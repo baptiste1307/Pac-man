@@ -1,31 +1,18 @@
 PYTHON = python3
-BUILD_DIR = build
-CACHE_DIR = $(BUILD_DIR)/cache
-WHEEL_DIR = $(BUILD_DIR)/wheel
 WHL_FILE = mazegenerator-00001-py3-none-any.whl
-DEPENDENCIES = mypy flake8 pygame
 MAIN = pac-man.py
 CONFIG = config.json
-MKDIR = mkdir -p
 RM = rm -rf
-UV = uv run
+SYNC = uv sync
+RUN= uv run
 
-$(BUILD_DIR):
 
-	$(MKDIR) $(BUILD_DIR)
-
-dirs: $(BUILD_DIR)
-
-	$(MKDIR) $(CACHE_DIR)
-	$(MKDIR) $(WHEEL_DIR)
-
-install: dirs
-	$(UV) $(PYTHON) -m pip install $(DEPENDENCIES)
-## $(PYTHON) -m pip install $(WHL_FILE)
-	unzip $(WHL_FILE) -d $(WHEEL_DIR)
+install:
+	$(SYNC)
+	unzip $(WHL_FILE)
 	
 run:
-	PYTHONDONTWRITEBYTECODE=1 $(UV) $(PYTHON) $(MAIN) $(CONFIG)
+	PYTHONDONTWRITEBYTECODE=1 $(RUN) $(PYTHON) $(MAIN) $(CONFIG)
 
 debug:
 	$(PYTHON) -m pdb
@@ -39,16 +26,15 @@ clean:
 	$(RM) venv
 	$(RM) .venv
 	$(RM) data/output
-	$(RM) $(BUILD_DIR)
 
 lint:
 	$(PYTHON) -m flake8 .
-	$(PYTHON) -m mypy . --cache-dir $(CACHE_DIR)/mypy \
+	$(PYTHON) -m mypy . \
 		--warn-return-any --warn-unused-ignores --ignore-missing-imports \
 		--disallow-untyped-defs --check-untyped-defs
 
 lint-strict:
 	$(PYTHON) -m flake8 .
-	$(PYTHON) -m mypy . --cache-dir $(CACHE_DIR)/mypy --strict
+	$(PYTHON) -m mypy . --strict
 
 .PHONY: install run debug test clean lint lint-strict

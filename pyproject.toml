@@ -10,4 +10,8 @@ dependencies = [
     "mypy",
     "flake8",
     "pygame-ce",
+    "black>=26.5.1",
 ]
+
+[tool.black]
+line-length = 79

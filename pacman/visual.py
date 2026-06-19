@@ -1,20 +1,31 @@
 import pygame
 from typing import Any
-from mazegenerator.mazegenerator import MazeGenerator
+from dataclasses import dataclass, field
+from .visual_utils import Colors, Level
 
 MAZE_OFFSET_X = 25
 MAZE_OFFSET_Y = 125
 
 
+@dataclass
 class Visual:
-    def __init__(self):
-        self.screen_width = 2160
-        self.screen_height = 1280
-        self.screen = pygame.display.set_mode((self.screen_width,
-                                               self.screen_height))
+    screen_width = 2160
+    screen_height = 1280
+    screen: any = field(init=False)
+    colors: type = Colors
 
-    def draw_stats(self, config: dict[str, Any], current_level: int,
-                   colors: dict[str, str]) -> None:
+    def __post_init__(self):
+        self.screen = pygame.display.set_mode(
+            (self.screen_width, self.screen_height)
+        )
+
+    def draw_stats(
+        self,
+        config: dict[str, Any],
+        current_level: int,
+    ) -> None:
+
+        colors = self.colors
 
         font = pygame.font.SysFont("arial", 24)
         stats_x = 25
@@ -22,18 +33,20 @@ class Visual:
 
         game_score = 0
 
-        score_text = font.render(f"Score: {game_score}", True, colors["white"])
+        score_text = font.render(
+            f"Score: {game_score}", True, colors.WHITE.value
+        )
 
         lives_text = font.render(
-            f"Lives: {config['lives']}", True, colors["white"]
+            f"Lives: {config['lives']}", True, colors.WHITE.value
         )
 
         level_text = font.render(
-            f"Level: {current_level + 1}", True, colors["white"]
+            f"Level: {current_level + 1}", True, colors.WHITE.value
         )
 
         time_text = font.render(
-            f"Time: {config['level_max_time']}", True, colors["white"]
+            f"Time: {config['level_max_time']}", True, colors.WHITE.value
         )
 
         self.screen.blit(score_text, (stats_x, stats_y + 20))
@@ -42,7 +55,9 @@ class Visual:
         self.screen.blit(time_text, (stats_x, stats_y + 80))
 
     # DEBUG (to delete)
-    def draw_next_button(self, colors: dict[str, Any]) -> pygame.Rect:
+    def draw_next_button(self) -> pygame.Rect:
+
+        colors = self.colors
 
         font = pygame.font.SysFont("arial", 24)
 
@@ -52,12 +67,13 @@ class Visual:
         button_x = self.screen.get_width() - button_width - 20
         button_y = 40
 
-        button_rect = pygame.Rect(button_x, button_y,
-                                  button_width, button_height)
+        button_rect = pygame.Rect(
+            button_x, button_y, button_width, button_height
+        )
 
-        pygame.draw.rect(self.screen, colors["yellow"], button_rect)
+        pygame.draw.rect(self.screen, colors.YELLOW.value, button_rect)
 
-        text = font.render("NEXT", True, colors["black"])
+        text = font.render("NEXT", True, colors.BLACK.value)
 
         self.screen.blit(
             text,
@@ -69,20 +85,21 @@ class Visual:
 
         return button_rect
 
-    def draw_maze(self, maze: list[list[int]], cell_size: int,
-                  colors: dict[str, Any]) -> None:
+    def load_pacman(
+        self,
+        maze: list[list[int]],
+        cell_size: int,
+    ):
+        # convert_alpha: for png with transparent bg & better performances
+        return pygame.image.load("assets/pacman-right/1.png").convert_alpha()
 
-        # def has_south_and_east_walls(x: int, y: int) -> bool:
-        #     return ((maze[y][x] & 4) and (maze[y][x] & 2))
+    def draw_maze(
+        self,
+        maze: list[list[int]],
+        cell_size: int,
+    ) -> None:
 
-        # def has_south_and_west_walls(x: int, y: int) -> bool:
-        #     return ((maze[y][x] & 4) and (maze[y][x] & 8))
-
-        # def has_north_and_east_wall(x: int, y: int) -> bool:
-        #     return ((maze[y][x] & 1) and (maze[y][x] & 2))
-
-        # def has_north_and_west_wall(x: int, y: int) -> bool:
-        #     return ((maze[y][x] & 1) and (maze[y][x] & 8))
+        colors = self.colors
 
         rows = len(maze)
         cols = len(maze[0])
@@ -97,7 +114,7 @@ class Visual:
                 if cell & 1:
                     pygame.draw.line(
                         self.screen,
-                        colors["wall_blue"],
+                        colors.WALL_BLUE.value,
                         (px, py),
                         (px + cell_size, py),
                         5,
@@ -107,7 +124,7 @@ class Visual:
                 if cell & 8:
                     pygame.draw.line(
                         self.screen,
-                        colors["wall_blue"],
+                        colors.WALL_BLUE.value,
                         (px, py),
                         (px, py + cell_size),
                         5,
@@ -117,7 +134,7 @@ class Visual:
                 if x == (cols - 1) and (cell & 2):
                     pygame.draw.line(
                         self.screen,
-                        colors["wall_blue"],
+                        colors.WALL_BLUE.value,
                         (px + cell_size, py),
                         (px + cell_size, py + cell_size),
                         5,
@@ -127,58 +144,56 @@ class Visual:
                 if y == rows - 1 and (cell & 4):
                     pygame.draw.line(
                         self.screen,
-                        colors["wall_blue"],
+                        colors.WALL_BLUE.value,
                         (px, py + cell_size),
                         (px + cell_size, py + cell_size),
                         5,
                     )
 
-                # if x < cols - 1 and y < cols - 1:
-                #     # if there's a part of the maze without walls
-                #     if (not has_south_and_east_walls(x, y)
-                #         and not has_south_and_west_walls(x + 1, y)
-                #         and not has_north_and_east_wall(x, y + 1)
-                #             and not has_north_and_west_wall(x + 1, y)):
-                #         pygame.draw.line(
-                #             screen, colors["wall_blue"],
-                #             (px + cell_size, py + cell_size),
-                #             (px + cell_size + 5, py + cell_size), 5)
+    def main_menu(self) -> None:
 
-    def main_menu(self, colors: dict[str, Any]) -> None:
+        colors = self.colors
+
         font = pygame.font.SysFont("arial", 48)
         small_font = pygame.font.SysFont("arial", 24)
 
         running = True
 
         while running:
-            self.screen.fill(colors["black"])
+            self.screen.fill(colors.BLACK.value)
 
-            # create only an image with the text
-            title_text = font.render("PAC-MAN", True, colors["yellow"])
-            # "true" to have a not-pixelized text
+            title_text = font.render("PAC-MAN", True, colors.YELLOW.value)
+
             start_text = small_font.render(
-                "Press SPACE to start", True, colors["white"]
-            )
-            quit_text = small_font.render(
-                "Press ESC to quit", True, colors["white"]
+                "Press SPACE to start", True, colors.WHITE.value
             )
 
-            # ".blit()" = put thoses images on screen
+            quit_text = small_font.render(
+                "Press ESC to quit", True, colors.WHITE.value
+            )
+
             self.screen.blit(
                 title_text,
                 (
-                    # to center the text image (x coord), 150 = y coord
                     self.screen.get_width() // 2 - title_text.get_width() // 2,
                     150,
                 ),
             )
+
             self.screen.blit(
                 start_text,
-                (self.screen.get_width() // 2 - start_text.get_width() // 2, 300),
+                (
+                    self.screen.get_width() // 2 - start_text.get_width() // 2,
+                    300,
+                ),
             )
+
             self.screen.blit(
                 quit_text,
-                (self.screen.get_width() // 2 - quit_text.get_width() // 2, 350),
+                (
+                    self.screen.get_width() // 2 - quit_text.get_width() // 2,
+                    350,
+                ),
             )
 
             pygame.display.flip()
@@ -195,110 +210,66 @@ class Visual:
                         pygame.quit()
                         return
 
-    def _find_cell_size(self, width: int, height: int) -> int:
+    def get_levels(self, config: dict[str, Any]) -> list[Level]:
+        levels: list[Level] = []
 
-        pygame.init()
-        info = pygame.display.Info()
+        for level in config["levels"]:
+            new_level = Level(width=level["width"], height=level["height"])
+            levels.append(new_level)
 
-        cell_size = min(
-            (info.current_w * 0.7) // width, (info.current_h * 0.7) // height
-        )
-        return cell_size
+        return levels
 
     def init_game(self, config: dict[str, Any]) -> None:
 
-        # 1,2,4,8 = north, east, south, west
-        colors = {
-            "white": (255, 255, 255),
-            "black": (0, 0, 0),
-            "yellow": (255, 255, 0),
-            "wall_blue": (25, 25, 166),
-            "ultramarine": (33, 33, 222),
-            "peach": (222, 161, 133),
-            "red": (253, 0, 0),
-            "green": (0, 255, 0),
-        }
-
-        mazes: list[dict[str, Any]] = []
-        for index, level in enumerate(config["levels"]):
-            mazes.append({})
-            level_height = level["height"]
-            level_width = level["width"]
-            new_level_maze = MazeGenerator(size=(level_height, level_width))
-            mazes[index]["maze"] = new_level_maze
-            cell_size = self._find_cell_size(level_width, level_height)
-            mazes[index]["cell_size"] = cell_size
-            mazes[index]["height"] = level_height
-            mazes[index]["width"] = level_width
-
         pygame.init()
+        levels = self.get_levels(config)
 
-        width = mazes[0]["width"] * mazes[0]["cell_size"] + 50
-        height = mazes[0]["height"] * mazes[0]["cell_size"] + 150
-
-        screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("Pac-Man")
 
-        self.main_menu(screen, colors)
+        self.main_menu()
         current_level = 0
 
-        clock = pygame.time.Clock()  # create an intern timer for the game
-        # to limit FPS
+        clock = pygame.time.Clock()
         running = True
 
         while running:
-            next_button = self.draw_next_button(screen, colors)
+            next_button = self.draw_next_button()
 
-            # get all the events(mouse click, key press, close window etc)
             for event in pygame.event.get():
-                # if event = close window
                 if event.type == pygame.QUIT:
                     running = False
 
-                # if event = mouse click
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
 
                     if next_button.collidepoint(mouse_pos):
                         current_level += 1
 
-                        if current_level >= len(mazes):
+                        if current_level >= len(levels):
                             current_level = 0
 
-                        width = (
-                            mazes[current_level]["width"]
-                            * mazes[current_level]["cell_size"]
-                            + 50
-                        )
+            self.screen.fill(self.colors.BLACK.value)
 
-                        height = (
-                            mazes[current_level]["height"]
-                            * mazes[current_level]["cell_size"]
-                            + 150
-                        )
+            self.draw_stats(config, current_level)
 
-                        screen = pygame.display.set_mode((width, height))
-
-            # cleaning screen at each frame
-            screen.fill(colors["black"])
-
-            self.draw_stats(screen, config, current_level, colors)
-
-            # generating the drawing of the maze at each frame
             self.draw_maze(
-                screen,
-                mazes[current_level]["maze"].maze,
-                mazes[current_level]["cell_size"],
-                colors,
+                levels[current_level].maze.maze,
+                levels[current_level].cell_size,
             )
-            next_button = self.draw_next_button(screen, colors)
 
-            # displays it on the screen. "display" draws on a "hidden" zone,
-            # and "flip" copy it to the real screen to make it visible
+            self.screen.blit(
+                # function to load pacman
+                self.load_pacman(
+                    levels[current_level].maze.maze,
+                    levels[current_level].cell_size,
+                ),
+                # coordinates where to draw it
+                (300, 300),
+            )
+
+            next_button = self.draw_next_button()
+
             pygame.display.flip()
-            # max FPS for the game = 60FPS
             clock.tick(60)
 
-        # cleanly close the windows and free window, memory
-        # and graphical ressources
         pygame.quit()

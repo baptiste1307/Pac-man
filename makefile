@@ -8,6 +8,7 @@ MAIN = pac-man.py
 CONFIG = config.json
 MKDIR = mkdir -p
 RM = rm -rf
+UV = uv run
 
 $(BUILD_DIR):
 
@@ -19,12 +20,12 @@ dirs: $(BUILD_DIR)
 	$(MKDIR) $(WHEEL_DIR)
 
 install: dirs
-	$(PYTHON) -m pip install $(DEPENDENCIES)
+	$(UV) $(PYTHON) -m pip install $(DEPENDENCIES)
 ## $(PYTHON) -m pip install $(WHL_FILE)
 	unzip $(WHL_FILE) -d $(WHEEL_DIR)
 	
 run:
-	PYTHONDONTWRITEBYTECODE=1 $(PYTHON) $(MAIN) $(CONFIG)
+	PYTHONDONTWRITEBYTECODE=1 $(UV) $(PYTHON) $(MAIN) $(CONFIG)
 
 debug:
 	$(PYTHON) -m pdb

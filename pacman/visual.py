@@ -9,9 +9,9 @@ MAZE_OFFSET_Y = 125
 
 @dataclass
 class Visual:
-    screen_width = 2160
-    screen_height = 1280
-    screen: any = field(init=False)
+    screen_width: int = 2160
+    screen_height: int = 1280
+    screen: Any = field(init=False)
     colors: type = Colors
 
     def __post_init__(self):

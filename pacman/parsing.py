@@ -85,7 +85,6 @@ class Parser:
             print(f"Error: cannot read file {path}: {e}", file=sys.stderr)
             sys.exit(1)
 
-
     def check_json(self, config_file_path: Path,
                    config: dict[str, Any]) -> None:
 

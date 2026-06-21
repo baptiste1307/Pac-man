@@ -134,6 +134,10 @@ class Parser:
                                     config,
                                     default_size,
                                     config_file_path)
+        
+        for key, value in config.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
 
     def parser_main(self, args: list[str]):
         namespace = self.parse_input(args)

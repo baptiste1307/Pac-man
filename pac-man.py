@@ -6,10 +6,12 @@ from pacman.visual import Visual
 
 
 def main() -> None:
-    # try:
+    try:
         visual = Visual()
         parser = Parser()
         parser.parser_main(sys.argv)
+        # print(parser.lives)
+
         # args: argparse.Namespace = parse_input(sys.argv)
         # config_file_path = Path(args.config_file)
         # config = load_json_with_comments(config_file_path)
@@ -20,9 +22,10 @@ def main() -> None:
         config = parser.__dict__
         visual.init_game(config)
 
-    # except Exception as e:
-    #     print(f"Error: {e}", file=sys.stderr)
-    #     sys.exit(1)
+
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

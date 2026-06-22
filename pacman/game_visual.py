@@ -1,7 +1,8 @@
 import pygame
 from typing import Any
 from dataclasses import dataclass, field
-from .visual_utils import Colors, Level
+from .visual_utils import Colors
+from .assets import LoadedAssets
 
 MAZE_OFFSET_X = 25
 MAZE_OFFSET_Y = 125
@@ -85,13 +86,20 @@ class GameVisual:
 
         return button_rect
 
-    def load_pacman(
-        self,
-        maze: list[list[int]],
-        cell_size: int,
-    ):
-        # convert_alpha: for png with transparent bg & better performances
-        return pygame.image.load("assets/pacman-right/1.png").convert_alpha()
+    def draw_pacman(self, cell_size: int):
+        a = LoadedAssets()
+
+        pacman = a.get_image(
+            "pacman_right",
+            "opened",
+            cell_size,
+        )
+
+        self.screen.blit(
+            pacman,
+            # coordinates where to draw it
+            (300, 300),
+        )
 
     def draw_maze(
         self,
@@ -162,39 +170,35 @@ class GameVisual:
         while running:
             self.screen.fill(colors.BLACK.value)
 
-            title_text = font.render("PAC-MAN", True, colors.YELLOW.value)
+            menu_text = {
+                "title_text": {
+                    "text": font.render("PAC-MAN", True, colors.YELLOW.value),
+                    "y_pos": 150,
+                },
+                "start_text": {
+                    "text": small_font.render(
+                        "Press SPACE to start", True, colors.WHITE.value
+                    ),
+                    "y_pos": 300,
+                },
+                "quit_text": {
+                    "text": small_font.render(
+                        "Press ESC to quit", True, colors.WHITE.value
+                    ),
+                    "y_pos": 350,
+                },
+            }
 
-            start_text = small_font.render(
-                "Press SPACE to start", True, colors.WHITE.value
-            )
+            for data in menu_text.values():
 
-            quit_text = small_font.render(
-                "Press ESC to quit", True, colors.WHITE.value
-            )
-
-            self.screen.blit(
-                title_text,
-                (
-                    self.screen.get_width() // 2 - title_text.get_width() // 2,
-                    150,
-                ),
-            )
-
-            self.screen.blit(
-                start_text,
-                (
-                    self.screen.get_width() // 2 - start_text.get_width() // 2,
-                    300,
-                ),
-            )
-
-            self.screen.blit(
-                quit_text,
-                (
-                    self.screen.get_width() // 2 - quit_text.get_width() // 2,
-                    350,
-                ),
-            )
+                self.screen.blit(
+                    data["text"],
+                    (
+                        self.screen.get_width() // 2
+                        - data["text"].get_width() // 2,
+                        data["y_pos"],
+                    ),
+                )
 
             pygame.display.flip()
 
@@ -209,5 +213,3 @@ class GameVisual:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         return
-
-

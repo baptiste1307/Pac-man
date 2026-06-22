@@ -1,8 +1,6 @@
 #! /usr/bin/env python3
 
 import pygame
-from dataclasses import dataclass
-from .game_stats import GameStats
 from .game_visual import GameVisual
 from .visual_utils import Level
 from typing import Any
@@ -57,14 +55,8 @@ class GameEngine:
                 levels[current_level].cell_size,
             )
 
-            v.screen.blit(
-                # function to load pacman
-                v.load_pacman(
-                    levels[current_level].maze.maze,
-                    levels[current_level].cell_size,
-                ),
-                # coordinates where to draw it
-                (300, 300),
+            v.draw_pacman(
+                levels[current_level].cell_size,
             )
 
             next_button = v.draw_next_button()

@@ -11,4 +11,4 @@ class GameStats:
     level_time_left: int = 60
     game_status: str = "HERO"  # HERO, INSTRUCTION, PLAY, NAME, SCORE
     pacman_pos: Tuple[int, int] = (1, 1)
-    ghosts_pos: List[Tuple[int, int]]
+    # ghosts_pos: List[Tuple[int, int]]

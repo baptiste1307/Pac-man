@@ -125,9 +125,9 @@ class Parser:
                 if len(config["levels"]) <= 0:
                     continue
                 check_levels_key(config,
-                                config_file_path,
-                                default_size,
-                                default_seed)
+                                 config_file_path,
+                                 default_size,
+                                 default_seed)
 
         # checks if a mandatory key from default_config_keys is missing in config
         check_missing_mandatory_key(default_config_keys,

@@ -2,6 +2,7 @@ import pygame
 from dataclasses import dataclass, field
 from mazegenerator.mazegenerator import MazeGenerator
 from enum import Enum
+from typing import Tuple, Any
 
 
 class Colors(Enum):
@@ -13,6 +14,10 @@ class Colors(Enum):
     PEACH = (222, 161, 133)
     RED = (253, 0, 0)
     GREEN = (0, 255, 0)
+
+    D_BLUE = (234, 82, 73)
+    CYAN = (174, 34, 100)
+    B_YELLOW = (61, 54, 100)
 
 
 @dataclass
@@ -37,3 +42,25 @@ class Level:
             (info.current_w * 0.7) // level_width,
             (info.current_h * 0.7) // level_height,
         )
+
+
+class Button:
+    def __init__(self, rect_width: int,
+                 rect_height: int,
+                 rect_pos_x: int,
+                 rect_pos_y: int,
+                 text: str,
+                 text_rect: Any,
+                 stroke_thickness: int) -> None:
+        self.rect_width = rect_width
+        self.rect_height = rect_height
+        self.rect_pos_x = rect_pos_x
+        self.rect_pos_y = rect_pos_y
+        self.text = text
+        self.text_rect = text_rect
+        self.stroke_thickness = stroke_thickness
+
+        # self.rect = (self.rect_pos_x, self.rect_pos_y,
+        #              self.rect_width - self.stroke_thickness,
+        #              self.rect_height - self.stroke_thickness)
+

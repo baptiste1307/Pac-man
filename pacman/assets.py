@@ -56,21 +56,30 @@ class LoadedAssets:
 
         asset = getattr(self, name)
 
-        asset_size = maze_cell_size - 10
+        asset_size = maze_cell_size - 5
 
+        # if asset only has one path
         if isinstance(asset, str):
-            return pygame.transform.scale(
-                asset, (asset_size, asset_size)
-            )
+            return pygame.transform.scale(asset, (asset_size, asset_size))
 
+        # for asset pacman that has sub-pathes
         elif isinstance(asset, dict):
 
             if sub_name is None:
                 raise ValueError(f"Asset '{name}' requires a sub_name.")
 
-            return pygame.transform.scale(
-                asset[sub_name], (asset_size, asset_size)
-            )
+            # return all assets (open, half-open and closed)
+            elif sub_name == "all":
+                return [
+                    pygame.transform.scale(asset[p], (asset_size, asset_size))
+                    for p in asset
+                ]
+
+            # return only one sub_path given by sub_name
+            else:
+                return pygame.transform.scale(
+                    asset[sub_name], (asset_size, asset_size)
+                )
 
         # if no "name" attribute
         raise TypeError(f"Unsupported asset type for '{name}'.")

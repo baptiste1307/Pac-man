@@ -1,7 +1,7 @@
 import pygame
 from typing import Any
 from dataclasses import dataclass, field
-from .visual_utils import Colors
+from .utils.visual_utils import Colors
 from .assets import LoadedAssets
 
 MAZE_OFFSET_X = 25
@@ -86,19 +86,35 @@ class GameVisual:
 
         return button_rect
 
-    def draw_pacman(self, cell_size: int):
-        a = LoadedAssets()
+    def draw_pacman(
+        self,
+        direction: str,
+        x: int,
+        y: int,
+        cell_size: int,
+        assets: LoadedAssets,
+        current_frame: int = 0
+    ) -> None:
 
-        pacman = a.get_image(
-            "pacman_right",
-            "opened",
+        if direction == "up":
+            asset = "pacman_up"
+        elif direction == "down":
+            asset = "pacman_down"
+        elif direction == "right":
+            asset = "pacman_right"
+        elif direction == "left":
+            asset = "pacman_left"
+
+        pacman = assets.get_image(
+            asset,
+            "all",
             cell_size,
         )
 
         self.screen.blit(
-            pacman,
+            pacman[current_frame],
             # coordinates where to draw it
-            (300, 300),
+            (x, y),
         )
 
     def draw_maze(
@@ -106,7 +122,7 @@ class GameVisual:
         maze: list[list[int]],
         cell_size: int,
     ) -> None:
-
+        # 1,2,4,8 = N, E, S, W
         colors = self.colors
 
         rows = len(maze)

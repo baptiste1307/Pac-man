@@ -1,9 +1,11 @@
 from pathlib import Path
 from typing import Any, List, Dict
-from .parsing_utils import (check_levels_key,
-                            check_int_key,
-                            check_str_key,
-                            check_missing_mandatory_key)
+from .utils.parsing_utils import (
+    check_levels_key,
+    check_int_key,
+    check_str_key,
+    check_missing_mandatory_key,
+)
 import json
 import argparse
 import sys
@@ -13,7 +15,8 @@ from dataclasses import dataclass, field
 @dataclass
 class Parser:
     levels: List[Dict[str, Any]] = field(
-        default_factory=lambda: [{"height": 13, "width": 13}])
+        default_factory=lambda: [{"height": 13, "width": 13}]
+    )
 
     highscore_filename: str = "scores.json"
     lives: int = 3
@@ -29,11 +32,13 @@ class Parser:
             raise ValueError("There should be exactly 2 arguments.")
 
         # elif "/" not in args[0] and args[0] != "pac-man.py":
-        #    raise ValueError("Incorrect program file. It should be 'pac-man.py', "
+        #    raise ValueError("Incorrect program file.
+        # It should be 'pac-man.py', "
         #                      "or a path to this file.")
 
         # elif "/" in args[0] and args[0].split("/")[-1] != "pac-man.py":
-        #    raise ValueError("Incorrect program file. It should be 'pac-man.py', "
+        #    raise ValueError("Incorrect program file.
+        # It should be 'pac-man.py', "
         #                      "or a path to this file.")
         # ==> useless to verifiy name "pac-man.py"
 
@@ -54,18 +59,19 @@ class Parser:
         except (TypeError, SystemExit):
             print("Error: invalid arguments.")
             sys.exit(1)
-    
+
     @staticmethod
     def load_json_with_comments(path: Path) -> dict[str, Any]:
         if not path.exists() or not path.is_file():
             raise FileNotFoundError(f"JSON file not found: {path}.")
         try:
-            with open(path, 'r') as file:
+            with open(path, "r") as file:
                 lines = []
                 for line in file:
                     # not "in file.read()" -> one chr at a time
-                    if (line.lstrip().startswith('#')
-                            or line.lstrip().startswith("//")):
+                    if line.lstrip().startswith(
+                        "#"
+                    ) or line.lstrip().startswith("//"):
                         continue
                     lines.append(line)
             config = json.loads("\n".join(lines))
@@ -85,17 +91,17 @@ class Parser:
             print(f"Error: cannot read file {path}: {e}", file=sys.stderr)
             sys.exit(1)
 
-    def check_json(self, config_file_path: Path,
-                   config: dict[str, Any]) -> None:
+    def check_json(
+        self, config_file_path: Path, config: dict[str, Any]
+    ) -> None:
 
         default_size = 13
         default_seed = 42
         default_config_keys = {
             "highscore_filename": {"count": 0, "default": "scores.json"},
-            "levels": {"count": 0, "default": [{
-                "height": default_size,
-                "width": default_size
-                }]
+            "levels": {
+                "count": 0,
+                "default": [{"height": default_size, "width": default_size}],
             },
             "lives": {"count": 0, "default": 3},
             "pacgum": {"count": 0, "default": 42},
@@ -113,28 +119,30 @@ class Parser:
                 if key == "levels" and len(value) <= 0:
                     continue
                 default_config_keys[key]["count"] = (
-                    default_config_keys[key].get("count", 0) + 1)
+                    default_config_keys[key].get("count", 0) + 1
+                )
 
             if isinstance(value, int):
                 check_int_key(key, config, config_file_path, value)
 
             if isinstance(value, str):
-                check_str_key(key, config, config_file_path, default_config_keys)
+                check_str_key(
+                    key, config, config_file_path, default_config_keys
+                )
 
             elif key == "levels":
                 if len(config["levels"]) <= 0:
                     continue
-                check_levels_key(config,
-                                 config_file_path,
-                                 default_size,
-                                 default_seed)
+                check_levels_key(
+                    config, config_file_path, default_size, default_seed
+                )
 
-        # checks if a mandatory key from default_config_keys is missing in config
-        check_missing_mandatory_key(default_config_keys,
-                                    config,
-                                    default_size,
-                                    config_file_path)
-        
+        # checks if a mandatory key from default_config_keys is missing in
+        # config
+        check_missing_mandatory_key(
+            default_config_keys, config, default_size, config_file_path
+        )
+
         for key, value in config.items():
             if hasattr(self, key):
                 setattr(self, key, value)

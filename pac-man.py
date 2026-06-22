@@ -3,11 +3,10 @@ import argparse
 from pathlib import Path
 from pacman.parsing import Parser
 from pacman.game_engine import GameEngine
-from pacman.game_visual import GameVisual
 
 
 def main() -> None:
-    # try:
+    try:
         engine = GameEngine()
         parser = Parser()
         parser.parser_main(sys.argv)
@@ -23,10 +22,9 @@ def main() -> None:
         config = parser.__dict__
         engine.init_game(config)
 
-
-    # except Exception as e:
-    #     print(f"Error: {e}", file=sys.stderr)
-    #     sys.exit(1)
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

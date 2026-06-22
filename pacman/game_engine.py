@@ -2,66 +2,68 @@
 
 import pygame
 from .game_visual import GameVisual
-from .visual_utils import Level
+from .utils.engine_utils import GameState, EngineUtils
 from typing import Any
+from .assets import LoadedAssets
 
 
 class GameEngine:
-    def get_levels(self, config: dict[str, Any]) -> list[Level]:
-        levels: list[Level] = []
 
-        for level in config["levels"]:
-            new_level = Level(width=level["width"], height=level["height"])
-            levels.append(new_level)
+    def render(
+        self,
+        game: GameVisual,
+        assets: LoadedAssets,
+        state: GameState,
+        config: dict[str, Any],
+    ) -> None:
+        game.screen.fill(game.colors.BLACK.value)
 
-        return levels
+        game.draw_stats(config, state.current_level)
+
+        game.draw_maze(
+            state.current_maze,
+            state.current_cell_size,
+        )
+
+        game.draw_pacman(
+            direction=state.direction,
+            x=state.pacman_x,
+            y=state.pacman_y,
+            cell_size=state.current_cell_size,
+            assets=assets,
+            current_frame=state.current_frame,
+        )
+
+        game.draw_next_button()
+
+        pygame.display.flip()
 
     def init_game(self, config: dict[str, Any]) -> None:
-        v = GameVisual()
+        game = GameVisual()
+        assets = LoadedAssets()
 
         pygame.init()
-        levels = self.get_levels(config)
-
         pygame.display.set_caption("Pac-Man")
 
-        v.main_menu()
-        current_level = 0
+        state = GameState(config=config)
+
+        game.main_menu()
 
         clock = pygame.time.Clock()
         running = True
 
+        utils = EngineUtils()
+
         while running:
-            next_button = v.draw_next_button()
+            dt = clock.tick(60)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
+            running = utils.handle_events(game, state)
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
+            utils.update_animation(state, dt)
+            utils.update_direction(state)
+            utils.update_pacman_target(state)
+            utils.move_pacman(state)
 
-                    if next_button.collidepoint(mouse_pos):
-                        current_level += 1
-
-                        if current_level >= len(levels):
-                            current_level = 0
-
-            v.screen.fill(v.colors.BLACK.value)
-
-            v.draw_stats(config, current_level)
-
-            v.draw_maze(
-                levels[current_level].maze.maze,
-                levels[current_level].cell_size,
-            )
-
-            v.draw_pacman(
-                levels[current_level].cell_size,
-            )
-
-            next_button = v.draw_next_button()
-
-            pygame.display.flip()
-            clock.tick(60)
+            self.render(game, assets, state, config)
 
         pygame.quit()

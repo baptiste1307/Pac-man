@@ -1,8 +1,8 @@
 import pygame
 from .visual_utils import Level
 from typing import Any
-from dataclasses import dataclass
-from pacman.game_visual import GameVisual, MAZE_OFFSET_X, MAZE_OFFSET_Y
+from dataclasses import dataclass, field
+from pacman.game_stats import GameStats
 
 
 def get_levels(config: dict[str, Any]) -> list[Level]:
@@ -24,6 +24,9 @@ class GameState:
     current_frame: int = 0
     animation_timer: int = 0
     animation_delay: int = 60
+    statistics: GameStats = field(default_factory=GameStats)
+    MAZE_OFFSET_X = 25
+    MAZE_OFFSET_Y = 125
 
     def __post_init__(self):
         self.levels = get_levels(self.config)
@@ -31,13 +34,11 @@ class GameState:
 
     def update_target_position(self) -> None:
         self.target_x = (
-            MAZE_OFFSET_X
-            + self.pacman_grid_x * self.current_cell_size
+            self.MAZE_OFFSET_X + self.pacman_grid_x * self.current_cell_size
         )
 
         self.target_y = (
-            MAZE_OFFSET_Y
-            + self.pacman_grid_y * self.current_cell_size
+            self.MAZE_OFFSET_Y + self.pacman_grid_y * self.current_cell_size
         )
 
     def reset_level(self) -> None:
@@ -48,13 +49,11 @@ class GameState:
         self.pacman_grid_y = len(self.current_maze) // 2
 
         self.pacman_x = (
-            MAZE_OFFSET_X
-            + self.pacman_grid_x * self.current_cell_size
+            self.MAZE_OFFSET_X + self.pacman_grid_x * self.current_cell_size
         )
 
         self.pacman_y = (
-            MAZE_OFFSET_Y
-            + self.pacman_grid_y * self.current_cell_size
+            self.MAZE_OFFSET_Y + self.pacman_grid_y * self.current_cell_size
         )
 
         self.target_x = self.pacman_x
@@ -81,21 +80,6 @@ class EngineUtils:
             return not (cell & 8)
 
         return False
-
-    def handle_events(self, game: GameVisual, state: GameState) -> bool:
-        next_button = game.draw_next_button()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return False
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-
-                if next_button.collidepoint(mouse_pos):
-                    self.next_level(state)
-
-        return True
 
     def next_level(self, state: GameState) -> None:
         state.current_level += 1

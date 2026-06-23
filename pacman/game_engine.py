@@ -4,15 +4,28 @@ import pygame
 from .game_visual import GameVisual
 from .utils.engine_utils import GameState, EngineUtils
 from typing import Any
-from .assets import LoadedAssets
 
 
 class GameEngine:
 
+    def handle_events(self, game: GameVisual, state: GameState) -> bool:
+        next_button = game.draw_next_button()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+
+                if next_button.collidepoint(mouse_pos):
+                    self.next_level(state)
+
+        return True
+
     def render(
         self,
         game: GameVisual,
-        assets: LoadedAssets,
         state: GameState,
         config: dict[str, Any],
     ) -> None:
@@ -20,19 +33,11 @@ class GameEngine:
 
         game.draw_stats(config, state.current_level)
 
-        game.draw_maze(
-            state.current_maze,
-            state.current_cell_size,
-        )
+        game.draw_maze(state)
 
-        game.draw_pacman(
-            direction=state.direction,
-            x=state.pacman_x,
-            y=state.pacman_y,
-            cell_size=state.current_cell_size,
-            assets=assets,
-            current_frame=state.current_frame,
-        )
+        game.draw_pacman(state)
+
+        game.draw_pacgums(state)
 
         game.draw_next_button()
 
@@ -40,7 +45,6 @@ class GameEngine:
 
     def init_game(self, config: dict[str, Any]) -> None:
         game = GameVisual()
-        assets = LoadedAssets()
 
         pygame.init()
         pygame.display.set_caption("Pac-Man")
@@ -57,13 +61,13 @@ class GameEngine:
         while running:
             dt = clock.tick(60)
 
-            running = utils.handle_events(game, state)
+            running = self.handle_events(game, state)
 
             utils.update_animation(state, dt)
             utils.update_direction(state)
             utils.update_pacman_target(state)
             utils.move_pacman(state)
 
-            self.render(game, assets, state, config)
+            self.render(game, state, config)
 
         pygame.quit()

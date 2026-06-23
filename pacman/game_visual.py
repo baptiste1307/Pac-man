@@ -3,9 +3,7 @@ from typing import Any
 from dataclasses import dataclass
 from .utils.visual_utils import Colors, Button
 from .assets import LoadedAssets
-
-MAZE_OFFSET_X = 25
-MAZE_OFFSET_Y = 125
+from .utils.engine_utils import GameState
 
 
 @dataclass
@@ -18,6 +16,7 @@ class GameVisual:
     screen: Any = pygame.display.set_mode((screen_width, screen_height))
     colors: type = Colors
     my_font: str = "fonts/Zen_Dots/ZenDots-Regular.ttf"
+    assets = LoadedAssets()
 
     # =================== Fonts =================== #
 
@@ -151,15 +150,13 @@ class GameVisual:
 
         return button_rect
 
-    def draw_pacman(
-        self,
-        direction: str,
-        x: int,
-        y: int,
-        cell_size: int,
-        assets: LoadedAssets,
-        current_frame: int = 0,
-    ) -> None:
+    def draw_pacman(self, state: GameState) -> None:
+
+        direction = state.direction
+        x = state.pacman_x
+        y = state.pacman_y
+        cell_size = state.current_cell_size
+        current_frame = state.current_frame
 
         if direction == "up":
             asset = "pacman_up"
@@ -170,10 +167,10 @@ class GameVisual:
         elif direction == "left":
             asset = "pacman_left"
 
-        pacman = assets.get_image(
-            asset,
-            "all",
-            cell_size,
+        pacman = self.assets.get_image(
+            name=asset,
+            sub_name="all",
+            maze_cell_size=cell_size,
         )
 
         self.screen.blit(
@@ -182,13 +179,35 @@ class GameVisual:
             (x, y),
         )
 
-    def draw_maze(
-        self,
-        maze: list[list[int]],
-        cell_size: int,
-    ) -> None:
+    def draw_pacgums(self, state: GameState) -> None:
+        maze = state.current_maze
+        dot = self.assets.get_image(
+            name="dot", maze_cell_size=state.current_cell_size
+        )
+
+        cell_size = state.current_cell_size
+
+        dot_rect = dot.get_rect()
+
+        for row_index, row in enumerate(maze):
+            for col_index, col in enumerate(row):
+                dot_rect.center = (
+                    state.MAZE_OFFSET_X
+                    + (col_index * cell_size)
+                    + (cell_size // 2),
+                    state.MAZE_OFFSET_Y
+                    + (row_index * cell_size)
+                    + (cell_size // 2),
+                )
+
+                self.screen.blit(dot, dot_rect)
+
+    def draw_maze(self, state: GameState) -> None:
         # 1,2,4,8 = N, E, S, W
         colors = self.colors
+
+        maze = state.current_maze
+        cell_size = state.current_cell_size
 
         rows = len(maze)
         cols = len(maze[0])
@@ -196,8 +215,8 @@ class GameVisual:
         for y, row in enumerate(maze):
             for x, cell in enumerate(row):
 
-                px = MAZE_OFFSET_X + x * cell_size
-                py = MAZE_OFFSET_Y + y * cell_size
+                px = state.MAZE_OFFSET_X + x * cell_size
+                py = state.MAZE_OFFSET_Y + y * cell_size
 
                 # top wall
                 if cell & 1:
@@ -294,24 +313,3 @@ class GameVisual:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         return
-
-    def test_draw(self):
-        page = "hero"
-
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if page == "hero":
-                        pass
-
-            self.draw_hero()
-            pygame.display.flip()
-        pygame.quit()
-
-
-if __name__ == "__main__":
-    v = GameVisual()
-    v.test_draw()

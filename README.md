@@ -1,6 +1,6 @@
-*This project has been created as part of the 42 curriculum by hliu*
+*This project has been created as part of the 42 curriculum by hliu & bpasquer*
 
-# Fly in ✈️
+# Pac Man 🎮
 
 ## Table of contents
 - [Description](#description)

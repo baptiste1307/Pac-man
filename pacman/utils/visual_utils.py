@@ -12,12 +12,12 @@ class Colors(Enum):
     WALL_BLUE = (25, 25, 166)
     ULTRAMARINE = (33, 33, 222)
     PEACH = (222, 161, 133)
-    RED = (253, 0, 0)
+    RED = (255, 4, 8)
     GREEN = (0, 255, 0)
 
-    D_BLUE = (234, 82, 73)
-    CYAN = (174, 34, 100)
-    B_YELLOW = (61, 54, 100)
+    D_BLUE = (33, 48, 187)
+    CYAN = (168, 255, 246)
+    B_YELLOW = (253, 255, 166)
 
 
 @dataclass
@@ -60,7 +60,7 @@ class Button:
         self.text_rect = text_rect
         self.stroke_thickness = stroke_thickness
 
-        # self.rect = (self.rect_pos_x, self.rect_pos_y,
-        #              self.rect_width - self.stroke_thickness,
-        #              self.rect_height - self.stroke_thickness)
+        self.rect = (self.rect_pos_x, self.rect_pos_y,
+                     self.rect_width - self.stroke_thickness,
+                     self.rect_height - self.stroke_thickness)
 

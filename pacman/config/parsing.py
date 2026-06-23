@@ -152,3 +152,7 @@ class Parser:
         path = Path(namespace.config_file)
         raw_data = self.load_json_with_comments(path)
         self.check_json(path, raw_data)
+
+        # debug
+        # print(
+        # "\n".join(f"{key}: {value}" for key, value in raw_data.items()))

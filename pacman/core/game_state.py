@@ -20,7 +20,7 @@ def get_levels(config: dict[str, Any]) -> list[Level]:
 class GameState:
     config: dict[str, Any]
     current_level: int = 0
-    pacman_speed: int = 4
+    pacman_speed: int = 2
     direction: str = "right"
     current_frame: int = 0
     animation_timer: int = 0

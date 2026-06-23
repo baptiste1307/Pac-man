@@ -13,8 +13,10 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
     pygame.init()
     pygame.font.init()
 
-    screen_width: int = 2160
-    screen_height: int = 1280
+    # adapt screen dimensions to be 70% of current display dimensions
+    info = pygame.display.Info()
+    screen_width, screen_height = info.current_w * 0.7, info.current_h * 0.7
+
     screen: Any = pygame.display.set_mode((screen_width, screen_height))
     colors: type = Colors
     my_font: str = (

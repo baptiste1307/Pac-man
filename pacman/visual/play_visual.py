@@ -182,25 +182,59 @@ class PlayVisualMixin:
 
             self.screen.blit(dot, dot_rect)
 
-    def draw_ghosts(self, state: GameState) -> None:
+    def draw_grid_asset(
+        self,
+        state: GameState,
+        asset_name: str,
+        grid_position: tuple[int, int],
+        sub_name: str | None = None,
+        frame_index: int | None = None,
+    ) -> None:
         cell_size = state.current_cell_size
 
-        orange_ghost = self.assets.get_image(
-            name="orange_ghost", maze_cell_size=state.current_cell_size
+        asset = self.assets.get_image(
+            name=asset_name,
+            maze_cell_size=cell_size,
+            sub_name=sub_name,
         )
 
-        orange_ghost_rect = orange_ghost.get_rect()
+        if isinstance(asset, list) and frame_index is not None:
+            asset = asset[frame_index % len(asset)]
 
+        asset_rect = asset.get_rect()
+        x, y = grid_position
+
+        asset_rect.center = (
+            state.MAZE_OFFSET_X + (x * cell_size) + (cell_size // 2),
+            state.MAZE_OFFSET_Y + (y * cell_size) + (cell_size // 2),
+        )
+
+        self.screen.blit(asset, asset_rect)
+
+    def draw_ghosts(self, state: GameState) -> None:
         if len(state.pacgums) == 0:
             state.current_level += 1
             state.reset_level()
 
-        orange_ghost_rect.center = (
-            state.MAZE_OFFSET_X + (cell_size // 2),
-            state.MAZE_OFFSET_Y + (cell_size // 2),
-        )
+        maze = state.current_maze
+        last_row = len(maze) - 1
+        last_col = len(maze[0]) - 1
 
-        self.screen.blit(orange_ghost, orange_ghost_rect)
+        ghosts_start_positions = {
+            "red_ghost_right": (0, 0),
+            "pink_ghost_left": (last_col, 0),
+            "blue_ghost_right": (0, last_row),
+            "orange_ghost_left": (last_col, last_row),
+        }
+
+        for ghost, position in ghosts_start_positions.items():
+            self.draw_grid_asset(
+                state=state,
+                asset_name=ghost,
+                grid_position=position,
+                sub_name="all",
+                frame_index=state.current_frame,
+            )
 
     def draw_maze(self, state: GameState) -> None:
         # 1,2,4,8 = N, E, S, W

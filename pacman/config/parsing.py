@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Any, List, Dict
-from .utils.parsing_utils import (
+from .parsing_utils import (
     check_levels_key,
     check_int_key,
     check_str_key,

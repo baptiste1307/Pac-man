@@ -1,8 +1,9 @@
 #! /usr/bin/env python3
 
 import pygame
-from .game_visual import GameVisual
-from .utils.engine_utils import GameState, EngineUtils
+from pacman.core import GameState
+from pacman.visual import GameVisual
+from .engine_utils import EngineUtils
 from typing import Any
 
 

@@ -3,44 +3,50 @@ from typing import Any
 import random
 
 
-def check_int_key(key: str,
-                  config: dict[str, Any],
-                  config_file_path: Path,
-                  value: int) -> None:
+def check_int_key(
+    key: str, config: dict[str, Any], config_file_path: Path, value: int
+) -> None:
 
     if value > 10000:
         config[key] = 10000
         print(
             f"{config_file_path}: incorrect value '{value}'"
             f"for '{key}' (max 10_000) => Automatically updated value:"
-            f" {config[key]}.\n")
+            f" {config[key]}.\n"
+        )
 
     elif value <= 0:
         config[key] *= -1
         print(
             f"{config_file_path}: incorrect value '{value}'"
             f"for '{key}' (min 1) => Automatically updated value: "
-            f"{config[key]}.\n")
+            f"{config[key]}.\n"
+        )
 
 
-def check_str_key(key: str,
-                  config: dict[str, Any],
-                  config_file_path: Path,
-                  default_config_keys: dict[str, Any]) -> None:
+def check_str_key(
+    key: str,
+    config: dict[str, Any],
+    config_file_path: Path,
+    default_config_keys: dict[str, Any],
+) -> None:
 
-    splitted = config[key].strip().split('.')
+    splitted = config[key].strip().split(".")
     if len(splitted) != 2 or splitted[-1] != "json":
         config[key] = default_config_keys[key]["default"]
         print(
             f"{config_file_path}: incorrect JSON file name for '{key}'"
             f" => Automatically updated value: "
-            f"'{default_config_keys[key]['default']}.'\n")
+            f"'{default_config_keys[key]['default']}.'\n"
+        )
 
 
-def check_levels_key(config: dict[str, Any],
-                     config_file_path: Path,
-                     default_size: int,
-                     default_seed: int) -> None:
+def check_levels_key(
+    config: dict[str, Any],
+    config_file_path: Path,
+    default_size: int,
+    default_seed: int,
+) -> None:
 
     for index, level in enumerate(config["levels"]):
         # each level is a dict that should contain height, weight
@@ -53,7 +59,8 @@ def check_levels_key(config: dict[str, Any],
             print(
                 f"{config_file_path}: width missing for "
                 f"level {index + 1} => "
-                f"Automatically updated value: {level['width']}.\n")
+                f"Automatically updated value: {level['width']}.\n"
+            )
 
         # case 2: height missing -> height = width
         elif "width" in level and "height" not in level:
@@ -61,21 +68,25 @@ def check_levels_key(config: dict[str, Any],
             print(
                 f"{config_file_path}: height missing for "
                 f"level {index + 1} => "
-                f"Automatically updated value: {level['height']}.\n")
+                f"Automatically updated value: {level['height']}.\n"
+            )
 
         # case 3: both missing -> width & height = default_size
-        elif ("height" not in level and "width" not in level):
+        elif "height" not in level and "width" not in level:
             level["height"] = default_size
             level["width"] = default_size
             print(
                 f"{config_file_path}: incorrect height or width for"
                 f" level {index + 1} => "
-                f"Automatically updated value: {level['width']}.\n")
+                f"Automatically updated value: {level['width']}.\n"
+            )
 
         # case 4: missing or invalid seed -> set to random int
-        if ("seed" not in level
-                or level["seed"] <= 0
-                or level["seed"] > 1000000):
+        if (
+            "seed" not in level
+            or level["seed"] <= 0
+            or level["seed"] > 1000000
+        ):
             # level 1 = default seed
             if index == 0:
                 level["seed"] = default_seed
@@ -84,7 +95,8 @@ def check_levels_key(config: dict[str, Any],
             print(
                 f"{config_file_path}: seed incorrect or missing for"
                 f" level {index + 1} =>"
-                f" Randomly generated value: {level['seed']}.\n")
+                f" Randomly generated value: {level['seed']}.\n"
+            )
 
         # Part 2: checking key values
         max_size = 20  # (for performance)
@@ -138,20 +150,26 @@ def check_levels_key(config: dict[str, Any],
     if index < 10:
         index += 1
         while index != 10:
-            config["levels"].append({
-                "height": default_size,
-                "width": default_size,
-                "seed": random.randint(1, 1_000_000)
-                })
-            print(f"{config_file_path}: level {index + 1} details"
-                  " missing. => Default level created.\n")
+            config["levels"].append(
+                {
+                    "height": default_size,
+                    "width": default_size,
+                    "seed": random.randint(1, 1_000_000),
+                }
+            )
+            print(
+                f"{config_file_path}: level {index + 1} details"
+                " missing. => Default level created.\n"
+            )
             index += 1
 
 
-def check_missing_mandatory_key(default_config_keys: dict[str, Any],
-                                config: dict[str, Any],
-                                default_size: int,
-                                config_file_path: Path) -> None:
+def check_missing_mandatory_key(
+    default_config_keys: dict[str, Any],
+    config: dict[str, Any],
+    default_size: int,
+    config_file_path: Path,
+) -> None:
 
     for key, value in default_config_keys.items():
         if value["count"] <= 0:
@@ -161,17 +179,22 @@ def check_missing_mandatory_key(default_config_keys: dict[str, Any],
                 index = 0
                 while index != 10:
                     multiplier = 1.2 ** (index // 3)
-                    config["levels"].append({
-                        "height": int(default_size * multiplier),
-                        "width": int(default_size * multiplier),
-                        "seed": random.randint(1, 1_000_000)
-                        })
-                    print(f"{config_file_path}: level {index + 1} details"
-                          " missing. => Default level created.\n")
+                    config["levels"].append(
+                        {
+                            "height": int(default_size * multiplier),
+                            "width": int(default_size * multiplier),
+                            "seed": random.randint(1, 1_000_000),
+                        }
+                    )
+                    print(
+                        f"{config_file_path}: level {index + 1} details"
+                        " missing. => Default level created.\n"
+                    )
                     index += 1
             else:
                 config[key] = value["default"]
                 # on l'ajoute et on lui donne sa valeur par defaut
                 print(
                     f"{config_file_path}: key '{key}' missing. "
-                    f"=> Updated with default value {value['default']}.\n")
+                    f"=> Updated with default value {value['default']}.\n"
+                )

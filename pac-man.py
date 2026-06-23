@@ -1,8 +1,6 @@
 import sys
-import argparse
-from pathlib import Path
-from pacman.parsing import Parser
-from pacman.game_engine import GameEngine
+from pacman.config import Parser
+from pacman.engine import GameEngine
 
 
 def main() -> None:

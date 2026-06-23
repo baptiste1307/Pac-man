@@ -5,7 +5,7 @@ from typing import Any
 
 
 @dataclass
-class GameStats:
+class Statistics:
     config: dict[str, Any]
     score: int = 0
     lives: int = 3

@@ -1,7 +1,7 @@
 import pygame
 from .visual_utils import Level
 from typing import Any
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pacman.game_stats import GameStats
 
 
@@ -24,7 +24,6 @@ class GameState:
     current_frame: int = 0
     animation_timer: int = 0
     animation_delay: int = 60
-    statistics: GameStats = field(default_factory=GameStats)
     MAZE_OFFSET_X = 25
     MAZE_OFFSET_Y = 125
 
@@ -41,23 +40,57 @@ class GameState:
             self.MAZE_OFFSET_Y + self.pacman_grid_y * self.current_cell_size
         )
 
+    def find_42_pattern_cells(self) -> list[tuple[int, int]]:
+        return [
+            (x, y)
+            for y, row in enumerate(self.current_maze)
+            for x, _ in enumerate(row)
+            # if cell is fully closed
+            if self.current_maze[y][x] == 15
+        ]
+
+    def find_start_coords(self) -> tuple[int, int]:
+        x = len(self.current_maze[0]) // 2
+        y = len(self.current_maze) // 2
+        if (x, y) not in self.fourty_two_cells:
+            return (x, y)
+
+        while (x, y) in self.fourty_two_cells:
+            x -= 1
+
+        return (x, y)
+
     def reset_level(self) -> None:
         self.current_maze = self.levels[self.current_level].maze.maze
         self.current_cell_size = self.levels[self.current_level].cell_size
 
-        self.pacman_grid_x = len(self.current_maze[0]) // 2
-        self.pacman_grid_y = len(self.current_maze) // 2
+        self.fourty_two_cells = self.find_42_pattern_cells()
+        pacman_start_coords = self.find_start_coords()
+
+        self.pacman_grid_x = pacman_start_coords[0]
+        self.pacman_grid_y = pacman_start_coords[1]
 
         self.pacman_x = (
             self.MAZE_OFFSET_X + self.pacman_grid_x * self.current_cell_size
         )
-
         self.pacman_y = (
             self.MAZE_OFFSET_Y + self.pacman_grid_y * self.current_cell_size
         )
 
+        pacman_start = (self.pacman_grid_x, self.pacman_grid_y)
+        self.pacgums = set()
+        for y, row in enumerate(self.current_maze):
+            for x, _ in enumerate(row):
+                if (x, y) not in self.fourty_two_cells and (
+                    x,
+                    y,
+                ) != pacman_start:
+                    self.pacgums.add((x, y))
+
         self.target_x = self.pacman_x
         self.target_y = self.pacman_y
+
+        self.statistics = GameStats(config=self.config)
 
 
 class EngineUtils:
@@ -121,6 +154,7 @@ class EngineUtils:
             state.pacman_grid_y,
             state.direction,
         ):
+            state.current_frame = 1
             return
 
         if state.direction == "up":
@@ -131,6 +165,12 @@ class EngineUtils:
             state.pacman_grid_y += 1
         elif state.direction == "left":
             state.pacman_grid_x -= 1
+
+        current_cell = (state.pacman_grid_x, state.pacman_grid_y)
+
+        if current_cell in state.pacgums:
+            state.pacgums.remove(current_cell)
+            state.statistics.score += state.config["points_per_pacgum"]
 
         state.update_target_position()
 

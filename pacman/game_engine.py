@@ -19,7 +19,8 @@ class GameEngine:
                 mouse_pos = pygame.mouse.get_pos()
 
                 if next_button.collidepoint(mouse_pos):
-                    self.next_level(state)
+                    state.current_level += 1
+                    state.reset_level()
 
         return True
 
@@ -31,7 +32,7 @@ class GameEngine:
     ) -> None:
         game.screen.fill(game.colors.BLACK.value)
 
-        game.draw_stats(config, state.current_level)
+        game.draw_stats(state)
 
         game.draw_maze(state)
 

@@ -16,7 +16,8 @@ class GameVisual:
     screen: Any = pygame.display.set_mode((screen_width, screen_height))
     colors: type = Colors
     my_font: str = (
-        "fonts/Bitcount_Prop_Double/BitcountPropDouble-VariableFont_CRSV,ELSH,ELXP,slnt,wght.ttf"
+        "fonts/Bitcount_Prop_Double/BitcountPropDouble-VariableFont_"
+        "CRSV,ELSH,ELXP,slnt,wght.ttf"
     )
     assets = LoadedAssets()
 
@@ -187,7 +188,8 @@ class GameVisual:
             "Instruction", self.title_font, Colors.D_BLUE.value, (461, 298)
         )
         self.draw_text(
-            "Try not to get eaten by aggressive ghosts.\nYou will be moved to next level if you last",
+            "Try not to get eaten by aggressive ghosts.\nYou will be moved to "
+            "next level if you last",
             self.t_font,
             Colors.D_BLUE.value,
             (700, 402),
@@ -209,7 +211,9 @@ class GameVisual:
             "inside the mize.", self.t_font, Colors.D_BLUE.value, (950, 572)
         )
         self.draw_text(
-            "Small dot (pac-gum) = \nBig dot (super-gum) = \nAfter eating super-gum, ghosts become vulnerable, \nIt's time to eat them up! Each ghost = ",
+            "Small dot (pac-gum) = \nBig dot (super-gum) = \nAfter eating "
+            "super-gum, ghosts become vulnerable, \nIt's time to eat them up! "
+            "Each ghost = ",
             self.t_font,
             Colors.D_BLUE.value,
             (700, 666),
@@ -424,34 +428,28 @@ class GameVisual:
             pygame.display.flip()
         pygame.quit()
 
-    def draw_stats(
-        self,
-        config: dict[str, Any],
-        current_level: int,
-    ) -> None:
-
-        colors = self.colors
+    def draw_stats(self, state: GameState) -> None:
 
         font = pygame.font.SysFont("arial", 24)
         stats_x = 25
         stats_y = 5
 
-        game_score = 0
-
         score_text = font.render(
-            f"Score: {game_score}", True, colors.WHITE.value
+            f"Score: {state.statistics.score}", True, self.colors.WHITE.value
         )
 
         lives_text = font.render(
-            f"Lives: {config['lives']}", True, colors.WHITE.value
+            f"Lives: {state.config['lives']}", True, self.colors.WHITE.value
         )
 
         level_text = font.render(
-            f"Level: {current_level + 1}", True, colors.WHITE.value
+            f"Level: {state.current_level + 1}", True, self.colors.WHITE.value
         )
 
         time_text = font.render(
-            f"Time: {config['level_max_time']}", True, colors.WHITE.value
+            f"Time: {state.config['level_max_time']}",
+            True,
+            self.colors.WHITE.value,
         )
 
         self.screen.blit(score_text, (stats_x, stats_y + 20))
@@ -520,7 +518,6 @@ class GameVisual:
         )
 
     def draw_pacgums(self, state: GameState) -> None:
-        maze = state.current_maze
         dot = self.assets.get_image(
             name="dot", maze_cell_size=state.current_cell_size
         )
@@ -529,18 +526,17 @@ class GameVisual:
 
         dot_rect = dot.get_rect()
 
-        for row_index, row in enumerate(maze):
-            for col_index, col in enumerate(row):
-                dot_rect.center = (
-                    state.MAZE_OFFSET_X
-                    + (col_index * cell_size)
-                    + (cell_size // 2),
-                    state.MAZE_OFFSET_Y
-                    + (row_index * cell_size)
-                    + (cell_size // 2),
-                )
+        if len(state.pacgums) == 0:
+            state.current_level += 1
+            state.reset_level()
 
-                self.screen.blit(dot, dot_rect)
+        for x, y in state.pacgums:
+            dot_rect.center = (
+                state.MAZE_OFFSET_X + (x * cell_size) + (cell_size // 2),
+                state.MAZE_OFFSET_Y + (y * cell_size) + (cell_size // 2),
+            )
+
+            self.screen.blit(dot, dot_rect)
 
     def draw_maze(self, state: GameState) -> None:
         # 1,2,4,8 = N, E, S, W

@@ -60,7 +60,7 @@ class Button:
         self.text_rect = text_rect
         self.stroke_thickness = stroke_thickness
 
-        # self.rect = (self.rect_pos_x, self.rect_pos_y,
-        #              self.rect_width - self.stroke_thickness,
-        #              self.rect_height - self.stroke_thickness)
+        self.rect = (self.rect_pos_x, self.rect_pos_y,
+                     self.rect_width - self.stroke_thickness,
+                     self.rect_height - self.stroke_thickness)
 

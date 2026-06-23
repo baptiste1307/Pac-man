@@ -1,5 +1,5 @@
 import pygame
-from typing import Any, Tuple
+from typing import Any, Tuple, Dict
 from dataclasses import dataclass
 from .utils.visual_utils import Colors, Button
 from .assets import LoadedAssets
@@ -42,6 +42,12 @@ class GameVisual:
     instruc_img = pygame.transform.scale(
         pygame.image.load("./img/keyboard.png").convert_alpha(),
         (170, 115))
+    type_name_img = pygame.transform.scale(
+        pygame.image.load("./img/type_name_img.png").convert_alpha(),
+        (507, 221))
+    score_img = pygame.transform.scale(
+        pygame.image.load("./img/score_img.png").convert_alpha(),
+        (436, 436))
 
     # =================== Buttons =================== #
 
@@ -55,6 +61,8 @@ class GameVisual:
         self.screen = pygame.display.set_mode(
             (self.screen_width, self.screen_height)
         )
+
+    # =================== Basic Methods =================== #
 
     def draw_button(self, button: Button, button_font) -> None:
         mouse = pygame.mouse.get_pos()
@@ -130,6 +138,8 @@ class GameVisual:
         text_rect.center = pos
         self.screen.blit(to_draw_text, text_rect.center)
 
+    # =================== Rendering =================== #
+
     def draw_loading():
         pass
 
@@ -166,12 +176,43 @@ class GameVisual:
         self.screen.blit(self.instruc_img, (461, 503))
         self.draw_button(self.go_back_button, self.button_font)
 
+    def draw_type_name(self) -> None:
+        self.screen.blit(self.background_img, (0, 0))
+        self.screen.blit(self.white_frame, (365, 208))
+        pygame.draw.rect(self.screen, Colors.WHITE.value, (401, 258, 1356, 778), border_radius=30)
+        self.draw_text("Congratulations !!!", self.start_font, Colors.D_BLUE.value, (779, 322))
+        self.draw_text("Let us know what your name is...", self.title_font, Colors.D_BLUE.value, (681, 436))
+        self.draw_text("__________", self.title_font, Colors.D_BLUE.value, (938, 531))
+        self.screen.blit(self.type_name_img, (828, 678))
+        self.draw_button(self.go_back_button, self.button_font)
 
-
+    def draw_score_list(self, scores: Dict[str, int]) -> None:
+        offset = 55
+        nb_dashes = {}
+        sorted_scores = dict(sorted(scores.items(), key=lambda x: x[1], reverse=True))
+        self.screen.blit(self.background_img, (0, 0))
+        self.screen.blit(self.white_frame, (365, 208))
+        pygame.draw.rect(self.screen, Colors.WHITE.value, (401, 258, 1356, 778), border_radius=30)
+        self.draw_text("Here are the best players...", self.title_font, Colors.D_BLUE.value, (743, 348))
+        for name in scores.keys():
+            total = 17
+            nb_dash = total - len(name)
+            nb_dashes[name] = nb_dash
+        i = 0
+        for name, score in sorted_scores.items():
+            self.draw_text(f"{name} {'-' * nb_dashes[name]}",
+                           self.button_font, Colors.D_BLUE.value,
+                           (743, 434 + offset * i))
+            self.draw_text(f"{score}", self.button_font, Colors.D_BLUE.value,
+                           (1069, 434 + offset * i))
+            i += 1
+        self.screen.blit(self.score_img, (1208, 460))
+        self.draw_button(self.go_back_button, self.button_font)
 
 
     def test_draw(self):
-        page = "instruction"
+        page = "hero"
+        scores = {"huian": 300, "baptiste": 600, "allan": 200}
 
         running = True
         while running:
@@ -180,14 +221,34 @@ class GameVisual:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if page == "hero":
-                        pass
-
+                        if pygame.Rect(self.start_button.rect
+                                       ).collidepoint(event.pos):
+                            pass
+                        if pygame.Rect(self.instruction_button.rect
+                                       ).collidepoint(event.pos):
+                            page = "instruction"
+                        if pygame.Rect(self.score_button.rect
+                                       ).collidepoint(event.pos):
+                            page = "score"
+                        if pygame.Rect(self.exit_button.rect
+                                       ).collidepoint(event.pos):
+                            running = False
+                    elif page == "instruction":
+                        if pygame.Rect(self.go_back_button.rect
+                                       ).collidepoint(event.pos):
+                            page = "hero"
+                    elif page == "score":
+                        if pygame.Rect(self.go_back_button.rect
+                                       ).collidepoint(event.pos):
+                            page = "hero"
             if page == "hero":
                 self.draw_hero()
             elif page == "instruction":
                 self.draw_instruction()
-            # elif page == "score":
-            #     self.draw_score()
+            elif page == "type_name":
+                self.draw_type_name()
+            elif page == "score":
+                self.draw_score_list(scores)
             pygame.display.flip()
         pygame.quit()
 

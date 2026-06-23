@@ -48,6 +48,7 @@ class GameVisual:
     score_img = pygame.transform.scale(
         pygame.image.load("./img/score_img.png").convert_alpha(),
         (436, 436))
+    
 
     # =================== Buttons =================== #
 
@@ -123,7 +124,8 @@ class GameVisual:
             self.screen.blit(texto, button.text_rect)
     
     def draw_text(self, text: str, font: Any,
-                  color: Tuple[int, int, int], pos: Tuple[int, int]) -> None:
+                  color: Tuple[int, int, int], pos: Tuple[int, int],
+                  center=False) -> None:
         """
         Draw text on the screen.
 
@@ -132,11 +134,14 @@ class GameVisual:
             font: the desired text font.
             color: the desired text color.
             pos: the position to draw the text.
+            center: if the text is center-positioned (or topleft).
         """
         to_draw_text = font.render(text, True, color)
-        text_rect = to_draw_text.get_rect()
-        text_rect.center = pos
-        self.screen.blit(to_draw_text, text_rect.center)
+        if center:
+            rect = to_draw_text.get_rect(center=pos)
+            self.screen.blit(to_draw_text, rect)
+        else:
+            self.screen.blit(to_draw_text, pos)
 
     # =================== Rendering =================== #
 
@@ -209,12 +214,47 @@ class GameVisual:
         self.screen.blit(self.score_img, (1208, 460))
         self.draw_button(self.go_back_button, self.button_font)
 
+    def draw_play(self, level: int, lives: int, rest_time: int, score: int):
+        score_board = pygame.transform.scale(
+            pygame.image.load("./img/play/score_board.png").convert_alpha(),
+            (278, 278))
+        lives_icon = pygame.transform.scale(
+            pygame.image.load("./img/play/lives.png").convert_alpha(),
+            (149, 149))
+        level_icon = pygame.transform.scale(
+            pygame.image.load("./img/play/level-badge.png").convert_alpha(),
+            (149, 149))
+        timer_icon = pygame.transform.scale(
+            pygame.image.load("./img/play/time.png").convert_alpha(),
+            (149, 149))
+
+        self.screen.blit(self.background_img, (0, 0))
+        pygame.draw.rect(self.screen, Colors.BLACK.value, (125, 140, 1429, 1000), border_radius=50)
+        self.screen.blit(score_board, (1632, 140))
+        self.draw_text(f"{score}", self.start_font, Colors.BLACK.value, (1774, 323), center=True)
+        
+        self.screen.blit(lives_icon, (1632, 460))
+        pygame.draw.rect(self.screen, Colors.CYAN.value, (1632, 512, 149, 44), border_radius=8)
+        self.draw_text("LIVES", self.button_font, Colors.BLACK.value, (1663, 516))
+        self.draw_text(f"{lives}", self.title_font, Colors.WHITE.value, (1833, 492))
+
+        self.screen.blit(level_icon, (1632, 623))
+        pygame.draw.rect(self.screen, Colors.CYAN.value, (1632, 684, 149, 44), border_radius=8)
+        self.draw_text("LEVEL", self.button_font, Colors.BLACK.value, (1658, 686))
+        self.draw_text(f"{level}", self.title_font, Colors.WHITE.value, (1833, 683))
+
+        self.screen.blit(timer_icon, (1632, 802))
+        self.draw_text(f"{rest_time}", self.start_font, Colors.WHITE.value, (1833, 862))
+
+        
+
 
     def test_draw(self):
         page = "hero"
         scores = {"huian": 300, "baptiste": 600, "allan": 200}
 
         running = True
+        data = [1, 3, 60, 234]
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -223,7 +263,7 @@ class GameVisual:
                     if page == "hero":
                         if pygame.Rect(self.start_button.rect
                                        ).collidepoint(event.pos):
-                            pass
+                            page = "play"
                         if pygame.Rect(self.instruction_button.rect
                                        ).collidepoint(event.pos):
                             page = "instruction"
@@ -249,19 +289,10 @@ class GameVisual:
                 self.draw_type_name()
             elif page == "score":
                 self.draw_score_list(scores)
+            elif page == "play":
+                self.draw_play(data[0], data[1], data[2], data[3])
             pygame.display.flip()
         pygame.quit()
-
-
-
-
-
-
-
-
-
-
-
 
 
 

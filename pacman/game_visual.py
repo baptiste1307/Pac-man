@@ -17,15 +17,15 @@ class GameVisual:
     screen_height: int = 1280
     screen: Any = pygame.display.set_mode((screen_width, screen_height))
     colors: type = Colors
-    my_font: str = "fonts/Zen_Dots/ZenDots-Regular.ttf"
+    my_font: str = "fonts/Bitcount_Prop_Double/BitcountPropDouble-VariableFont_CRSV,ELSH,ELXP,slnt,wght.ttf"
 
     # =================== Fonts =================== #
 
     # ------------------- Hero ------------------- #
 
-    start_font = pygame.font.SysFont(my_font, 64)
-    button_font = pygame.font.SysFont(my_font, 36)
-    text_font = pygame.font.SysFont(my_font, 24)
+    start_font = pygame.font.Font(my_font, 64)
+    button_font = pygame.font.Font(my_font, 36)
+    text_font = pygame.font.Font(my_font, 24)
 
     # =================== Images =================== #
 
@@ -45,7 +45,10 @@ class GameVisual:
 
     # ------------------- Hero ------------------- #
 
-    start_button = Button(911, 711, 277, 86, "start", (987, 745), 30)
+    start_button = Button(277, 86, 941, 721, "Start", (982, 726), 8)
+    instruction_button = Button(240, 58, 609, 902, "Instruction", (626, 908), 4)
+    score_button = Button(240, 58, 960, 902, "High Score", (988, 908), 4)
+    exit_button = Button(240, 58, 1311, 902, "Exit", (1390, 908), 4)
 
     def __post_init__(self):
         self.screen = pygame.display.set_mode(
@@ -54,28 +57,61 @@ class GameVisual:
 
     def draw_button(self, button: Button, button_font) -> None:
         mouse = pygame.mouse.get_pos()
-        button_rect = (
+        stroke_rect = (
             button.rect_pos_x,
             button.rect_pos_y,
             button.rect_width,
-            button.rect_height,
+            button.rect_height
+        )
+        button_rect = (
+            button.rect_pos_x + button.stroke_thickness,
+            button.rect_pos_y + button.stroke_thickness,
+            button.rect_width - 2 * button.stroke_thickness,
+            button.rect_height - 2 * button.stroke_thickness
+        )
+        shade_rect = (
+            button.rect_pos_x,
+            button.rect_pos_y + button.stroke_thickness,
+            button.rect_width,
+            button.rect_height
         )
 
-        hovered = pygame.Rect(button_rect).collidepoint(mouse)
+        hovered = pygame.Rect(stroke_rect).collidepoint(mouse)
 
-        color = Colors.D_BLUE.value
+        button_color = Colors.D_BLUE.value
         stroke_and_text_color = (
             Colors.CYAN.value if hovered else Colors.B_YELLOW.value
         )
+        texto = button_font.render(button.text, True, stroke_and_text_color)
 
+        if not hovered:
+            pygame.draw.rect(self.screen, Colors.CYAN.value, shade_rect,
+                             border_radius=40)
+            pygame.draw.rect(self.screen,
+                    stroke_and_text_color,
+                    stroke_rect,
+                    border_radius=40)
+
+        elif hovered:
+            pygame.draw.rect(
+                self.screen,
+                stroke_and_text_color,
+                stroke_rect,
+                border_radius=40
+            )     
+        
         pygame.draw.rect(
             self.screen,
-            color,
+            button_color,
             button_rect,
-            border_radius=button.stroke_thickness,
+            border_radius=30
         )
-        texto = button_font.render(button.text, True, stroke_and_text_color)
-        self.screen.blit(texto, button.text_rect)
+
+        if hovered:
+            self.screen.blit(texto, (
+                button.text_rect[0], button.text_rect[1] + 5))
+        elif not hovered:
+            self.screen.blit(texto, button.text_rect)
 
     def draw_loading():
         pass
@@ -84,6 +120,9 @@ class GameVisual:
         self.screen.blit(self.background_img, (0, 0))
         self.screen.blit(self.pacman_img, (383, 0))
         self.draw_button(self.start_button, self.start_font)
+        self.draw_button(self.instruction_button, self.button_font)
+        self.draw_button(self.score_button, self.button_font)
+        self.draw_button(self.exit_button, self.button_font)
 
     def draw_stats(
         self,

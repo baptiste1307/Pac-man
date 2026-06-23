@@ -28,7 +28,6 @@ class GameEngine:
         self,
         game: GameVisual,
         state: GameState,
-        config: dict[str, Any],
     ) -> None:
         game.screen.fill(game.colors.BLACK.value)
 
@@ -39,6 +38,8 @@ class GameEngine:
         game.draw_pacman(state)
 
         game.draw_pacgums(state)
+
+        game.draw_ghosts(state)
 
         game.draw_next_button()
 
@@ -69,8 +70,10 @@ class GameEngine:
                 state.statistics.time_left -= 1
 
                 if state.statistics.time_left <= 0:
-                    # handle game over
-                    pass
+                    state.statistics.lives -= 1
+                    if state.statistics.lives <= 0:
+                        # handle game over
+                        pass
 
             running = self.handle_events(game, state)
 
@@ -79,6 +82,6 @@ class GameEngine:
             utils.update_pacman_target(state)
             utils.move_pacman(state)
 
-            self.render(game, state, config)
+            self.render(game, state)
 
         pygame.quit()

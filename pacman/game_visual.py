@@ -439,7 +439,7 @@ class GameVisual:
         )
 
         lives_text = font.render(
-            f"Lives: {state.config['lives']}", True, self.colors.WHITE.value
+            f"Lives: {state.statistics.lives}", True, self.colors.WHITE.value
         )
 
         level_text = font.render(
@@ -518,11 +518,9 @@ class GameVisual:
         )
 
     def draw_pacgums(self, state: GameState) -> None:
-        dot = self.assets.get_image(
-            name="dot", maze_cell_size=state.current_cell_size
-        )
-
         cell_size = state.current_cell_size
+
+        dot = self.assets.get_image(name="dot", maze_cell_size=cell_size)
 
         dot_rect = dot.get_rect()
 
@@ -537,6 +535,26 @@ class GameVisual:
             )
 
             self.screen.blit(dot, dot_rect)
+
+    def draw_ghosts(self, state: GameState) -> None:
+        cell_size = state.current_cell_size
+
+        orange_ghost = self.assets.get_image(
+            name="orange_ghost", maze_cell_size=state.current_cell_size
+        )
+
+        orange_ghost_rect = orange_ghost.get_rect()
+
+        if len(state.pacgums) == 0:
+            state.current_level += 1
+            state.reset_level()
+
+        orange_ghost_rect.center = (
+            state.MAZE_OFFSET_X + (cell_size // 2),
+            state.MAZE_OFFSET_Y + (cell_size // 2),
+        )
+
+        self.screen.blit(orange_ghost, orange_ghost_rect)
 
     def draw_maze(self, state: GameState) -> None:
         # 1,2,4,8 = N, E, S, W

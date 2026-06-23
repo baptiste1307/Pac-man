@@ -1,5 +1,5 @@
 import pygame
-from typing import Any
+from typing import Any, Tuple
 from dataclasses import dataclass
 from .utils.visual_utils import Colors, Button
 from .assets import LoadedAssets
@@ -21,34 +21,35 @@ class GameVisual:
 
     # =================== Fonts =================== #
 
-    # ------------------- Hero ------------------- #
-
     start_font = pygame.font.Font(my_font, 64)
     button_font = pygame.font.Font(my_font, 36)
     text_font = pygame.font.Font(my_font, 24)
+   
+    title_font = pygame.font.Font(my_font, 48)
+    t_font = pygame.font.Font(my_font, 32)
 
     # =================== Images =================== #
 
     background_img = pygame.transform.scale(
         pygame.image.load("./img/background.jpeg").convert(),
-        (screen_width, screen_height),
-    )
-
-    # ------------------- Hero ------------------- #
-
+        (screen_width, screen_height))
+    white_frame = pygame.transform.scale(
+        pygame.image.load("./img/white frame.png").convert_alpha(),
+        (1433, 871))
     pacman_img = pygame.transform.scale(
         pygame.image.load("./img/pac-man-title.png").convert_alpha(),
-        (1393, 929),
-    )
+        (1393, 929))
+    instruc_img = pygame.transform.scale(
+        pygame.image.load("./img/keyboard.png").convert_alpha(),
+        (170, 115))
 
     # =================== Buttons =================== #
-
-    # ------------------- Hero ------------------- #
 
     start_button = Button(277, 86, 941, 721, "Start", (982, 726), 8)
     instruction_button = Button(240, 58, 609, 902, "Instruction", (626, 908), 4)
     score_button = Button(240, 58, 960, 902, "High Score", (988, 908), 4)
     exit_button = Button(240, 58, 1311, 902, "Exit", (1390, 908), 4)
+    go_back_button = Button(160, 58, 1512, 912, "Go Back", (1523, 918), 2)
 
     def __post_init__(self):
         self.screen = pygame.display.set_mode(
@@ -112,17 +113,112 @@ class GameVisual:
                 button.text_rect[0], button.text_rect[1] + 5))
         elif not hovered:
             self.screen.blit(texto, button.text_rect)
+    
+    def draw_text(self, text: str, font: Any,
+                  color: Tuple[int, int, int], pos: Tuple[int, int]) -> None:
+        """
+        Draw text on the screen.
+
+        Args:
+            text: the text content to draw.
+            font: the desired text font.
+            color: the desired text color.
+            pos: the position to draw the text.
+        """
+        to_draw_text = font.render(text, True, color)
+        text_rect = to_draw_text.get_rect()
+        text_rect.center = pos
+        self.screen.blit(to_draw_text, text_rect.center)
 
     def draw_loading():
         pass
 
-    def draw_hero(self):
+    def draw_hero(self) -> None:
         self.screen.blit(self.background_img, (0, 0))
         self.screen.blit(self.pacman_img, (383, 0))
         self.draw_button(self.start_button, self.start_font)
         self.draw_button(self.instruction_button, self.button_font)
         self.draw_button(self.score_button, self.button_font)
         self.draw_button(self.exit_button, self.button_font)
+        self.draw_text("A lovely project by bpasquer & hliu", self.text_font, Colors.B_YELLOW.value, (875, 1094))
+
+    def draw_instruction(self) -> None:
+        self.screen.blit(self.background_img, (0, 0))
+        self.screen.blit(self.white_frame, (365, 208))
+        pygame.draw.rect(self.screen, Colors.WHITE.value, (401, 258, 1356, 778), border_radius=30)
+        self.draw_text("Instruction", self.title_font, Colors.D_BLUE.value, (461, 298))
+        self.draw_text("Try not to get eaten by aggressive ghosts.\nYou will be moved to next level if you last", self.t_font, Colors.D_BLUE.value, (700, 402))
+        self.draw_text("60 seconds!", self.t_font, Colors.RED.value, (1400, 440))
+        self.draw_text("Use the arrow keys to move Pac-Man ", self.t_font, Colors.D_BLUE.value, (700, 534))
+        self.draw_text("up, down", self.t_font, Colors.RED.value, (1307, 534))
+        self.draw_text("left, and right ", self.t_font, Colors.RED.value, (700, 572))
+        self.draw_text("inside the mize.", self.t_font, Colors.D_BLUE.value, (950, 572))
+        self.draw_text("Small dot (pac-gum) = \nBig dot (super-gum) = \nAfter eating super-gum, ghosts become vulnerable, \nIt's time to eat them up! Each ghost = ", self.t_font, Colors.D_BLUE.value, (700, 666))
+        self.draw_text("point,", self.t_font, Colors.D_BLUE.value, (1115, 666))
+        self.draw_text("point,", self.t_font, Colors.D_BLUE.value, (1115, 704))
+        self.draw_text("point,", self.t_font, Colors.D_BLUE.value, (1412, 780))
+        self.draw_text("10", self.t_font, Colors.RED.value, (1070, 666))
+        self.draw_text("50", self.t_font, Colors.RED.value, (1068, 704))
+        self.draw_text("200", self.t_font, Colors.RED.value, (1346, 780))
+        self.draw_text("Try to survive and collect as many points!\nHave fun!!",
+                       self.t_font, Colors.D_BLUE.value, (700, 874))
+        
+        self.screen.blit(self.instruc_img, (461, 503))
+        self.draw_button(self.go_back_button, self.button_font)
+
+
+
+
+
+    def test_draw(self):
+        page = "instruction"
+
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if page == "hero":
+                        pass
+
+            if page == "hero":
+                self.draw_hero()
+            elif page == "instruction":
+                self.draw_instruction()
+            # elif page == "score":
+            #     self.draw_score()
+            pygame.display.flip()
+        pygame.quit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def draw_stats(
         self,
@@ -333,22 +429,6 @@ class GameVisual:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         return
-
-    def test_draw(self):
-        page = "hero"
-
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if page == "hero":
-                        pass
-
-            self.draw_hero()
-            pygame.display.flip()
-        pygame.quit()
 
 
 if __name__ == "__main__":

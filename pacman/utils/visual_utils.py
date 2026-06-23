@@ -12,7 +12,7 @@ class Colors(Enum):
     WALL_BLUE = (25, 25, 166)
     ULTRAMARINE = (33, 33, 222)
     PEACH = (222, 161, 133)
-    RED = (253, 0, 0)
+    RED = (255, 4, 8)
     GREEN = (0, 255, 0)
 
     D_BLUE = (33, 48, 187)

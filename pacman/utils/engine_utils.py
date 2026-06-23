@@ -26,6 +26,7 @@ class GameState:
     animation_delay: int = 60
     MAZE_OFFSET_X = 25
     MAZE_OFFSET_Y = 125
+    level_timer: int = 0
 
     def __post_init__(self):
         self.levels = get_levels(self.config)
@@ -91,6 +92,7 @@ class GameState:
         self.target_y = self.pacman_y
 
         self.statistics = GameStats(config=self.config)
+        self.level_timer = 0
 
 
 class EngineUtils:

@@ -61,6 +61,16 @@ class GameEngine:
 
         while running:
             dt = clock.tick(60)
+            state.level_timer += dt
+
+            # when 1 sec passed
+            if state.level_timer >= 1000:
+                state.level_timer = 0
+                state.statistics.time_left -= 1
+
+                if state.statistics.time_left <= 0:
+                    # handle game over
+                    pass
 
             running = self.handle_events(game, state)
 

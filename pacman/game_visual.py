@@ -447,7 +447,7 @@ class GameVisual:
         )
 
         time_text = font.render(
-            f"Time: {state.config['level_max_time']}",
+            f"Time: {state.statistics.time_left}",
             True,
             self.colors.WHITE.value,
         )

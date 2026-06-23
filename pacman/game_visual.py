@@ -57,6 +57,7 @@ class GameVisual:
     score_button = Button(240, 58, 960, 902, "High Score", (988, 908), 4)
     exit_button = Button(240, 58, 1311, 902, "Exit", (1390, 908), 4)
     go_back_button = Button(160, 58, 1512, 912, "Go Back", (1523, 918), 2)
+    play_back_button = Button(160, 58, 1632, 1076, "Go Back", (1643, 1082), 2)
 
     def __post_init__(self):
         self.screen = pygame.display.set_mode(
@@ -143,7 +144,7 @@ class GameVisual:
         else:
             self.screen.blit(to_draw_text, pos)
 
-    # =================== Rendering =================== #
+    # =================== Pages Rendering =================== #
 
     def draw_loading():
         pass
@@ -246,6 +247,8 @@ class GameVisual:
         self.screen.blit(timer_icon, (1632, 802))
         self.draw_text(f"{rest_time}", self.start_font, Colors.WHITE.value, (1833, 862))
 
+        self.draw_button(self.play_back_button, self.button_font)
+
         
 
 
@@ -279,6 +282,10 @@ class GameVisual:
                             page = "hero"
                     elif page == "score":
                         if pygame.Rect(self.go_back_button.rect
+                                       ).collidepoint(event.pos):
+                            page = "hero"
+                    elif page == "play":
+                        if pygame.Rect(self.play_back_button.rect
                                        ).collidepoint(event.pos):
                             page = "hero"
             if page == "hero":

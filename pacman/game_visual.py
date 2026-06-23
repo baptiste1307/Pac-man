@@ -64,6 +64,10 @@ class GameVisual:
             (self.screen_width, self.screen_height)
         )
 
+    # =================== Sounds =================== #
+
+    # background_sound
+
     # =================== Basic Methods =================== #
 
     def draw_button(self, button: Button, button_font) -> None:
@@ -255,6 +259,8 @@ class GameVisual:
     def test_draw(self):
         page = "hero"
         scores = {"huian": 300, "baptiste": 600, "allan": 200}
+        pygame.mouse.set_visible(False)
+        cursor_img = pygame.image.load("./assets/ghosts/pinky.png").convert_alpha()
 
         running = True
         data = [1, 3, 60, 234]
@@ -298,6 +304,10 @@ class GameVisual:
                 self.draw_score_list(scores)
             elif page == "play":
                 self.draw_play(data[0], data[1], data[2], data[3])
+            
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            cursor_rect = cursor_img.get_rect(center=(mouse_x, mouse_y))
+            self.screen.blit(cursor_img, cursor_rect)
             pygame.display.flip()
         pygame.quit()
 

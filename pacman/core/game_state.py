@@ -6,11 +6,13 @@ from .statistics import Statistics
 from .level import Level
 
 
-def get_levels(config: dict[str, Any]) -> list[Level]:
+def get_levels(config: dict[str, Any], game: Any) -> list[Level]:
     levels: list[Level] = []
 
     for level in config["levels"]:
-        new_level = Level(width=level["width"], height=level["height"])
+        new_level = Level(
+            width=level["width"], height=level["height"], game=game
+        )
         levels.append(new_level)
 
     return levels
@@ -19,18 +21,19 @@ def get_levels(config: dict[str, Any]) -> list[Level]:
 @dataclass
 class GameState:
     config: dict[str, Any]
+    game: Any
     current_level: int = 0
-    pacman_speed: int = 2
+    pacman_speed: int = 4
     direction: str = "right"
+    wanted_direction: str = "right"
     current_frame: int = 0
     animation_timer: int = 0
     animation_delay: int = 60
-    MAZE_OFFSET_X = 25
-    MAZE_OFFSET_Y = 125
     level_timer: int = 0
 
     def __post_init__(self):
-        self.levels = get_levels(self.config)
+        self.levels = get_levels(self.config, self.game)
+        self.statistics = Statistics(config=self.config)
         self.reset_level()
 
     def update_target_position(self) -> None:
@@ -64,7 +67,7 @@ class GameState:
 
     def reset_level(self) -> None:
         self.current_maze = self.levels[self.current_level].maze.maze
-        self.current_cell_size = self.levels[self.current_level].cell_size
+        self.update_level_layout()
 
         self.fourty_two_cells = self.find_42_pattern_cells()
         pacman_start_coords = self.find_start_coords()
@@ -92,5 +95,41 @@ class GameState:
         self.target_x = self.pacman_x
         self.target_y = self.pacman_y
 
-        self.statistics = Statistics(config=self.config)
         self.level_timer = 0
+        self.statistics.time_left = self.statistics.level_max_time
+
+    def update_level_layout(self) -> None:
+        current_level = self.levels[self.current_level]
+        current_level.cell_size = current_level._find_cell_size(
+            current_level.width,
+            current_level.height,
+        )
+
+        self.current_cell_size = current_level.cell_size
+
+        self.maze_width_pixel = (
+            self.levels[self.current_level].width * self.current_cell_size
+        )
+
+        self.maze_height_pixel = (
+            self.levels[self.current_level].height * self.current_cell_size
+        )
+
+        self.MAZE_OFFSET_X = self.game.black_rectangle_start[0] + (
+            (self.game.black_rectangle_width - self.maze_width_pixel) // 2
+        )
+        self.MAZE_OFFSET_Y = self.game.black_rectangle_start[1] + (
+            (self.game.black_rectangle_height - self.maze_height_pixel) // 2
+        )
+
+    def refresh_layout(self) -> None:
+        self.update_level_layout()
+        self.pacman_x = (
+            self.MAZE_OFFSET_X + self.pacman_grid_x * self.current_cell_size
+        )
+        self.pacman_y = (
+            self.MAZE_OFFSET_Y + self.pacman_grid_y * self.current_cell_size
+        )
+
+        self.target_x = self.pacman_x
+        self.target_y = self.pacman_y

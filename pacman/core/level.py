@@ -1,13 +1,13 @@
-import pygame
 from dataclasses import dataclass, field
-
 from mazegenerator.mazegenerator import MazeGenerator
+from typing import Any
 
 
 @dataclass
 class Level:
     width: int
     height: int
+    game: Any
     cell_size: int = field(default=0)
     maze: MazeGenerator = field(default=None)
 
@@ -17,12 +17,15 @@ class Level:
 
     def _find_cell_size(self, level_width: int, level_height: int) -> int:
 
-        # get current display's height & width
-        info = pygame.display.Info()
+        r_width, r_height = (
+            self.game.black_rectangle_width,
+            self.game.black_rectangle_height,
+        )
+        fill_ratio = self.game.play_area_fill_ratio
 
-        # adapt cell_size to be 70% of current level height or width
-        # (depending on which one is the greatest)
-        return min(
-            (info.current_w * 0.7) // level_width,
-            (info.current_h * 0.7) // level_height,
+        return int(
+            min(
+                (r_height * fill_ratio) // level_height,
+                (r_width * fill_ratio) // level_width,
+            )
         )

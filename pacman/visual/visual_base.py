@@ -3,8 +3,49 @@ from typing import Any, Tuple
 
 from pacman.ui import Button, Colors
 
+BUTTON_OUTER_RADIUS = 40
+BUTTON_INNER_RADIUS = 30
+BUTTON_HOVER_Y_OFFSET = 5
+
 
 class VisualBaseMixin:
+    def x(self, value: int) -> int:
+        return int(self.screen_width * (value / self.design_width))
+
+    def y(self, value: int) -> int:
+        return int(self.screen_height * (value / self.design_height))
+
+    def pos(self, value: Tuple[int, int]) -> Tuple[int, int]:
+        return self.x(value[0]), self.y(value[1])
+
+    def size(self, value: Tuple[int, int]) -> Tuple[int, int]:
+        return self.x(value[0]), self.y(value[1])
+
+    def rect(
+        self, value: Tuple[int, int, int, int]
+    ) -> Tuple[int, int, int, int]:
+        return (
+            self.x(value[0]),
+            self.y(value[1]),
+            self.x(value[2]),
+            self.y(value[3]),
+        )
+
+    def radius(self, value: int) -> int:
+        return max(
+            1,
+            int(
+                value
+                * min(
+                    self.screen_width / self.design_width,
+                    self.screen_height / self.design_height,
+                )
+            ),
+        )
+
+    def present(self) -> None:
+        pygame.display.flip()
+
     def draw_button(self, button: Button, button_font) -> None:
         mouse = pygame.mouse.get_pos()
         stroke_rect = (
@@ -36,13 +77,16 @@ class VisualBaseMixin:
 
         if not hovered:
             pygame.draw.rect(
-                self.screen, Colors.CYAN.value, shade_rect, border_radius=40
+                self.screen,
+                Colors.CYAN.value,
+                shade_rect,
+                border_radius=self.radius(BUTTON_OUTER_RADIUS),
             )
             pygame.draw.rect(
                 self.screen,
                 stroke_and_text_color,
                 stroke_rect,
-                border_radius=40,
+                border_radius=self.radius(BUTTON_OUTER_RADIUS),
             )
 
         elif hovered:
@@ -50,16 +94,23 @@ class VisualBaseMixin:
                 self.screen,
                 stroke_and_text_color,
                 stroke_rect,
-                border_radius=40,
+                border_radius=self.radius(BUTTON_OUTER_RADIUS),
             )
 
         pygame.draw.rect(
-            self.screen, button_color, button_rect, border_radius=30
+            self.screen,
+            button_color,
+            button_rect,
+            border_radius=self.radius(BUTTON_INNER_RADIUS),
         )
 
         if hovered:
             self.screen.blit(
-                texto, (button.text_rect[0], button.text_rect[1] + 5)
+                texto,
+                (
+                    button.text_rect[0],
+                    button.text_rect[1] + self.y(BUTTON_HOVER_Y_OFFSET),
+                ),
             )
         elif not hovered:
             self.screen.blit(texto, button.text_rect)
@@ -83,8 +134,9 @@ class VisualBaseMixin:
             center: if the text is center-positioned (or topleft).
         """
         to_draw_text = font.render(text, True, color)
+        scaled_pos = self.pos(pos)
         if center:
-            rect = to_draw_text.get_rect(center=pos)
+            rect = to_draw_text.get_rect(center=scaled_pos)
             self.screen.blit(to_draw_text, rect)
         else:
-            self.screen.blit(to_draw_text, pos)
+            self.screen.blit(to_draw_text, scaled_pos)

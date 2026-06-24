@@ -3,6 +3,51 @@ from typing import Dict
 
 from pacman.ui import Colors
 
+HERO_POSITIONS = {
+    "pacman": (383, 0),
+    "credit": (875, 1094),
+}
+
+MENU_FRAME_POS = (365, 208)
+MENU_PANEL_RECT = (401, 258, 1356, 778)
+MENU_PANEL_RADIUS = 30
+
+INSTRUCTION_POSITIONS = {
+    "title": (461, 298),
+    "intro": (700, 402),
+    "time": (1400, 440),
+    "move_text": (700, 534),
+    "up_down": (1307, 534),
+    "left_right": (700, 572),
+    "maze_text": (950, 572),
+    "points_text": (700, 666),
+    "small_point": (1115, 666),
+    "super_point": (1115, 704),
+    "ghost_point": (1412, 780),
+    "small_value": (1070, 666),
+    "super_value": (1068, 704),
+    "ghost_value": (1346, 780),
+    "ending": (700, 874),
+    "keyboard": (461, 503),
+}
+
+TYPE_NAME_POSITIONS = {
+    "title": (779, 322),
+    "subtitle": (681, 436),
+    "line": (938, 531),
+    "image": (828, 678),
+}
+
+SCORE_POSITIONS = {
+    "title": (743, 348),
+    "name": (743, 434),
+    "score": (1069, 434),
+    "image": (1208, 460),
+}
+
+SCORE_ROW_OFFSET = 55
+SCORE_NAME_DASH_TOTAL = 17
+
 
 class MenuVisualMixin:
     def draw_loading():
@@ -10,7 +55,7 @@ class MenuVisualMixin:
 
     def draw_hero(self) -> None:
         self.screen.blit(self.background_img, (0, 0))
-        self.screen.blit(self.pacman_img, (383, 0))
+        self.screen.blit(self.pacman_img, self.pos(HERO_POSITIONS["pacman"]))
         self.draw_button(self.start_button, self.start_font)
         self.draw_button(self.instruction_button, self.button_font)
         self.draw_button(self.score_button, self.button_font)
@@ -19,43 +64,60 @@ class MenuVisualMixin:
             "A lovely project by bpasquer & hliu",
             self.text_font,
             Colors.B_YELLOW.value,
-            (875, 1094),
+            HERO_POSITIONS["credit"],
         )
 
     def draw_instruction(self) -> None:
         self.screen.blit(self.background_img, (0, 0))
-        self.screen.blit(self.white_frame, (365, 208))
+        self.screen.blit(self.white_frame, self.pos(MENU_FRAME_POS))
         pygame.draw.rect(
             self.screen,
             Colors.WHITE.value,
-            (401, 258, 1356, 778),
-            border_radius=30,
+            self.rect(MENU_PANEL_RECT),
+            border_radius=self.radius(MENU_PANEL_RADIUS),
         )
         self.draw_text(
-            "Instruction", self.title_font, Colors.D_BLUE.value, (461, 298)
+            "Instruction",
+            self.title_font,
+            Colors.D_BLUE.value,
+            INSTRUCTION_POSITIONS["title"],
         )
         self.draw_text(
             "Try not to get eaten by aggressive ghosts.\nYou will be moved to "
             "next level if you last",
             self.t_font,
             Colors.D_BLUE.value,
-            (700, 402),
+            INSTRUCTION_POSITIONS["intro"],
         )
         self.draw_text(
-            "60 seconds!", self.t_font, Colors.RED.value, (1400, 440)
+            "60 seconds!",
+            self.t_font,
+            Colors.RED.value,
+            INSTRUCTION_POSITIONS["time"],
         )
         self.draw_text(
             "Use the arrow keys to move Pac-Man ",
             self.t_font,
             Colors.D_BLUE.value,
-            (700, 534),
-        )
-        self.draw_text("up, down", self.t_font, Colors.RED.value, (1307, 534))
-        self.draw_text(
-            "left, and right ", self.t_font, Colors.RED.value, (700, 572)
+            INSTRUCTION_POSITIONS["move_text"],
         )
         self.draw_text(
-            "inside the mize.", self.t_font, Colors.D_BLUE.value, (950, 572)
+            "up, down",
+            self.t_font,
+            Colors.RED.value,
+            INSTRUCTION_POSITIONS["up_down"],
+        )
+        self.draw_text(
+            "left, and right ",
+            self.t_font,
+            Colors.RED.value,
+            INSTRUCTION_POSITIONS["left_right"],
+        )
+        self.draw_text(
+            "inside the mize.",
+            self.t_font,
+            Colors.D_BLUE.value,
+            INSTRUCTION_POSITIONS["maze_text"],
         )
         self.draw_text(
             "Small dot (pac-gum) = \nBig dot (super-gum) = \nAfter eating "
@@ -63,201 +125,183 @@ class MenuVisualMixin:
             "Each ghost = ",
             self.t_font,
             Colors.D_BLUE.value,
-            (700, 666),
+            INSTRUCTION_POSITIONS["points_text"],
         )
-        self.draw_text("point,", self.t_font, Colors.D_BLUE.value, (1115, 666))
-        self.draw_text("point,", self.t_font, Colors.D_BLUE.value, (1115, 704))
-        self.draw_text("point,", self.t_font, Colors.D_BLUE.value, (1412, 780))
-        self.draw_text("10", self.t_font, Colors.RED.value, (1070, 666))
-        self.draw_text("50", self.t_font, Colors.RED.value, (1068, 704))
-        self.draw_text("200", self.t_font, Colors.RED.value, (1346, 780))
+        self.draw_text(
+            "point,",
+            self.t_font,
+            Colors.D_BLUE.value,
+            INSTRUCTION_POSITIONS["small_point"],
+        )
+        self.draw_text(
+            "point,",
+            self.t_font,
+            Colors.D_BLUE.value,
+            INSTRUCTION_POSITIONS["super_point"],
+        )
+        self.draw_text(
+            "point,",
+            self.t_font,
+            Colors.D_BLUE.value,
+            INSTRUCTION_POSITIONS["ghost_point"],
+        )
+        self.draw_text(
+            "10",
+            self.t_font,
+            Colors.RED.value,
+            INSTRUCTION_POSITIONS["small_value"],
+        )
+        self.draw_text(
+            "50",
+            self.t_font,
+            Colors.RED.value,
+            INSTRUCTION_POSITIONS["super_value"],
+        )
+        self.draw_text(
+            "200",
+            self.t_font,
+            Colors.RED.value,
+            INSTRUCTION_POSITIONS["ghost_value"],
+        )
         self.draw_text(
             "Try to survive and collect as many points!\nHave fun!!",
             self.t_font,
             Colors.D_BLUE.value,
-            (700, 874),
+            INSTRUCTION_POSITIONS["ending"],
         )
 
-        self.screen.blit(self.instruc_img, (461, 503))
+        self.screen.blit(
+            self.instruc_img,
+            self.pos(INSTRUCTION_POSITIONS["keyboard"]),
+        )
         self.draw_button(self.go_back_button, self.button_font)
 
     def draw_type_name(self) -> None:
         self.screen.blit(self.background_img, (0, 0))
-        self.screen.blit(self.white_frame, (365, 208))
+        self.screen.blit(self.white_frame, self.pos(MENU_FRAME_POS))
         pygame.draw.rect(
             self.screen,
             Colors.WHITE.value,
-            (401, 258, 1356, 778),
-            border_radius=30,
+            self.rect(MENU_PANEL_RECT),
+            border_radius=self.radius(MENU_PANEL_RADIUS),
         )
         self.draw_text(
             "Congratulations !!!",
             self.start_font,
             Colors.D_BLUE.value,
-            (779, 322),
+            TYPE_NAME_POSITIONS["title"],
         )
         self.draw_text(
             "Let us know what your name is...",
             self.title_font,
             Colors.D_BLUE.value,
-            (681, 436),
+            TYPE_NAME_POSITIONS["subtitle"],
         )
         self.draw_text(
-            "__________", self.title_font, Colors.D_BLUE.value, (938, 531)
+            "__________",
+            self.title_font,
+            Colors.D_BLUE.value,
+            TYPE_NAME_POSITIONS["line"],
         )
-        self.screen.blit(self.type_name_img, (828, 678))
+        self.screen.blit(
+            self.type_name_img,
+            self.pos(TYPE_NAME_POSITIONS["image"]),
+        )
         self.draw_button(self.go_back_button, self.button_font)
 
     def draw_score_list(self, scores: Dict[str, int]) -> None:
-        offset = 55
         nb_dashes = {}
         sorted_scores = dict(
             sorted(scores.items(), key=lambda x: x[1], reverse=True)
         )
         self.screen.blit(self.background_img, (0, 0))
-        self.screen.blit(self.white_frame, (365, 208))
+        self.screen.blit(self.white_frame, self.pos(MENU_FRAME_POS))
         pygame.draw.rect(
             self.screen,
             Colors.WHITE.value,
-            (401, 258, 1356, 778),
-            border_radius=30,
+            self.rect(MENU_PANEL_RECT),
+            border_radius=self.radius(MENU_PANEL_RADIUS),
         )
         self.draw_text(
             "Here are the best players...",
             self.title_font,
             Colors.D_BLUE.value,
-            (743, 348),
+            SCORE_POSITIONS["title"],
         )
         for name in scores.keys():
-            total = 17
-            nb_dash = total - len(name)
+            nb_dash = SCORE_NAME_DASH_TOTAL - len(name)
             nb_dashes[name] = nb_dash
         i = 0
         for name, score in sorted_scores.items():
+            row_y = SCORE_POSITIONS["name"][1] + SCORE_ROW_OFFSET * i
             self.draw_text(
                 f"{name} {'-' * nb_dashes[name]}",
                 self.button_font,
                 Colors.D_BLUE.value,
-                (743, 434 + offset * i),
+                (SCORE_POSITIONS["name"][0], row_y),
             )
             self.draw_text(
                 f"{score}",
                 self.button_font,
                 Colors.D_BLUE.value,
-                (1069, 434 + offset * i),
+                (SCORE_POSITIONS["score"][0], row_y),
             )
             i += 1
-        self.screen.blit(self.score_img, (1208, 460))
+        self.screen.blit(self.score_img, self.pos(SCORE_POSITIONS["image"]))
         self.draw_button(self.go_back_button, self.button_font)
 
-    def test_draw(self):
-        page = "hero"
-        scores = {"huian": 300, "baptiste": 600, "allan": 200}
+    # def main_menu(self) -> None:
 
-        running = True
-        data = [1, 3, 60, 234]
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if page == "hero":
-                        if pygame.Rect(self.start_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            page = "play"
-                        if pygame.Rect(
-                            self.instruction_button.rect
-                        ).collidepoint(event.pos):
-                            page = "instruction"
-                        if pygame.Rect(self.score_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            page = "score"
-                        if pygame.Rect(self.exit_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            running = False
-                    elif page == "instruction":
-                        if pygame.Rect(self.go_back_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            page = "hero"
-                    elif page == "score":
-                        if pygame.Rect(self.go_back_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            page = "hero"
-                    elif page == "play":
-                        if pygame.Rect(
-                            self.play_back_button.rect
-                        ).collidepoint(event.pos):
-                            page = "hero"
-            if page == "hero":
-                self.draw_hero()
-            elif page == "instruction":
-                self.draw_instruction()
-            elif page == "type_name":
-                self.draw_type_name()
-            elif page == "score":
-                self.draw_score_list(scores)
-            elif page == "play":
-                self.draw_play(data[0], data[1], data[2], data[3])
-            pygame.display.flip()
-        pygame.quit()
+    #     colors = self.colors
 
-    def main_menu(self) -> None:
+    #     font = pygame.font.SysFont("arial", 48)
+    #     small_font = pygame.font.SysFont("arial", 24)
 
-        colors = self.colors
+    #     running = True
 
-        font = pygame.font.SysFont("arial", 48)
-        small_font = pygame.font.SysFont("arial", 24)
+    #     while running:
+    #         self.screen.fill(colors.BLACK.value)
 
-        running = True
+    #         menu_text = {
+    #             "title_text": {
+    #                "text": font.render("PAC-MAN", True, colors.YELLOW.value),
+    #                 "y_pos": 150,
+    #             },
+    #             "start_text": {
+    #                 "text": small_font.render(
+    #                     "Press SPACE to start", True, colors.WHITE.value
+    #                 ),
+    #                 "y_pos": 300,
+    #             },
+    #             "quit_text": {
+    #                 "text": small_font.render(
+    #                     "Press ESC to quit", True, colors.WHITE.value
+    #                 ),
+    #                 "y_pos": 350,
+    #             },
+    #         }
 
-        while running:
-            self.screen.fill(colors.BLACK.value)
+    #         for data in menu_text.values():
 
-            menu_text = {
-                "title_text": {
-                    "text": font.render("PAC-MAN", True, colors.YELLOW.value),
-                    "y_pos": 150,
-                },
-                "start_text": {
-                    "text": small_font.render(
-                        "Press SPACE to start", True, colors.WHITE.value
-                    ),
-                    "y_pos": 300,
-                },
-                "quit_text": {
-                    "text": small_font.render(
-                        "Press ESC to quit", True, colors.WHITE.value
-                    ),
-                    "y_pos": 350,
-                },
-            }
+    #             self.screen.blit(
+    #                 data["text"],
+    #                 (
+    #                     self.screen.get_width() // 2
+    #                     - data["text"].get_width() // 2,
+    #                     data["y_pos"],
+    #                 ),
+    #             )
 
-            for data in menu_text.values():
+    #         pygame.display.flip()
 
-                self.screen.blit(
-                    data["text"],
-                    (
-                        self.screen.get_width() // 2
-                        - data["text"].get_width() // 2,
-                        data["y_pos"],
-                    ),
-                )
+    #         for event in pygame.event.get():
+    #             if event.type == pygame.QUIT:
+    #                 pygame.quit()
+    #                 return
 
-            pygame.display.flip()
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        return
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        return
+    #             if event.type == pygame.KEYDOWN:
+    #                 if event.key == pygame.K_SPACE:
+    #                     return
+    #                 if event.key == pygame.K_ESCAPE:
+    #                     pygame.quit()
+    #                     return

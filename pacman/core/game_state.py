@@ -23,8 +23,9 @@ class GameState:
     config: dict[str, Any]
     game: Any
     current_level: int = 0
-    pacman_speed: int = 2
+    pacman_speed: int = 4
     direction: str = "right"
+    wanted_direction: str = "right"
     current_frame: int = 0
     animation_timer: int = 0
     animation_delay: int = 60

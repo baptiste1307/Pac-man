@@ -66,22 +66,7 @@ class GameState:
 
     def reset_level(self) -> None:
         self.current_maze = self.levels[self.current_level].maze.maze
-        self.current_cell_size = self.levels[self.current_level].cell_size
-
-        self.maze_width_pixel = (
-            self.levels[self.current_level].width * self.current_cell_size
-        )
-
-        self.maze_height_pixel = (
-            self.levels[self.current_level].height * self.current_cell_size
-        )
-
-        self.MAZE_OFFSET_X = self.game.black_rectangle_start[0] + (
-            (self.game.black_rectangle_width - self.maze_width_pixel) // 2
-        )
-        self.MAZE_OFFSET_Y = self.game.black_rectangle_start[1] + (
-            (self.game.black_rectangle_height - self.maze_height_pixel) // 2
-        )
+        self.update_level_layout()
 
         self.fourty_two_cells = self.find_42_pattern_cells()
         pacman_start_coords = self.find_start_coords()
@@ -111,3 +96,39 @@ class GameState:
 
         self.statistics = Statistics(config=self.config)
         self.level_timer = 0
+
+    def update_level_layout(self) -> None:
+        current_level = self.levels[self.current_level]
+        current_level.cell_size = current_level._find_cell_size(
+            current_level.width,
+            current_level.height,
+        )
+
+        self.current_cell_size = current_level.cell_size
+
+        self.maze_width_pixel = (
+            self.levels[self.current_level].width * self.current_cell_size
+        )
+
+        self.maze_height_pixel = (
+            self.levels[self.current_level].height * self.current_cell_size
+        )
+
+        self.MAZE_OFFSET_X = self.game.black_rectangle_start[0] + (
+            (self.game.black_rectangle_width - self.maze_width_pixel) // 2
+        )
+        self.MAZE_OFFSET_Y = self.game.black_rectangle_start[1] + (
+            (self.game.black_rectangle_height - self.maze_height_pixel) // 2
+        )
+
+    def refresh_layout(self) -> None:
+        self.update_level_layout()
+        self.pacman_x = (
+            self.MAZE_OFFSET_X + self.pacman_grid_x * self.current_cell_size
+        )
+        self.pacman_y = (
+            self.MAZE_OFFSET_Y + self.pacman_grid_y * self.current_cell_size
+        )
+
+        self.target_x = self.pacman_x
+        self.target_y = self.pacman_y

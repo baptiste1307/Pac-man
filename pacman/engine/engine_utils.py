@@ -35,13 +35,13 @@ class EngineUtils:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:
-            state.direction = "left"
+            state.wanted_direction = "left"
         elif keys[pygame.K_RIGHT]:
-            state.direction = "right"
+            state.wanted_direction = "right"
         elif keys[pygame.K_UP]:
-            state.direction = "up"
+            state.wanted_direction = "up"
         elif keys[pygame.K_DOWN]:
-            state.direction = "down"
+            state.wanted_direction = "down"
 
     def update_animation(self, state: GameState, dt: int) -> None:
         state.animation_timer += dt
@@ -57,11 +57,21 @@ class EngineUtils:
         ):
             return
 
-        if not self.can_move(
+        # if pacman can move in the direction the player want
+        if self.can_move(
             state.current_maze,
             state.pacman_grid_x,
             state.pacman_grid_y,
-            state.direction,
+            state.wanted_direction,
+        ):
+            # the "official" direction is now the wanted direction
+            state.direction = state.wanted_direction
+
+        elif not self.can_move(
+            state.current_maze,
+            state.pacman_grid_x,
+            state.pacman_grid_y,
+            state.direction
         ):
             state.current_frame = 1
             return

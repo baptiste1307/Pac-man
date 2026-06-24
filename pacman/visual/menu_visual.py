@@ -1,5 +1,5 @@
 import pygame
-from typing import Dict
+from typing import Dict, Tuple
 
 from pacman.ui import Colors
 
@@ -149,62 +149,6 @@ class MenuVisualMixin:
             i += 1
         self.screen.blit(self.score_img, (1208, 460))
         self.draw_button(self.go_back_button, self.button_font)
-
-    def test_draw(self):
-        page = "hero"
-        scores = {"huian": 300, "baptiste": 600, "allan": 200}
-
-        running = True
-        data = [1, 3, 60, 234]
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if page == "hero":
-                        if pygame.Rect(self.start_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            page = "play"
-                        if pygame.Rect(
-                            self.instruction_button.rect
-                        ).collidepoint(event.pos):
-                            page = "instruction"
-                        if pygame.Rect(self.score_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            page = "score"
-                        if pygame.Rect(self.exit_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            running = False
-                    elif page == "instruction":
-                        if pygame.Rect(self.go_back_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            page = "hero"
-                    elif page == "score":
-                        if pygame.Rect(self.go_back_button.rect).collidepoint(
-                            event.pos
-                        ):
-                            page = "hero"
-                    elif page == "play":
-                        if pygame.Rect(
-                            self.play_back_button.rect
-                        ).collidepoint(event.pos):
-                            page = "hero"
-            if page == "hero":
-                self.draw_hero()
-            elif page == "instruction":
-                self.draw_instruction()
-            elif page == "type_name":
-                self.draw_type_name()
-            elif page == "score":
-                self.draw_score_list(scores)
-            elif page == "play":
-                self.draw_play(data[0], data[1], data[2], data[3])
-            pygame.display.flip()
-        pygame.quit()
 
     def main_menu(self) -> None:
 

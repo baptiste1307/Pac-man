@@ -5,8 +5,18 @@ from pacman.ui import Button, Colors
 
 
 class VisualBaseMixin:
+    def get_real_mouse_pos(self) -> Tuple[int, int]:
+        screen_mouse_x, screen_mouse_y = pygame.mouse.get_pos()
+        scale_x = self.screen_width / self.scaled_width
+        scale_y = self.screen_height / self.scaled_height
+
+        real_mouse_x = int(screen_mouse_x * scale_x)
+        real_mouse_y = int(screen_mouse_y * scale_y)
+
+        return tuple((real_mouse_x, real_mouse_y))
+
     def draw_button(self, button: Button, button_font) -> None:
-        mouse = pygame.mouse.get_pos()
+        mouse = self.get_real_mouse_pos()
         stroke_rect = (
             button.rect_pos_x,
             button.rect_pos_y,

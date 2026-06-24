@@ -12,7 +12,7 @@ install:
 	unzip $(WHL_FILE)
 	
 run:
-	PYTHONDONTWRITEBYTECODE=1 $(RUN) $(PYTHON) $(MAIN) $(CONFIG)
+	@PYTHONDONTWRITEBYTECODE=1 $(RUN) $(PYTHON) $(MAIN) $(CONFIG)
 
 debug:
 	$(PYTHON) -m pdb

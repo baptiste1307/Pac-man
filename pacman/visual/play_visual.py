@@ -92,6 +92,7 @@ class PlayVisualMixin:
         )
 
         self.draw_button(self.play_back_button, self.button_font)
+        self.draw_button(self.next_level_button, self.button_font)
 
     # def draw_stats(self, state: GameState) -> None:
 
@@ -123,37 +124,6 @@ class PlayVisualMixin:
     #     self.screen.blit(lives_text, (stats_x, stats_y + 40))
     #     self.screen.blit(level_text, (stats_x, stats_y + 60))
     #     self.screen.blit(time_text, (stats_x, stats_y + 80))
-
-    # DEBUG (to delete)
-    def draw_next_button(self) -> pygame.Rect:
-
-        colors = self.colors
-
-        font = pygame.font.SysFont("arial", 24)
-
-        button_width = 120
-        button_height = 50
-
-        button_x = self.screen.get_width() - button_width - 20
-        button_y = 40
-
-        button_rect = pygame.Rect(
-            button_x, button_y, button_width, button_height
-        )
-
-        pygame.draw.rect(self.screen, colors.YELLOW.value, button_rect)
-
-        text = font.render("NEXT", True, colors.BLACK.value)
-
-        self.screen.blit(
-            text,
-            (
-                button_rect.centerx - text.get_width() // 2,
-                button_rect.centery - text.get_height() // 2,
-            ),
-        )
-
-        return button_rect
 
     def draw_pacman(self, state: GameState) -> None:
 

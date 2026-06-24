@@ -10,8 +10,7 @@ from typing import Any
 class GameEngine:
 
     def handle_events(self, game: GameVisual, state: GameState) -> bool:
-        next_button = game.draw_next_button()
-
+        # next_button = game.draw_next_button()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -19,7 +18,8 @@ class GameEngine:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = game.get_real_mouse_pos(event.pos)
 
-                if next_button.collidepoint(mouse_pos):
+                b_rect = pygame.Rect(game.next_level_button.rect)
+                if b_rect.collidepoint(mouse_pos):
                     state.current_level += 1
                     state.reset_level()
 
@@ -42,7 +42,7 @@ class GameEngine:
 
         game.draw_ghosts(state)
 
-        game.draw_next_button()
+        # game.draw_next_button()
 
         game.present()
 

@@ -80,6 +80,8 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
     exit_button = Button(240, 58, 1311, 902, "Exit", (1390, 908), 4)
     go_back_button = Button(160, 58, 1512, 912, "Go Back", (1523, 918), 2)
     play_back_button = Button(160, 58, 1632, 1076, "Go Back", (1643, 1082), 2)
+    next_level_button = Button(200, 58, 1832, 1076, "Next Level",
+                               (1843, 1082), 2)
 
     black_rectangle_start = (125, 140)
     black_rectangle_width = 1429

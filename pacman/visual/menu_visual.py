@@ -1,5 +1,5 @@
 import pygame
-from typing import Dict, Tuple
+from typing import Dict
 
 from pacman.ui import Colors
 

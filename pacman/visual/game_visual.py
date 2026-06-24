@@ -125,7 +125,8 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
                 self.draw_score_list(scores)
             elif page == "play":
                 self.draw_play(data[0], data[1], data[2], data[3])
-            self.scaled_surface = pygame.transform.smoothscale(self.screen, (self.scaled_width, self.scaled_height))
+            self.scaled_surface = pygame.transform.smoothscale(
+                self.screen, (self.scaled_width, self.scaled_height))
             self.scaled_screen.blit(self.scaled_surface, (0, 0))
             pygame.display.flip()
         pygame.quit()

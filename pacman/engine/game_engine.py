@@ -17,11 +17,15 @@ class GameEngine:
                 return False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = game.get_real_mouse_pos(event.pos)
+                mouse_pos = event.pos
 
                 if next_button.collidepoint(mouse_pos):
                     state.current_level += 1
                     state.reset_level()
+
+            if event.type == pygame.VIDEORESIZE:
+                game.resize(event.w, event.h)
+                state.refresh_layout()
 
         return True
 

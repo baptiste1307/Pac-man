@@ -1,5 +1,4 @@
 import pygame
-from typing import Any
 from dataclasses import dataclass
 from pacman.assets import LoadedAssets
 from pacman.ui import Button, Colors
@@ -13,77 +12,130 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
     pygame.init()
     pygame.font.init()
 
-    # adapt screen dimensions to be 70% of current display dimensions
-    screen_width, screen_height = 2160, 1280
-    info = pygame.display.Info()
-    target_width = int(info.current_w * 0.7)
-    target_height = int(info.current_h * 0.7)
-    aspect_ratio = screen_width / screen_height
-
-    if target_width / target_height > aspect_ratio:
-        scaled_height = target_height
-        scaled_width = int(target_height * aspect_ratio)
-    else:
-        scaled_width = target_width
-        scaled_height = int(target_width / aspect_ratio)
-
-    scaled_screen = pygame.display.set_mode((scaled_width, scaled_height))
-    screen: Any = pygame.Surface((screen_width, screen_height))
+    design_width = 2160
+    design_height = 1280
 
     colors: type = Colors
     my_font: str = (
         "fonts/Bitcount_Prop_Double/BitcountPropDouble-VariableFont_"
         "CRSV,ELSH,ELXP,slnt,wght.ttf"
     )
-    assets = LoadedAssets()
 
-    # =================== Fonts =================== #
+    def __post_init__(self):
+        info = pygame.display.Info()
+        width = int(info.current_w * 0.7)
+        height = int(info.current_h * 0.7)
+        self.resize(width, height)
+        self.assets = LoadedAssets()
 
-    start_font = pygame.font.Font(my_font, 64)
-    button_font = pygame.font.Font(my_font, 36)
-    text_font = pygame.font.Font(my_font, 24)
+    def fit_to_design_ratio(self, width: int, height: int) -> tuple[int, int]:
+        width = max(1, width)
+        height = max(1, height)
+        design_ratio = self.design_width / self.design_height
+        requested_ratio = width / height
 
-    title_font = pygame.font.Font(my_font, 48)
-    t_font = pygame.font.Font(my_font, 32)
+        if requested_ratio > design_ratio:
+            height = height
+            width = int(height * design_ratio)
+        else:
+            width = width
+            height = int(width / design_ratio)
 
-    # =================== Images =================== #
+        return max(1, width), max(1, height)
 
-    background_img = pygame.transform.scale(
-        pygame.image.load("./img/background.jpeg").convert(),
-        (screen_width, screen_height),
-    )
-    white_frame = pygame.transform.scale(
-        pygame.image.load("./img/white frame.png").convert_alpha(), (1433, 871)
-    )
-    pacman_img = pygame.transform.scale(
-        pygame.image.load("./img/pac-man-title.png").convert_alpha(),
-        (1393, 929),
-    )
-    instruc_img = pygame.transform.scale(
-        pygame.image.load("./img/keyboard.png").convert_alpha(), (170, 115)
-    )
-    type_name_img = pygame.transform.scale(
-        pygame.image.load("./img/type_name_img.png").convert_alpha(),
-        (507, 221),
-    )
-    score_img = pygame.transform.scale(
-        pygame.image.load("./img/score_img.png").convert_alpha(), (436, 436)
-    )
+    def resize(self, width: int, height: int) -> None:
+        self.screen_width, self.screen_height = self.fit_to_design_ratio(
+            width, height
+        )
+        self.screen = pygame.display.set_mode(
+            (self.screen_width, self.screen_height),
+            pygame.RESIZABLE,
+        )
+        self.load_fonts()
+        self.load_images()
+        self.load_buttons()
+        self.load_play_area()
 
-    # =================== Buttons =================== #
+    def font_size(self, value: int) -> int:
+        return max(1, self.y(value))
 
-    start_button = Button(277, 86, 941, 721, "Start", (982, 726), 8)
-    instruction_button = Button(
-        240, 58, 609, 902, "Instruction", (626, 908), 4
-    )
-    score_button = Button(240, 58, 960, 902, "High Score", (988, 908), 4)
-    exit_button = Button(240, 58, 1311, 902, "Exit", (1390, 908), 4)
-    go_back_button = Button(160, 58, 1512, 912, "Go Back", (1523, 918), 2)
-    play_back_button = Button(160, 58, 1632, 1076, "Go Back", (1643, 1082), 2)
+    def load_fonts(self) -> None:
+        self.start_font = pygame.font.Font(self.my_font, self.font_size(64))
+        self.button_font = pygame.font.Font(self.my_font, self.font_size(36))
+        self.text_font = pygame.font.Font(self.my_font, self.font_size(24))
+        self.title_font = pygame.font.Font(self.my_font, self.font_size(48))
+        self.t_font = pygame.font.Font(self.my_font, self.font_size(32))
 
-    black_rectangle_start = (125, 140)
-    black_rectangle_width = 1429
-    black_rectangle_height = 1000
+    def load_images(self) -> None:
+        self.background_img = pygame.transform.scale(
+            pygame.image.load("./img/background.jpeg").convert(),
+            (self.screen_width, self.screen_height),
+        )
+        self.white_frame = pygame.transform.scale(
+            pygame.image.load("./img/white frame.png").convert_alpha(),
+            self.size((1433, 871)),
+        )
+        self.pacman_img = pygame.transform.scale(
+            pygame.image.load("./img/pac-man-title.png").convert_alpha(),
+            self.size((1393, 929)),
+        )
+        self.instruc_img = pygame.transform.scale(
+            pygame.image.load("./img/keyboard.png").convert_alpha(),
+            self.size((170, 115)),
+        )
+        self.type_name_img = pygame.transform.scale(
+            pygame.image.load("./img/type_name_img.png").convert_alpha(),
+            self.size((507, 221)),
+        )
+        self.score_img = pygame.transform.scale(
+            pygame.image.load("./img/score_img.png").convert_alpha(),
+            self.size((436, 436)),
+        )
+
+    def make_button(
+        self,
+        width: int,
+        height: int,
+        x: int,
+        y: int,
+        text: str,
+        text_pos: tuple[int, int],
+        stroke_thickness: int,
+    ) -> Button:
+        return Button(
+            self.x(width),
+            self.y(height),
+            self.x(x),
+            self.y(y),
+            text,
+            self.pos(text_pos),
+            self.x(stroke_thickness),
+        )
+
+    def load_buttons(self) -> None:
+        self.start_button = self.make_button(
+            277, 86, 941, 721, "Start", (982, 726), 8
+        )
+        self.instruction_button = self.make_button(
+            240, 58, 609, 902, "Instruction", (626, 908), 4
+        )
+        self.score_button = self.make_button(
+            240, 58, 960, 902, "High Score", (988, 908), 4
+        )
+        self.exit_button = self.make_button(
+            240, 58, 1311, 902, "Exit", (1390, 908), 4
+        )
+        self.go_back_button = self.make_button(
+            160, 58, 1512, 912, "Go Back", (1523, 918), 2
+        )
+        self.play_back_button = self.make_button(
+            160, 58, 1632, 1076, "Go Back", (1643, 1082), 2
+        )
+
+    def load_play_area(self) -> None:
+        self.black_rectangle_start = self.pos((125, 140))
+        self.black_rectangle_width = self.x(1429)
+        self.black_rectangle_height = self.y(1000)
 
     def test_draw(self):
         page = "hero"
@@ -93,8 +145,10 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize(event.w, event.h)
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    event_pos = self.get_real_mouse_pos(event.pos)
+                    event_pos = event.pos
                     if page == "hero":
                         if pygame.Rect(self.start_button.rect).collidepoint(
                             event_pos

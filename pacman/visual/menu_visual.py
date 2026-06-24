@@ -10,7 +10,7 @@ class MenuVisualMixin:
 
     def draw_hero(self) -> None:
         self.screen.blit(self.background_img, (0, 0))
-        self.screen.blit(self.pacman_img, (383, 0))
+        self.screen.blit(self.pacman_img, self.pos((383, 0)))
         self.draw_button(self.start_button, self.start_font)
         self.draw_button(self.instruction_button, self.button_font)
         self.draw_button(self.score_button, self.button_font)
@@ -24,12 +24,12 @@ class MenuVisualMixin:
 
     def draw_instruction(self) -> None:
         self.screen.blit(self.background_img, (0, 0))
-        self.screen.blit(self.white_frame, (365, 208))
+        self.screen.blit(self.white_frame, self.pos((365, 208)))
         pygame.draw.rect(
             self.screen,
             Colors.WHITE.value,
-            (401, 258, 1356, 778),
-            border_radius=30,
+            self.rect((401, 258, 1356, 778)),
+            border_radius=self.radius(30),
         )
         self.draw_text(
             "Instruction", self.title_font, Colors.D_BLUE.value, (461, 298)
@@ -78,17 +78,17 @@ class MenuVisualMixin:
             (700, 874),
         )
 
-        self.screen.blit(self.instruc_img, (461, 503))
+        self.screen.blit(self.instruc_img, self.pos((461, 503)))
         self.draw_button(self.go_back_button, self.button_font)
 
     def draw_type_name(self) -> None:
         self.screen.blit(self.background_img, (0, 0))
-        self.screen.blit(self.white_frame, (365, 208))
+        self.screen.blit(self.white_frame, self.pos((365, 208)))
         pygame.draw.rect(
             self.screen,
             Colors.WHITE.value,
-            (401, 258, 1356, 778),
-            border_radius=30,
+            self.rect((401, 258, 1356, 778)),
+            border_radius=self.radius(30),
         )
         self.draw_text(
             "Congratulations !!!",
@@ -105,7 +105,7 @@ class MenuVisualMixin:
         self.draw_text(
             "__________", self.title_font, Colors.D_BLUE.value, (938, 531)
         )
-        self.screen.blit(self.type_name_img, (828, 678))
+        self.screen.blit(self.type_name_img, self.pos((828, 678)))
         self.draw_button(self.go_back_button, self.button_font)
 
     def draw_score_list(self, scores: Dict[str, int]) -> None:
@@ -115,12 +115,12 @@ class MenuVisualMixin:
             sorted(scores.items(), key=lambda x: x[1], reverse=True)
         )
         self.screen.blit(self.background_img, (0, 0))
-        self.screen.blit(self.white_frame, (365, 208))
+        self.screen.blit(self.white_frame, self.pos((365, 208)))
         pygame.draw.rect(
             self.screen,
             Colors.WHITE.value,
-            (401, 258, 1356, 778),
-            border_radius=30,
+            self.rect((401, 258, 1356, 778)),
+            border_radius=self.radius(30),
         )
         self.draw_text(
             "Here are the best players...",
@@ -147,7 +147,7 @@ class MenuVisualMixin:
                 (1069, 434 + offset * i),
             )
             i += 1
-        self.screen.blit(self.score_img, (1208, 460))
+        self.screen.blit(self.score_img, self.pos((1208, 460)))
         self.draw_button(self.go_back_button, self.button_font)
 
     # def main_menu(self) -> None:

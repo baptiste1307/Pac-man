@@ -5,30 +5,45 @@ from pacman.ui import Button, Colors
 
 
 class VisualBaseMixin:
-    def get_real_mouse_pos(
-        self, mouse_pos: Tuple[int, int] | None = None
-    ) -> Tuple[int, int]:
-        if mouse_pos is None:
-            mouse_pos = pygame.mouse.get_pos()
+    def x(self, value: int) -> int:
+        return int(self.screen_width * (value / self.design_width))
 
-        screen_mouse_x, screen_mouse_y = mouse_pos
-        scale_x = self.screen_width / self.scaled_width
-        scale_y = self.screen_height / self.scaled_height
+    def y(self, value: int) -> int:
+        return int(self.screen_height * (value / self.design_height))
 
-        real_mouse_x = int(screen_mouse_x * scale_x)
-        real_mouse_y = int(screen_mouse_y * scale_y)
+    def pos(self, value: Tuple[int, int]) -> Tuple[int, int]:
+        return self.x(value[0]), self.y(value[1])
 
-        return tuple((real_mouse_x, real_mouse_y))
+    def size(self, value: Tuple[int, int]) -> Tuple[int, int]:
+        return self.x(value[0]), self.y(value[1])
+
+    def rect(
+        self, value: Tuple[int, int, int, int]
+    ) -> Tuple[int, int, int, int]:
+        return (
+            self.x(value[0]),
+            self.y(value[1]),
+            self.x(value[2]),
+            self.y(value[3]),
+        )
+
+    def radius(self, value: int) -> int:
+        return max(
+            1,
+            int(
+                value
+                * min(
+                    self.screen_width / self.design_width,
+                    self.screen_height / self.design_height,
+                )
+            ),
+        )
 
     def present(self) -> None:
-        scaled_surface = pygame.transform.smoothscale(
-            self.screen, (self.scaled_width, self.scaled_height)
-        )
-        self.scaled_screen.blit(scaled_surface, (0, 0))
         pygame.display.flip()
 
     def draw_button(self, button: Button, button_font) -> None:
-        mouse = self.get_real_mouse_pos()
+        mouse = pygame.mouse.get_pos()
         stroke_rect = (
             button.rect_pos_x,
             button.rect_pos_y,
@@ -58,13 +73,16 @@ class VisualBaseMixin:
 
         if not hovered:
             pygame.draw.rect(
-                self.screen, Colors.CYAN.value, shade_rect, border_radius=40
+                self.screen,
+                Colors.CYAN.value,
+                shade_rect,
+                border_radius=self.radius(40),
             )
             pygame.draw.rect(
                 self.screen,
                 stroke_and_text_color,
                 stroke_rect,
-                border_radius=40,
+                border_radius=self.radius(40),
             )
 
         elif hovered:
@@ -72,11 +90,14 @@ class VisualBaseMixin:
                 self.screen,
                 stroke_and_text_color,
                 stroke_rect,
-                border_radius=40,
+                border_radius=self.radius(40),
             )
 
         pygame.draw.rect(
-            self.screen, button_color, button_rect, border_radius=30
+            self.screen,
+            button_color,
+            button_rect,
+            border_radius=self.radius(30),
         )
 
         if hovered:
@@ -105,8 +126,9 @@ class VisualBaseMixin:
             center: if the text is center-positioned (or topleft).
         """
         to_draw_text = font.render(text, True, color)
+        scaled_pos = self.pos(pos)
         if center:
-            rect = to_draw_text.get_rect(center=pos)
+            rect = to_draw_text.get_rect(center=scaled_pos)
             self.screen.blit(to_draw_text, rect)
         else:
-            self.screen.blit(to_draw_text, pos)
+            self.screen.blit(to_draw_text, scaled_pos)

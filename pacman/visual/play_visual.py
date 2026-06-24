@@ -8,19 +8,19 @@ class PlayVisualMixin:
     def draw_play(self, state: GameState):
         score_board = pygame.transform.scale(
             pygame.image.load("./img/play/score_board.png").convert_alpha(),
-            (278, 278),
+            self.size((278, 278)),
         )
         lives_icon = pygame.transform.scale(
             pygame.image.load("./img/play/lives.png").convert_alpha(),
-            (149, 149),
+            self.size((149, 149)),
         )
         level_icon = pygame.transform.scale(
             pygame.image.load("./img/play/level-badge.png").convert_alpha(),
-            (149, 149),
+            self.size((149, 149)),
         )
         timer_icon = pygame.transform.scale(
             pygame.image.load("./img/play/time.png").convert_alpha(),
-            (149, 149),
+            self.size((149, 149)),
         )
 
         r_start_x, r_start_y = (
@@ -38,9 +38,9 @@ class PlayVisualMixin:
             self.screen,
             Colors.BLACK.value,
             (r_start_x, r_start_y, r_width, r_height),
-            border_radius=50,
+            border_radius=self.radius(50),
         )
-        self.screen.blit(score_board, (1632, 140))
+        self.screen.blit(score_board, self.pos((1632, 140)))
         self.draw_text(
             f"{state.statistics.score}",
             self.start_font,
@@ -49,12 +49,12 @@ class PlayVisualMixin:
             center=True,
         )
 
-        self.screen.blit(lives_icon, (1632, 460))
+        self.screen.blit(lives_icon, self.pos((1632, 460)))
         pygame.draw.rect(
             self.screen,
             Colors.CYAN.value,
-            (1632, 512, 149, 44),
-            border_radius=8,
+            self.rect((1632, 512, 149, 44)),
+            border_radius=self.radius(8),
         )
         self.draw_text(
             "LIVES", self.button_font, Colors.BLACK.value, (1663, 516)
@@ -66,12 +66,12 @@ class PlayVisualMixin:
             (1833, 492),
         )
 
-        self.screen.blit(level_icon, (1632, 623))
+        self.screen.blit(level_icon, self.pos((1632, 623)))
         pygame.draw.rect(
             self.screen,
             Colors.CYAN.value,
-            (1632, 684, 149, 44),
-            border_radius=8,
+            self.rect((1632, 684, 149, 44)),
+            border_radius=self.radius(8),
         )
         self.draw_text(
             "LEVEL", self.button_font, Colors.BLACK.value, (1658, 686)
@@ -83,7 +83,7 @@ class PlayVisualMixin:
             (1833, 683),
         )
 
-        self.screen.blit(timer_icon, (1632, 802))
+        self.screen.blit(timer_icon, self.pos((1632, 802)))
         self.draw_text(
             f"{state.statistics.time_left}",
             self.start_font,
@@ -129,13 +129,13 @@ class PlayVisualMixin:
 
         colors = self.colors
 
-        font = pygame.font.SysFont("arial", 24)
+        font = pygame.font.SysFont("arial", self.y(24))
 
-        button_width = 120
-        button_height = 50
+        button_width = self.x(120)
+        button_height = self.y(50)
 
-        button_x = self.screen.get_width() - button_width - 20
-        button_y = 40
+        button_x = self.screen.get_width() - button_width - self.x(20)
+        button_y = self.y(40)
 
         button_rect = pygame.Rect(
             button_x, button_y, button_width, button_height
@@ -280,7 +280,7 @@ class PlayVisualMixin:
                         colors.WALL_BLUE.value,
                         (px, py),
                         (px + cell_size, py),
-                        5,
+                        self.radius(5),
                     )
 
                 # left wall
@@ -290,7 +290,7 @@ class PlayVisualMixin:
                         colors.WALL_BLUE.value,
                         (px, py),
                         (px, py + cell_size),
-                        5,
+                        self.radius(5),
                     )
 
                 # right wall (last column)
@@ -300,7 +300,7 @@ class PlayVisualMixin:
                         colors.WALL_BLUE.value,
                         (px + cell_size, py),
                         (px + cell_size, py + cell_size),
-                        5,
+                        self.radius(5),
                     )
 
                 # bottom wall (last row)
@@ -310,5 +310,5 @@ class PlayVisualMixin:
                         colors.WALL_BLUE.value,
                         (px, py + cell_size),
                         (px + cell_size, py + cell_size),
-                        5,
+                        self.radius(5),
                     )

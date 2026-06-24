@@ -128,6 +128,7 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
                         if pygame.Rect(
                             self.play_back_button.rect
                         ).collidepoint(event_pos):
+                            # Maybe need to stop game engine and then go back to hero?
                             page = "hero"
             if page == "hero":
                 self.draw_hero()

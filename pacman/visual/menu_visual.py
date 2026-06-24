@@ -150,58 +150,58 @@ class MenuVisualMixin:
         self.screen.blit(self.score_img, (1208, 460))
         self.draw_button(self.go_back_button, self.button_font)
 
-    def main_menu(self) -> None:
+    # def main_menu(self) -> None:
 
-        colors = self.colors
+    #     colors = self.colors
 
-        font = pygame.font.SysFont("arial", 48)
-        small_font = pygame.font.SysFont("arial", 24)
+    #     font = pygame.font.SysFont("arial", 48)
+    #     small_font = pygame.font.SysFont("arial", 24)
 
-        running = True
+    #     running = True
 
-        while running:
-            self.screen.fill(colors.BLACK.value)
+    #     while running:
+    #         self.screen.fill(colors.BLACK.value)
 
-            menu_text = {
-                "title_text": {
-                    "text": font.render("PAC-MAN", True, colors.YELLOW.value),
-                    "y_pos": 150,
-                },
-                "start_text": {
-                    "text": small_font.render(
-                        "Press SPACE to start", True, colors.WHITE.value
-                    ),
-                    "y_pos": 300,
-                },
-                "quit_text": {
-                    "text": small_font.render(
-                        "Press ESC to quit", True, colors.WHITE.value
-                    ),
-                    "y_pos": 350,
-                },
-            }
+    #         menu_text = {
+    #             "title_text": {
+    #                "text": font.render("PAC-MAN", True, colors.YELLOW.value),
+    #                 "y_pos": 150,
+    #             },
+    #             "start_text": {
+    #                 "text": small_font.render(
+    #                     "Press SPACE to start", True, colors.WHITE.value
+    #                 ),
+    #                 "y_pos": 300,
+    #             },
+    #             "quit_text": {
+    #                 "text": small_font.render(
+    #                     "Press ESC to quit", True, colors.WHITE.value
+    #                 ),
+    #                 "y_pos": 350,
+    #             },
+    #         }
 
-            for data in menu_text.values():
+    #         for data in menu_text.values():
 
-                self.screen.blit(
-                    data["text"],
-                    (
-                        self.screen.get_width() // 2
-                        - data["text"].get_width() // 2,
-                        data["y_pos"],
-                    ),
-                )
+    #             self.screen.blit(
+    #                 data["text"],
+    #                 (
+    #                     self.screen.get_width() // 2
+    #                     - data["text"].get_width() // 2,
+    #                     data["y_pos"],
+    #                 ),
+    #             )
 
-            pygame.display.flip()
+    #         pygame.display.flip()
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
+    #         for event in pygame.event.get():
+    #             if event.type == pygame.QUIT:
+    #                 pygame.quit()
+    #                 return
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        return
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        return
+    #             if event.type == pygame.KEYDOWN:
+    #                 if event.key == pygame.K_SPACE:
+    #                     return
+    #                 if event.key == pygame.K_ESCAPE:
+    #                     pygame.quit()
+    #                     return

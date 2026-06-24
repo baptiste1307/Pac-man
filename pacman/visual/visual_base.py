@@ -5,8 +5,13 @@ from pacman.ui import Button, Colors
 
 
 class VisualBaseMixin:
-    def get_real_mouse_pos(self) -> Tuple[int, int]:
-        screen_mouse_x, screen_mouse_y = pygame.mouse.get_pos()
+    def get_real_mouse_pos(
+        self, mouse_pos: Tuple[int, int] | None = None
+    ) -> Tuple[int, int]:
+        if mouse_pos is None:
+            mouse_pos = pygame.mouse.get_pos()
+
+        screen_mouse_x, screen_mouse_y = mouse_pos
         scale_x = self.screen_width / self.scaled_width
         scale_y = self.screen_height / self.scaled_height
 
@@ -14,6 +19,13 @@ class VisualBaseMixin:
         real_mouse_y = int(screen_mouse_y * scale_y)
 
         return tuple((real_mouse_x, real_mouse_y))
+
+    def present(self) -> None:
+        scaled_surface = pygame.transform.smoothscale(
+            self.screen, (self.scaled_width, self.scaled_height)
+        )
+        self.scaled_screen.blit(scaled_surface, (0, 0))
+        pygame.display.flip()
 
     def draw_button(self, button: Button, button_font) -> None:
         mouse = self.get_real_mouse_pos()

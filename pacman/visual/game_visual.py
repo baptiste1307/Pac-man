@@ -16,7 +16,16 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
     # adapt screen dimensions to be 70% of current display dimensions
     screen_width, screen_height = 2160, 1280
     info = pygame.display.Info()
-    scaled_width, scaled_height = 500, 500
+    target_width = int(info.current_w * 0.7)
+    target_height = int(info.current_h * 0.7)
+    aspect_ratio = screen_width / screen_height
+
+    if target_width / target_height > aspect_ratio:
+        scaled_height = target_height
+        scaled_width = int(target_height * aspect_ratio)
+    else:
+        scaled_width = target_width
+        scaled_height = int(target_width / aspect_ratio)
 
     scaled_screen = pygame.display.set_mode((scaled_width, scaled_height))
     screen: Any = pygame.Surface((screen_width, screen_height))
@@ -72,17 +81,20 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
     go_back_button = Button(160, 58, 1512, 912, "Go Back", (1523, 918), 2)
     play_back_button = Button(160, 58, 1632, 1076, "Go Back", (1643, 1082), 2)
 
+    black_rectangle_start = (125, 140)
+    black_rectangle_width = 1429
+    black_rectangle_height = 1000
+
     def test_draw(self):
         page = "hero"
         scores = {"huian": 300, "baptiste": 600, "allan": 200}
         running = True
-        data = [1, 3, 60, 234]
         while running:
             for event in pygame.event.get():
-                event_pos = self.get_real_mouse_pos()
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    event_pos = self.get_real_mouse_pos(event.pos)
                     if page == "hero":
                         if pygame.Rect(self.start_button.rect).collidepoint(
                             event_pos
@@ -124,11 +136,8 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
             elif page == "score":
                 self.draw_score_list(scores)
             elif page == "play":
-                self.draw_play(data[0], data[1], data[2], data[3])
-            self.scaled_surface = pygame.transform.smoothscale(
-                self.screen, (self.scaled_width, self.scaled_height))
-            self.scaled_screen.blit(self.scaled_surface, (0, 0))
-            pygame.display.flip()
+                return
+            self.present()
         pygame.quit()
 
 

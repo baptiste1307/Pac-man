@@ -319,6 +319,14 @@ class PlayVisualMixin:
                 px = state.MAZE_OFFSET_X + x * cell_size
                 py = state.MAZE_OFFSET_Y + y * cell_size
 
+                # if cell of 42 pattern, 4 walls, closed
+                if cell == 15:  
+                    pygame.draw.rect(
+                        self.screen,
+                        Colors.NEON_PINK.value,
+                        (px, py, cell_size, cell_size)
+                    )
+
                 # top wall
                 if cell & 1:
                     pygame.draw.line(

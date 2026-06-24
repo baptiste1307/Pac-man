@@ -33,6 +33,7 @@ class GameState:
 
     def __post_init__(self):
         self.levels = get_levels(self.config, self.game)
+        self.statistics = Statistics(config=self.config)
         self.reset_level()
 
     def update_target_position(self) -> None:
@@ -94,8 +95,8 @@ class GameState:
         self.target_x = self.pacman_x
         self.target_y = self.pacman_y
 
-        self.statistics = Statistics(config=self.config)
         self.level_timer = 0
+        self.statistics.time_left = self.statistics.level_max_time
 
     def update_level_layout(self) -> None:
         current_level = self.levels[self.current_level]

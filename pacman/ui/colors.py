@@ -14,3 +14,4 @@ class Colors(Enum):
     D_BLUE = (33, 48, 187)
     CYAN = (168, 255, 246)
     B_YELLOW = (253, 255, 166)
+    NEON_PINK = (247, 18, 232)

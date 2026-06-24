@@ -16,7 +16,8 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
     # adapt screen dimensions to be 70% of current display dimensions
     screen_width, screen_height = 2160, 1280
     info = pygame.display.Info()
-    scaled_width, scaled_height = 500, 500
+    scaled_width = int(info.current_w * 0.7)
+    scaled_height = int(info.current_h * 0.7)
 
     scaled_screen = pygame.display.set_mode((scaled_width, scaled_height))
     screen: Any = pygame.Surface((screen_width, screen_height))

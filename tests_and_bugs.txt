@@ -29,7 +29,8 @@ mis-a-jour 25/06 (Game to-do):
 2.5. When all pacgums are eaten, show "good_job" sign.
 2.6. When pac-man is eaten or time's up, show "game_over" sign.
 2.7. After "game_over" sign, if the "score" is made in top 10 of the history, pop page type_name for name registration.
-2.8. Add sound system.
+
+2.8. Add sound system. => added two background musics in play and other pages. Added eat pacman sound. Eating ghost, dead sound and other sounds will be added when the whole game engine is complet.
 
 
 Done:

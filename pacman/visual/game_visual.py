@@ -177,6 +177,10 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
     def test_draw(self):
         page = "hero"
         scores = {"huian": 300, "baptiste": 600, "allan": 200}
+
+        pygame.mixer.music.load("./sounds/background.ogg")
+        pygame.mixer.music.play(-1)
+
         running = True
         while running:
             for event in pygame.event.get():
@@ -191,6 +195,11 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
                             event_pos
                         ):
                             page = "play"
+                            pygame.mixer.music.stop()
+                            pygame.mixer.music.load("./sounds/play_bgm.ogg")
+                            pygame.mixer.music.set_volume(0.6)
+                            pygame.mixer.music.play(-1)
+
                         if pygame.Rect(
                             self.instruction_button.rect
                         ).collidepoint(event_pos):
@@ -220,6 +229,9 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
                             # Maybe need to stop game
                             # engine and then go back to hero?
                             page = "hero"
+                            pygame.mixer.music.stop()
+                            pygame.mixer.music.load("./sounds/background.ogg")
+                            pygame.mixer.music.play(-1)
             if page == "hero":
                 self.draw_hero()
             elif page == "instruction":

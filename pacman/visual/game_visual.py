@@ -6,14 +6,66 @@ from .menu_visual import MenuVisualMixin
 from .play_visual import PlayVisualMixin
 from .visual_base import VisualBaseMixin
 
+DESIGN_SIZE = (2160, 1280)
+INITIAL_WINDOW_SCALE = 0.7
+PLAY_AREA_FILL_RATIO = 0.9
+
+IMAGE_SIZES = {
+    "white_frame": (1433, 871),
+    "pacman_img": (1393, 929),
+    "instruc_img": (170, 115),
+    "type_name_img": (507, 221),
+    "score_img": (436, 436),
+}
+
+BUTTON_SPECS = {
+    "start_button": (277, 86, 941, 721, "Start", (982, 726), 8),
+    "instruction_button": (
+        240,
+        58,
+        609,
+        902,
+        "Instruction",
+        (626, 908),
+        4,
+    ),
+    "score_button": (240, 58, 960, 902, "High Score", (988, 908), 4),
+    "exit_button": (240, 58, 1311, 902, "Exit", (1390, 908), 4),
+    "go_back_button": (160, 58, 1512, 912, "Go Back", (1523, 918), 2),
+    "play_back_button": (160, 58, 1632, 1076, "Go Back", (1643, 1082), 2),
+    "next_level_button": (
+        200,
+        58,
+        1832,
+        1076,
+        "Next Level",
+        (1843, 1082),
+        2,
+    ),
+}
+
+FONT_SIZES = {
+    "start_font": 64,
+    "button_font": 36,
+    "text_font": 24,
+    "title_font": 48,
+    "t_font": 32,
+}
+
+PLAY_AREA = {
+    "start": (125, 140),
+    "size": (1429, 1000),
+}
+
 
 @dataclass
 class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
     pygame.init()
     pygame.font.init()
 
-    design_width = 2160
-    design_height = 1280
+    design_width = DESIGN_SIZE[0]
+    design_height = DESIGN_SIZE[1]
+    play_area_fill_ratio = PLAY_AREA_FILL_RATIO
 
     colors: type = Colors
     my_font: str = (
@@ -23,8 +75,8 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
 
     def __post_init__(self):
         info = pygame.display.Info()
-        width = int(info.current_w * 0.7)
-        height = int(info.current_h * 0.7)
+        width = int(info.current_w * INITIAL_WINDOW_SCALE)
+        height = int(info.current_h * INITIAL_WINDOW_SCALE)
         self.resize(width, height)
         self.assets = LoadedAssets()
 
@@ -60,11 +112,12 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
         return max(1, self.y(value))
 
     def load_fonts(self) -> None:
-        self.start_font = pygame.font.Font(self.my_font, self.font_size(64))
-        self.button_font = pygame.font.Font(self.my_font, self.font_size(36))
-        self.text_font = pygame.font.Font(self.my_font, self.font_size(24))
-        self.title_font = pygame.font.Font(self.my_font, self.font_size(48))
-        self.t_font = pygame.font.Font(self.my_font, self.font_size(32))
+        for font_name, font_size in FONT_SIZES.items():
+            setattr(
+                self,
+                font_name,
+                pygame.font.Font(self.my_font, self.font_size(font_size)),
+            )
 
     def load_images(self) -> None:
         self.background_img = pygame.transform.scale(
@@ -73,23 +126,23 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
         )
         self.white_frame = pygame.transform.scale(
             pygame.image.load("./img/white frame.png").convert_alpha(),
-            self.size((1433, 871)),
+            self.size(IMAGE_SIZES["white_frame"]),
         )
         self.pacman_img = pygame.transform.scale(
             pygame.image.load("./img/pac-man-title.png").convert_alpha(),
-            self.size((1393, 929)),
+            self.size(IMAGE_SIZES["pacman_img"]),
         )
         self.instruc_img = pygame.transform.scale(
             pygame.image.load("./img/keyboard.png").convert_alpha(),
-            self.size((170, 115)),
+            self.size(IMAGE_SIZES["instruc_img"]),
         )
         self.type_name_img = pygame.transform.scale(
             pygame.image.load("./img/type_name_img.png").convert_alpha(),
-            self.size((507, 221)),
+            self.size(IMAGE_SIZES["type_name_img"]),
         )
         self.score_img = pygame.transform.scale(
             pygame.image.load("./img/score_img.png").convert_alpha(),
-            self.size((436, 436)),
+            self.size(IMAGE_SIZES["score_img"]),
         )
 
     def make_button(
@@ -113,29 +166,13 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
         )
 
     def load_buttons(self) -> None:
-        self.start_button = self.make_button(
-            277, 86, 941, 721, "Start", (982, 726), 8
-        )
-        self.instruction_button = self.make_button(
-            240, 58, 609, 902, "Instruction", (626, 908), 4
-        )
-        self.score_button = self.make_button(
-            240, 58, 960, 902, "High Score", (988, 908), 4
-        )
-        self.exit_button = self.make_button(
-            240, 58, 1311, 902, "Exit", (1390, 908), 4
-        )
-        self.go_back_button = self.make_button(
-            160, 58, 1512, 912, "Go Back", (1523, 918), 2
-        )
-        self.play_back_button = self.make_button(
-            160, 58, 1632, 1076, "Go Back", (1643, 1082), 2
-        )
+        for button_name, button_spec in BUTTON_SPECS.items():
+            setattr(self, button_name, self.make_button(*button_spec))
 
     def load_play_area(self) -> None:
-        self.black_rectangle_start = self.pos((125, 140))
-        self.black_rectangle_width = self.x(1429)
-        self.black_rectangle_height = self.y(1000)
+        self.black_rectangle_start = self.pos(PLAY_AREA["start"])
+        self.black_rectangle_width = self.x(PLAY_AREA["size"][0])
+        self.black_rectangle_height = self.y(PLAY_AREA["size"][1])
 
     def test_draw(self):
         page = "hero"
@@ -180,6 +217,8 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
                         if pygame.Rect(
                             self.play_back_button.rect
                         ).collidepoint(event_pos):
+                            # Maybe need to stop game
+                            # engine and then go back to hero?
                             page = "hero"
             if page == "hero":
                 self.draw_hero()

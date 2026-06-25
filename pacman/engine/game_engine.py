@@ -10,8 +10,7 @@ from typing import Any
 class GameEngine:
 
     def handle_events(self, game: GameVisual, state: GameState) -> bool:
-        next_button = game.draw_next_button()
-
+        # next_button = game.draw_next_button()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -19,8 +18,11 @@ class GameEngine:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
 
-                if next_button.collidepoint(mouse_pos):
+                b_rect = pygame.Rect(game.next_level_button.rect)
+                if b_rect.collidepoint(mouse_pos):
                     state.current_level += 1
+                    if state.current_level >= len(state.levels):
+                        state.current_level = 0
                     state.reset_level()
 
             if event.type == pygame.VIDEORESIZE:
@@ -46,7 +48,7 @@ class GameEngine:
 
         game.draw_ghosts(state)
 
-        game.draw_next_button()
+        # game.draw_next_button()
 
         game.present()
 
@@ -73,10 +75,17 @@ class GameEngine:
                 state.statistics.time_left -= 1
 
                 if state.statistics.time_left <= 0:
+                    # lose a life
                     state.statistics.lives -= 1
-                    if state.statistics.lives <= 0:
-                        # handle game over
-                        pass
+                    # reset timer
+                    state.statistics.time_left = (
+                        state.statistics.level_max_time
+                    )
+                    # reset the same level if pacman still have lives
+                    if state.statistics.lives > 0:
+                        state.reset_level()
+
+                    # if lives <= 0: handle game over
 
             running = self.handle_events(game, state)
             game.draw_play(state)

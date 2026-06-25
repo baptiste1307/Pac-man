@@ -1,0 +1,29 @@
+Bugs:
+
+2. lives go to negative when the countdown is finished. => we stil need to handle game over (game_engine.py L88)
+--> print a cool "game over" design on screen, enter name for scores table then go to main menu
+
+3. go_back button in play page doesn't work.
+
+4. Maps loading can be long --> we can't do anything, a-maze-ing package is sh*t...
+--> but we can display a nice progress bar as you said
+
+5. make run should depend on make install, but the .whl will be unzipped again.
+
+
+
+To-do:
+
+1. cases min 169, cases max 400, min 10, max 20 à mettre dans readme
+2. add a waiting(loading page) while the program is loading the maps(now is pure black screen).
+3. add good_job (when all pacgums are eaten) and game_over(when time's up or pacman is eaten by ghost) according to game result.
+
+5. Ghosts movement
+
+
+Done:
+
+6. 42 in maze are not filled. (Play_visual.py L323 --> "if cell == 15")
+0. the timer go to negative when the countdown is finished => now it is reset to 0 and lives -= 1
+1. Next button - Error: list index out of range after the last level. (after level 10)
+4. add new next_level button, deleted old draw_next_button.

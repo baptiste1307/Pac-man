@@ -21,10 +21,11 @@ class Level:
             self.game.black_rectangle_width,
             self.game.black_rectangle_height,
         )
+        fill_ratio = self.game.play_area_fill_ratio
 
         return int(
             min(
-                (r_height * 0.9) // level_height,
-                (r_width * 0.9) // level_width,
+                (r_height * fill_ratio) // level_height,
+                (r_width * fill_ratio) // level_width,
             )
         )

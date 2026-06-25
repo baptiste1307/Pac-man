@@ -13,4 +13,5 @@ class Statistics:
     # ghosts_pos: List[Tuple[int, int]]
 
     def __post_init__(self):
-        self.time_left = self.config["level_max_time"]
+        self.level_max_time = self.config["level_max_time"]
+        self.time_left = self.level_max_time

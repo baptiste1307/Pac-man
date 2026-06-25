@@ -3,6 +3,10 @@ from typing import Any, Tuple
 
 from pacman.ui import Button, Colors
 
+BUTTON_OUTER_RADIUS = 40
+BUTTON_INNER_RADIUS = 30
+BUTTON_HOVER_Y_OFFSET = 5
+
 
 class VisualBaseMixin:
     def x(self, value: int) -> int:
@@ -76,13 +80,21 @@ class VisualBaseMixin:
                 self.screen,
                 Colors.CYAN.value,
                 shade_rect,
+<<<<<<< HEAD
                 border_radius=self.radius(40),
+=======
+                border_radius=self.radius(BUTTON_OUTER_RADIUS),
+>>>>>>> main
             )
             pygame.draw.rect(
                 self.screen,
                 stroke_and_text_color,
                 stroke_rect,
+<<<<<<< HEAD
                 border_radius=self.radius(40),
+=======
+                border_radius=self.radius(BUTTON_OUTER_RADIUS),
+>>>>>>> main
             )
 
         elif hovered:
@@ -90,19 +102,31 @@ class VisualBaseMixin:
                 self.screen,
                 stroke_and_text_color,
                 stroke_rect,
+<<<<<<< HEAD
                 border_radius=self.radius(40),
+=======
+                border_radius=self.radius(BUTTON_OUTER_RADIUS),
+>>>>>>> main
             )
 
         pygame.draw.rect(
             self.screen,
             button_color,
             button_rect,
+<<<<<<< HEAD
             border_radius=self.radius(30),
+=======
+            border_radius=self.radius(BUTTON_INNER_RADIUS),
+>>>>>>> main
         )
 
         if hovered:
             self.screen.blit(
-                texto, (button.text_rect[0], button.text_rect[1] + 5)
+                texto,
+                (
+                    button.text_rect[0],
+                    button.text_rect[1] + self.y(BUTTON_HOVER_Y_OFFSET),
+                ),
             )
         elif not hovered:
             self.screen.blit(texto, button.text_rect)

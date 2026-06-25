@@ -3,24 +3,57 @@ import pygame
 from pacman.core import GameState
 from pacman.ui import Colors
 
+HUD_IMAGES = {
+    "score_board": {"size": (278, 278), "pos": (1632, 140)},
+    "lives_icon": {"size": (149, 149), "pos": (1632, 460)},
+    "level_icon": {"size": (149, 149), "pos": (1632, 623)},
+    "timer_icon": {"size": (149, 149), "pos": (1632, 802)},
+}
+
+HUD_LABEL_RECTS = {
+    "lives": (1632, 512, 149, 44),
+    "level": (1632, 684, 149, 44),
+}
+
+HUD_TEXT_POSITIONS = {
+    "score": (1774, 323),
+    "lives_label": (1663, 516),
+    "lives_value": (1833, 492),
+    "level_label": (1658, 686),
+    "level_value": (1833, 683),
+    "timer": (1833, 862),
+}
+
+NEXT_BUTTON = {
+    "font_size": 24,
+    "width": 120,
+    "height": 50,
+    "right_margin": 20,
+    "top": 40,
+}
+
+MAZE_WALL_WIDTH = 5
+PLAY_AREA_RADIUS = 50
+HUD_LABEL_RADIUS = 8
+
 
 class PlayVisualMixin:
     def draw_play(self, state: GameState):
         score_board = pygame.transform.scale(
             pygame.image.load("./img/play/score_board.png").convert_alpha(),
-            self.size((278, 278)),
+            self.size(HUD_IMAGES["score_board"]["size"]),
         )
         lives_icon = pygame.transform.scale(
             pygame.image.load("./img/play/lives.png").convert_alpha(),
-            self.size((149, 149)),
+            self.size(HUD_IMAGES["lives_icon"]["size"]),
         )
         level_icon = pygame.transform.scale(
             pygame.image.load("./img/play/level-badge.png").convert_alpha(),
-            self.size((149, 149)),
+            self.size(HUD_IMAGES["level_icon"]["size"]),
         )
         timer_icon = pygame.transform.scale(
             pygame.image.load("./img/play/time.png").convert_alpha(),
-            self.size((149, 149)),
+            self.size(HUD_IMAGES["timer_icon"]["size"]),
         )
 
         r_start_x, r_start_y = (
@@ -38,60 +71,69 @@ class PlayVisualMixin:
             self.screen,
             Colors.BLACK.value,
             (r_start_x, r_start_y, r_width, r_height),
-            border_radius=self.radius(50),
+            border_radius=self.radius(PLAY_AREA_RADIUS),
         )
-        self.screen.blit(score_board, self.pos((1632, 140)))
+        self.screen.blit(
+            score_board, self.pos(HUD_IMAGES["score_board"]["pos"])
+        )
         self.draw_text(
             f"{state.statistics.score}",
             self.start_font,
             Colors.BLACK.value,
-            (1774, 323),
+            HUD_TEXT_POSITIONS["score"],
             center=True,
         )
 
-        self.screen.blit(lives_icon, self.pos((1632, 460)))
+        self.screen.blit(lives_icon, self.pos(HUD_IMAGES["lives_icon"]["pos"]))
         pygame.draw.rect(
             self.screen,
             Colors.CYAN.value,
-            self.rect((1632, 512, 149, 44)),
-            border_radius=self.radius(8),
+            self.rect(HUD_LABEL_RECTS["lives"]),
+            border_radius=self.radius(HUD_LABEL_RADIUS),
         )
         self.draw_text(
-            "LIVES", self.button_font, Colors.BLACK.value, (1663, 516)
+            "LIVES",
+            self.button_font,
+            Colors.BLACK.value,
+            HUD_TEXT_POSITIONS["lives_label"],
         )
         self.draw_text(
             f"{state.statistics.lives}",
             self.title_font,
             Colors.WHITE.value,
-            (1833, 492),
+            HUD_TEXT_POSITIONS["lives_value"],
         )
 
-        self.screen.blit(level_icon, self.pos((1632, 623)))
+        self.screen.blit(level_icon, self.pos(HUD_IMAGES["level_icon"]["pos"]))
         pygame.draw.rect(
             self.screen,
             Colors.CYAN.value,
-            self.rect((1632, 684, 149, 44)),
-            border_radius=self.radius(8),
+            self.rect(HUD_LABEL_RECTS["level"]),
+            border_radius=self.radius(HUD_LABEL_RADIUS),
         )
         self.draw_text(
-            "LEVEL", self.button_font, Colors.BLACK.value, (1658, 686)
+            "LEVEL",
+            self.button_font,
+            Colors.BLACK.value,
+            HUD_TEXT_POSITIONS["level_label"],
         )
         self.draw_text(
             f"{state.current_level + 1}",
             self.title_font,
             Colors.WHITE.value,
-            (1833, 683),
+            HUD_TEXT_POSITIONS["level_value"],
         )
 
-        self.screen.blit(timer_icon, self.pos((1632, 802)))
+        self.screen.blit(timer_icon, self.pos(HUD_IMAGES["timer_icon"]["pos"]))
         self.draw_text(
             f"{state.statistics.time_left}",
             self.start_font,
             Colors.WHITE.value,
-            (1833, 862),
+            HUD_TEXT_POSITIONS["timer"],
         )
 
         self.draw_button(self.play_back_button, self.button_font)
+        self.draw_button(self.next_level_button, self.button_font)
 
     # def draw_stats(self, state: GameState) -> None:
 
@@ -129,13 +171,17 @@ class PlayVisualMixin:
 
         colors = self.colors
 
-        font = pygame.font.SysFont("arial", self.y(24))
+        font = pygame.font.SysFont("arial", self.y(NEXT_BUTTON["font_size"]))
 
-        button_width = self.x(120)
-        button_height = self.y(50)
+        button_width = self.x(NEXT_BUTTON["width"])
+        button_height = self.y(NEXT_BUTTON["height"])
 
-        button_x = self.screen.get_width() - button_width - self.x(20)
-        button_y = self.y(40)
+        button_x = (
+            self.screen.get_width()
+            - button_width
+            - self.x(NEXT_BUTTON["right_margin"])
+        )
+        button_y = self.y(NEXT_BUTTON["top"])
 
         button_rect = pygame.Rect(
             button_x, button_y, button_width, button_height
@@ -273,6 +319,14 @@ class PlayVisualMixin:
                 px = state.MAZE_OFFSET_X + x * cell_size
                 py = state.MAZE_OFFSET_Y + y * cell_size
 
+                # if cell of 42 pattern, 4 walls, closed
+                if cell == 15:  
+                    pygame.draw.rect(
+                        self.screen,
+                        Colors.NEON_PINK.value,
+                        (px, py, cell_size, cell_size)
+                    )
+
                 # top wall
                 if cell & 1:
                     pygame.draw.line(
@@ -281,6 +335,7 @@ class PlayVisualMixin:
                         (px, py),
                         (px + cell_size, py),
                         self.radius(5),
+                        self.radius(MAZE_WALL_WIDTH),
                     )
 
                 # left wall
@@ -291,6 +346,7 @@ class PlayVisualMixin:
                         (px, py),
                         (px, py + cell_size),
                         self.radius(5),
+                        self.radius(MAZE_WALL_WIDTH),
                     )
 
                 # right wall (last column)
@@ -301,6 +357,7 @@ class PlayVisualMixin:
                         (px + cell_size, py),
                         (px + cell_size, py + cell_size),
                         self.radius(5),
+                        self.radius(MAZE_WALL_WIDTH),
                     )
 
                 # bottom wall (last row)
@@ -311,4 +368,5 @@ class PlayVisualMixin:
                         (px, py + cell_size),
                         (px + cell_size, py + cell_size),
                         self.radius(5),
+                        self.radius(MAZE_WALL_WIDTH),
                     )

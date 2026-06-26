@@ -62,7 +62,7 @@ class GameEngine:
 
         utils = EngineUtils()
         clock = pygame.time.Clock()
-        game.test_draw()
+        # game.test_draw()
         running = True
 
         while running:
@@ -88,7 +88,8 @@ class GameEngine:
                     # if lives <= 0: handle game over
 
             running = self.handle_events(game, state)
-            game.draw_play(state)
+            # game.draw_play(state)
+            game.draw_maze(state)
 
             utils.update_animation(state, dt)
             utils.update_direction(state)

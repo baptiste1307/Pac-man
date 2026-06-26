@@ -80,21 +80,13 @@ class VisualBaseMixin:
                 self.screen,
                 Colors.CYAN.value,
                 shade_rect,
-<<<<<<< HEAD
-                border_radius=self.radius(40),
-=======
                 border_radius=self.radius(BUTTON_OUTER_RADIUS),
->>>>>>> main
             )
             pygame.draw.rect(
                 self.screen,
                 stroke_and_text_color,
                 stroke_rect,
-<<<<<<< HEAD
-                border_radius=self.radius(40),
-=======
                 border_radius=self.radius(BUTTON_OUTER_RADIUS),
->>>>>>> main
             )
 
         elif hovered:
@@ -102,22 +94,14 @@ class VisualBaseMixin:
                 self.screen,
                 stroke_and_text_color,
                 stroke_rect,
-<<<<<<< HEAD
-                border_radius=self.radius(40),
-=======
                 border_radius=self.radius(BUTTON_OUTER_RADIUS),
->>>>>>> main
             )
 
         pygame.draw.rect(
             self.screen,
             button_color,
             button_rect,
-<<<<<<< HEAD
-            border_radius=self.radius(30),
-=======
             border_radius=self.radius(BUTTON_INNER_RADIUS),
->>>>>>> main
         )
 
         if hovered:

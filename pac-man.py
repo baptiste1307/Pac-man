@@ -1,6 +1,7 @@
 import sys
 from pacman.config import Parser
 from pacman.engine import GameEngine
+from pacman.errors import format_exception_error
 
 
 def main() -> None:
@@ -12,7 +13,7 @@ def main() -> None:
         engine.init_game(config)
 
     except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
+        print(format_exception_error(e), file=sys.stderr)
         sys.exit(1)
 
 

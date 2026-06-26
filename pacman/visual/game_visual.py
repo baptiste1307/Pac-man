@@ -1,6 +1,7 @@
 import pygame
 from dataclasses import dataclass
 from pacman.assets import LoadedAssets
+from pacman.wall_sprites import LoadedSprites
 from pacman.ui import Button, Colors
 from .menu_visual import MenuVisualMixin
 from .play_visual import PlayVisualMixin
@@ -79,6 +80,7 @@ class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
         height = int(info.current_h * INITIAL_WINDOW_SCALE)
         self.resize(width, height)
         self.assets = LoadedAssets()
+        self.sprites = LoadedSprites()
 
     def fit_to_design_ratio(self, width: int, height: int) -> tuple[int, int]:
         width = max(1, width)

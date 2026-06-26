@@ -38,11 +38,15 @@ class GameState:
 
     def update_target_position(self) -> None:
         self.target_x = (
-            self.MAZE_OFFSET_X + self.pacman_grid_x * self.current_cell_size
+            self.MAZE_OFFSET_X
+            + self.pacman_grid_x * self.current_cell_size
+            + self.wall_thickness
         )
 
         self.target_y = (
-            self.MAZE_OFFSET_Y + self.pacman_grid_y * self.current_cell_size
+            self.MAZE_OFFSET_Y
+            + self.pacman_grid_y * self.current_cell_size
+            + self.wall_thickness
         )
 
     def find_42_pattern_cells(self) -> list[tuple[int, int]]:
@@ -76,10 +80,14 @@ class GameState:
         self.pacman_grid_y = pacman_start_coords[1]
 
         self.pacman_x = (
-            self.MAZE_OFFSET_X + self.pacman_grid_x * self.current_cell_size
+            self.MAZE_OFFSET_X
+            + self.pacman_grid_x * self.current_cell_size
+            + self.wall_thickness
         )
         self.pacman_y = (
-            self.MAZE_OFFSET_Y + self.pacman_grid_y * self.current_cell_size
+            self.MAZE_OFFSET_Y
+            + self.pacman_grid_y * self.current_cell_size
+            + self.wall_thickness
         )
 
         pacman_start = (self.pacman_grid_x, self.pacman_grid_y)
@@ -106,6 +114,8 @@ class GameState:
         )
 
         self.current_cell_size = current_level.cell_size
+
+        self.wall_thickness = max(1, int(0.3 * self.current_cell_size))
 
         self.maze_width_pixel = (
             self.levels[self.current_level].width * self.current_cell_size

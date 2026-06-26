@@ -1,5 +1,4 @@
 import pygame
-import math
 
 from pacman.core import GameState
 from pacman.ui import Colors
@@ -182,11 +181,6 @@ class PlayVisualMixin:
     ) -> None:
         cell_size = state.current_cell_size
         thickness = state.wall_thickness
-        cell_padding = thickness
-
-        if asset_name == "dot":
-            thickness = None
-            cell_padding = 0
 
         asset = self.assets.get_image(
             name=asset_name,
@@ -208,12 +202,12 @@ class PlayVisualMixin:
             asset_rect.center = (
                 state.MAZE_OFFSET_X
                 + (x * cell_size)
-                + cell_padding
-                + ((cell_size - cell_padding) // 2),
+                + thickness
+                + ((cell_size - thickness) // 2),
                 state.MAZE_OFFSET_Y
                 + (y * cell_size)
-                + cell_padding
-                + ((cell_size - cell_padding) // 2),
+                + thickness
+                + ((cell_size - thickness) // 2),
             )
 
             self.screen.blit(asset, asset_rect)
@@ -269,253 +263,3 @@ class PlayVisualMixin:
                 sub_name="all",
                 frame_index=state.current_frame,
             )
-
-    def draw_wall(
-        self, sprite_name, start_x, start_y, cell_size, thickness
-    ) -> None:
-
-        sprite = self.sprites.get_sprite(sprite_name, cell_size, thickness)
-
-        self.screen.blit(sprite, (start_x, start_y))
-
-    def draw_end_of_walls(
-        self, px, py, cell, up_cell, right_cell, left_cell, down_cell
-    ) -> None:
-        wall_thickness = self.maze_wall_thickness
-
-        # end of wall left
-        if (
-            cell == 1
-            and up_cell
-            and not (up_cell & 8)
-            and left_cell
-            and not (left_cell & 1)
-            and not (left_cell & 2)
-        ):
-            pygame.draw.arc(
-                self.screen,
-                self.colors.WALL_BLUE.value,
-                pygame.Rect(
-                    px,
-                    py - wall_thickness // 2,
-                    wall_thickness,
-                    wall_thickness,
-                ),
-                math.pi / 2,
-                3 * math.pi / 2,
-                1,
-            )
-
-        # end of wall right
-        if (
-            cell & 1
-            and up_cell
-            and not (up_cell & 2)
-            and right_cell
-            and not (right_cell & 8)
-            and not (right_cell & 1)
-        ):
-
-            pygame.draw.arc(
-                self.screen,
-                self.colors.WALL_BLUE.value,
-                pygame.Rect(
-                    px,
-                    py - wall_thickness // 2,
-                    wall_thickness,
-                    wall_thickness,
-                ),
-                math.pi / 2,
-                3 * math.pi / 2,
-                1,
-            )
-
-    def draw_maze(self, state: GameState) -> None:
-        # 1,2,4,8 = N, E, S, W
-        # colors = self.colors
-
-        maze = state.current_maze
-        cell_size = state.current_cell_size
-
-        thickness = state.wall_thickness
-
-        rows = len(maze)
-        cols = len(maze[0])
-
-        for y, row in enumerate(maze):
-            for x, cell in enumerate(row):
-
-                left_cell = None
-                up_cell = None
-                down_cell = None
-                right_cell = None
-
-                if y > 0:
-                    up_cell = maze[y - 1][x]
-
-                if x > 0:
-                    left_cell = maze[y][x - 1]
-
-                if y < len(maze) - 1:
-                    down_cell = maze[y + 1][x]
-
-                if x < len(maze[0]) - 1:
-                    right_cell = maze[y][x + 1]
-
-                # up_right_cell = maze[y - 1][x + 1]
-                # down_right_cell = maze[y + 1][x + 1]
-                # up_left_cell = maze[y - 1][x - 1]
-                # down_left_cell = maze[y + 1][x - 1]
-
-                px = state.MAZE_OFFSET_X + x * cell_size
-                py = state.MAZE_OFFSET_Y + y * cell_size
-
-                # if cell of 42 pattern, 4 walls, closed
-                if cell == 15:
-                    pygame.draw.rect(
-                        self.screen,
-                        Colors.NEON_PINK.value,
-                        (px, py, cell_size, cell_size),
-                    )
-
-                # top wall
-                if cell & 1:
-                    if y == 0:
-                        self.draw_wall(
-                            "horizontal_wall",
-                            px,
-                            py,
-                            cell_size,
-                            thickness,
-                        )
-
-                    else:
-                        self.draw_wall(
-                            "horizontal_wall",
-                            px,
-                            py,
-                            cell_size,
-                            thickness,
-                        )
-
-                # left wall
-                if cell & 8:
-                    if x == 0:
-                        self.draw_wall(
-                            "vertical_wall",
-                            px,
-                            py,
-                            cell_size,
-                            thickness,
-                        )
-                    else:
-                        self.draw_wall(
-                            "vertical_wall",
-                            px,
-                            py,
-                            cell_size,
-                            thickness,
-                        )
-
-                # right wall
-                if x == cols - 1 and cell & 2:
-                    self.draw_wall(
-                        "vertical_wall",
-                        px + cell_size,
-                        py,
-                        cell_size,
-                        thickness,
-                    )
-
-                # bottom wall
-                if y == rows - 1 and cell & 4:
-                    self.draw_wall(
-                        "horizontal_wall",
-                        px,
-                        py + cell_size,
-                        cell_size,
-                        thickness,
-                    )
-
-                # CORNERS
-
-                # self.draw_end_of_walls(
-                #     px, py, cell, up_cell, right_cell, left_cell, down_cell
-                # )
-
-                # if (cell & 1) and (cell & 8):
-                #     if not (
-                #         (left_cell and (left_cell & 1))
-                #         and (up_cell and (up_cell & 8))
-                #     ):
-                #         self.draw_wall(
-                #             "wall_corner_north_west", px, py, thickness
-                #         )
-
-                # if (cell & 1) and (cell & 2):
-
-                #     if not (
-                #         (right_cell and (right_cell & 1))
-                #         and (up_cell and (up_cell & 2))
-                #     ):
-                #         self.draw_wall(
-                #             "wall_corner_north_east", px, py, thickness
-                #         )
-
-                # if (cell & 8) and (cell & 4):
-                #     if not (
-                #         (down_cell and (down_cell & 8))
-                #         and (left_cell and (left_cell & 4))
-                #     ):
-                #         self.draw_wall(
-                #             "wall_corner_south_west", px, py, thickness
-                #         )
-
-                # if (cell & 2) and (cell & 4):
-                #     if not (
-                #         (right_cell and (right_cell & 4))
-                #         and (down_cell and (down_cell & 2))
-                #     ):
-                #         self.draw_wall(
-                #             "wall_corner_south_east", px, py, thickness
-                #         )
-
-                # # top wall
-                # if cell & 1:
-                #     pygame.draw.line(
-                #         self.screen,
-                #         colors.WALL_BLUE.value,
-                #         (px, py),
-                #         (px + cell_size, py),
-                #         self.radius(MAZE_WALL_WIDTH),
-                #     )
-
-                # # left wall
-                # if cell & 8:
-                #     pygame.draw.line(
-                #         self.screen,
-                #         colors.WALL_BLUE.value,
-                #         (px, py),
-                #         (px, py + cell_size),
-                #         self.radius(MAZE_WALL_WIDTH),
-                #     )
-
-                # # right wall (last column)
-                # if x == (cols - 1) and (cell & 2):
-                #     pygame.draw.line(
-                #         self.screen,
-                #         colors.WALL_BLUE.value,
-                #         (px + cell_size, py),
-                #         (px + cell_size, py + cell_size),
-                #         self.radius(MAZE_WALL_WIDTH),
-                #     )
-
-                # # bottom wall (last row)
-                # if y == rows - 1 and (cell & 4):
-                #     pygame.draw.line(
-                #         self.screen,
-                #         colors.WALL_BLUE.value,
-                #         (px, py + cell_size),
-                #         (px + cell_size, py + cell_size),
-                #         self.radius(MAZE_WALL_WIDTH),
-                #     )

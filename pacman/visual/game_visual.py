@@ -4,6 +4,7 @@ from pacman.assets import LoadedAssets
 from pacman.wall_sprites import LoadedSprites
 from pacman.ui import Button, Colors
 from .menu_visual import MenuVisualMixin
+from .maze_visual import MazeVisualMixin
 from .play_visual import PlayVisualMixin
 from .visual_base import VisualBaseMixin
 
@@ -60,7 +61,12 @@ PLAY_AREA = {
 
 
 @dataclass
-class GameVisual(VisualBaseMixin, MenuVisualMixin, PlayVisualMixin):
+class GameVisual(
+    VisualBaseMixin,
+    MenuVisualMixin,
+    MazeVisualMixin,
+    PlayVisualMixin,
+):
     pygame.init()
     pygame.font.init()
 

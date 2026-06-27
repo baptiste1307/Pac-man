@@ -5,15 +5,14 @@ from pacman.ui import Colors
 
 
 class MazeVisualMixin:
-    def draw_wall(self, mask_value, x, y, cell_size, state) -> None:
-        thickness = state.wall_thickness
+    def draw_wall(self, mask_value, x, y, cell_size, state, thickness) -> None:
 
         sprite, (origin_x, origin_y) = self.sprites.get_sprite_by_mask(
             mask_value, cell_size, thickness
         )
 
-        maze_x = state.MAZE_OFFSET_X + x * cell_size
-        maze_y = state.MAZE_OFFSET_Y + y * cell_size
+        maze_x = state.MAZE_OFFSET_X + x * cell_size + thickness // 2
+        maze_y = state.MAZE_OFFSET_Y + y * cell_size + thickness // 2
 
         intersection_x = maze_x - origin_x
         intersection_y = maze_y - origin_y
@@ -70,6 +69,7 @@ class MazeVisualMixin:
         # 1,2,4,8 = N, E, S, W
         maze = state.current_maze
         cell_size = state.current_cell_size
+        thickness = state.wall_thickness
 
         # go through each cell of the maze
         for y, row in enumerate(maze):
@@ -79,10 +79,16 @@ class MazeVisualMixin:
 
                 # if cell of 42 pattern, 4 walls, closed
                 if cell == 15:
+                    half = thickness // 2
                     pygame.draw.rect(
                         self.screen,
                         Colors.NEON_PINK.value,
-                        (px, py, cell_size, cell_size),
+                        (
+                            px + half,
+                            py + half,
+                            cell_size - half,
+                            cell_size - half,
+                        ),
                     )
 
         rows = len(maze)
@@ -99,4 +105,4 @@ class MazeVisualMixin:
                 # if mask_value == 0:
                 #     continue
 
-                self.draw_wall(mask_value, x, y, cell_size, state)
+                self.draw_wall(mask_value, x, y, cell_size, state, thickness)

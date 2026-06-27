@@ -115,7 +115,7 @@ class GameState:
 
         self.current_cell_size = current_level.cell_size
 
-        self.wall_thickness = max(1, int(0.3 * self.current_cell_size))
+        self.wall_thickness = max(1, int(0.2 * self.current_cell_size))
 
         self.maze_width_pixel = (
             self.levels[self.current_level].width * self.current_cell_size

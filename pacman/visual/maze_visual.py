@@ -5,25 +5,30 @@ from pacman.ui import Colors
 
 
 class MazeVisualMixin:
-    def draw_wall(self, mask_value, x, y, cell_size, thickness, state) -> None:
-        sprite = self.sprites.get_sprite_by_mask(
+    def draw_wall(self, mask_value, x, y, cell_size, state) -> None:
+        thickness = state.wall_thickness
+
+        sprite, (origin_x, origin_y) = self.sprites.get_sprite_by_mask(
             mask_value, cell_size, thickness
         )
 
-        wall_x = state.MAZE_OFFSET_X + x * cell_size
-        wall_y = state.MAZE_OFFSET_Y + y * cell_size
+        maze_x = state.MAZE_OFFSET_X + x * cell_size
+        maze_y = state.MAZE_OFFSET_Y + y * cell_size
 
-        if mask_value in [8, 10, 12, 14]:
-            wall_x -= thickness
+        intersection_x = maze_x - origin_x
+        intersection_y = maze_y - origin_y
 
-        if mask_value in [1, 3, 5, 7]:
-            wall_y -= thickness
+        # if mask_value in [8, 10, 12, 14]:
+        #     wall_x -= thickness
 
-        if mask_value in [9, 11, 13, 15]:
-            wall_x -= thickness
-            wall_y -= thickness
+        # if mask_value in [1, 3, 5, 7]:
+        #     wall_y -= thickness
 
-        self.screen.blit(sprite, (wall_x, wall_y))
+        # if mask_value in [9, 11, 13, 15]:
+        #     wall_x -= thickness
+        #     wall_y -= thickness
+
+        self.screen.blit(sprite, (intersection_x, intersection_y))
 
     def get_mask_value(
         self, x: int, y: int, rows: int, cols: int, maze: list[list[int]]
@@ -91,53 +96,7 @@ class MazeVisualMixin:
 
                 mask_value = self.get_mask_value(x, y, rows, cols, maze)
 
-                if mask_value == 0:
-                    continue
+                # if mask_value == 0:
+                #     continue
 
-                self.draw_wall(
-                    mask_value, x, y, cell_size, state.wall_thickness, state
-                )
-
-                # dessiner le sprite correspondant au numero de mask
-
-                # OLD VERSION
-
-                # # top wall
-                # if cell & 1:
-                #     pygame.draw.line(
-                #         self.screen,
-                #         colors.WALL_BLUE.value,
-                #         (px, py),
-                #         (px + cell_size, py),
-                #         self.radius(MAZE_WALL_WIDTH),
-                #     )
-
-                # # left wall
-                # if cell & 8:
-                #     pygame.draw.line(
-                #         self.screen,
-                #         colors.WALL_BLUE.value,
-                #         (px, py),
-                #         (px, py + cell_size),
-                #         self.radius(MAZE_WALL_WIDTH),
-                #     )
-
-                # # right wall (last column)
-                # if x == (cols - 1) and (cell & 2):
-                #     pygame.draw.line(
-                #         self.screen,
-                #         colors.WALL_BLUE.value,
-                #         (px + cell_size, py),
-                #         (px + cell_size, py + cell_size),
-                #         self.radius(MAZE_WALL_WIDTH),
-                #     )
-
-                # # bottom wall (last row)
-                # if y == rows - 1 and (cell & 4):
-                #     pygame.draw.line(
-                #         self.screen,
-                #         colors.WALL_BLUE.value,
-                #         (px, py + cell_size),
-                #         (px + cell_size, py + cell_size),
-                #         self.radius(MAZE_WALL_WIDTH),
-                #     )
+                self.draw_wall(mask_value, x, y, cell_size, state)

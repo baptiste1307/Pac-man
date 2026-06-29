@@ -17,7 +17,7 @@ class Level:
 
     def _find_cell_size(self, level_width: int, level_height: int) -> int:
 
-        r_width, r_height = (
+        rectangle_width, rectangle_height = (
             self.game.black_rectangle_width,
             self.game.black_rectangle_height,
         )
@@ -25,7 +25,7 @@ class Level:
 
         return int(
             min(
-                (r_height * fill_ratio) // level_height,
-                (r_width * fill_ratio) // level_width,
+                (rectangle_height * fill_ratio) // level_height,
+                (rectangle_width * fill_ratio) // level_width,
             )
         )

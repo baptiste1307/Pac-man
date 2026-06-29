@@ -6,6 +6,7 @@ from .parsing_utils import (
     check_str_key,
     check_missing_mandatory_key,
 )
+from pacman.errors import format_current_error
 import json
 import argparse
 import sys
@@ -57,7 +58,7 @@ class Parser:
             return parser.parse_args()
 
         except (TypeError, SystemExit):
-            print("Error: invalid arguments.")
+            print(format_current_error("invalid arguments."))
             sys.exit(1)
 
     @staticmethod
@@ -78,17 +79,24 @@ class Parser:
             if not isinstance(config, dict):
                 # in case load_json raises no error even if the file contains
                 # not dict
-                print(f"Error: {path}: root JSON value must be an object.")
+                print(
+                    format_current_error(
+                        f"{path}: root JSON value must be an object."
+                    )
+                )
                 sys.exit(1)
             return config
         # json.loads() raises errors if invalid Json
         # so catching them here
         except json.JSONDecodeError as e:
-            print(f"Error: invalid JSON in {path}: {e}.")
+            print(format_current_error(f"invalid JSON in {path}: {e}."))
             sys.exit(1)
         except OSError as e:
             # system cannot open/read/write this file, even if it exists
-            print(f"Error: cannot read file {path}: {e}", file=sys.stderr)
+            print(
+                format_current_error(f"cannot read file {path}: {e}"),
+                file=sys.stderr,
+            )
             sys.exit(1)
 
     def check_json(

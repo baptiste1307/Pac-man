@@ -18,7 +18,11 @@ To-do:
 2. add a waiting(loading page) while the program is loading the maps(now is pure black screen).
 3. add good_job (when all pacgums are eaten) and game_over(when time's up or pacman is eaten by ghost) according to game result.
 
-5. Ghosts movement
+5. Ghosts movement: 
+Blinky -> position actuelle de Pacman
+Pinky -> 3 ou 4 cases devant Pacman
+Inky -> calcul un peu plus bizarre ou semi-aléatoire
+Clyde -> Pacman si loin, coin de départ si proche
 
 
 Done:

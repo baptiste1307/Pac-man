@@ -65,21 +65,25 @@ class LoadedAssets:
     def get_image(
         self,
         name: str,
-        maze_cell_size: int,
+        cell_size: int,
+        thickness: int | None = None,
         sub_name: str | None = None,
     ) -> pygame.Surface:
 
         asset = getattr(self, name)
 
-        asset_size = maze_cell_size - 5
-        dot_size = maze_cell_size
+        dot_size = max(1, int(cell_size * 0.8))
+
+        # for pacman and ghosts
+        if thickness:
+            asset_size = max(1, int(cell_size - thickness))
 
         # for pacgums only (small size)
         if isinstance(asset, pygame.Surface) and name == "dot":
             return pygame.transform.scale(asset, (dot_size, dot_size))
 
         # if asset only has one path
-        if isinstance(asset, pygame.Surface):
+        elif isinstance(asset, pygame.Surface):
             return pygame.transform.scale(asset, (asset_size, asset_size))
 
         # for asset pacman that has sub-pathes

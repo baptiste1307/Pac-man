@@ -1,7 +1,9 @@
 import pygame
+import sys
 from typing import Dict
 
 from pacman.ui import Colors
+from pacman.config.parsing import Parser
 
 HERO_POSITIONS = {
     "pacman": (383, 0),
@@ -21,9 +23,9 @@ INSTRUCTION_POSITIONS = {
     "left_right": (700, 572),
     "maze_text": (950, 572),
     "points_text": (700, 666),
-    "small_point": (1115, 666),
-    "super_point": (1115, 704),
-    "ghost_point": (1412, 780),
+    "small_point": (1115 + 20, 666),
+    "super_point": (1115 + 20, 704),
+    "ghost_point": (1412 + 20, 780),
     "small_value": (1070, 666),
     "super_value": (1068, 704),
     "ghost_value": (1346, 780),
@@ -68,6 +70,9 @@ class MenuVisualMixin:
         )
 
     def draw_instruction(self) -> None:
+        p = Parser()
+        p.parser_main(sys.argv)
+
         self.screen.blit(self.background_img, (0, 0))
         self.screen.blit(self.white_frame, self.pos(MENU_FRAME_POS))
         pygame.draw.rect(
@@ -90,7 +95,7 @@ class MenuVisualMixin:
             INSTRUCTION_POSITIONS["intro"],
         )
         self.draw_text(
-            "60 seconds!",
+            f"{p.level_max_time} seconds!",
             self.t_font,
             Colors.RED.value,
             INSTRUCTION_POSITIONS["time"],
@@ -146,19 +151,19 @@ class MenuVisualMixin:
             INSTRUCTION_POSITIONS["ghost_point"],
         )
         self.draw_text(
-            "10",
+            f"{p.points_per_pacgum}",
             self.t_font,
             Colors.RED.value,
             INSTRUCTION_POSITIONS["small_value"],
         )
         self.draw_text(
-            "50",
+            f"{p.points_per_super_pacgum}",
             self.t_font,
             Colors.RED.value,
             INSTRUCTION_POSITIONS["super_value"],
         )
         self.draw_text(
-            "200",
+            f"{p.points_per_ghost}",
             self.t_font,
             Colors.RED.value,
             INSTRUCTION_POSITIONS["ghost_value"],

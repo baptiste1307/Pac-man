@@ -14,9 +14,13 @@ class EngineUtils:
         maze: list[list[int]],
         grid_x: int,
         grid_y: int,
-        direction: str,
+        direction: str | None,
+        state: GameState,
     ) -> bool:
         cell = maze[grid_y][grid_x]
+
+        if state.status == "pause":
+            return False
 
         if direction == "up":
             return not (cell & 1)
@@ -37,26 +41,42 @@ class EngineUtils:
 
         state.reset_level()
 
-    def update_direction(self, state: GameState) -> None:
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_LEFT]:
-            state.wanted_direction = "left"
-        elif keys[pygame.K_RIGHT]:
-            state.wanted_direction = "right"
-        elif keys[pygame.K_UP]:
-            state.wanted_direction = "up"
-        elif keys[pygame.K_DOWN]:
-            state.wanted_direction = "down"
-
     def update_animation(self, state: GameState, dt: int) -> None:
+        if state.status != "play":
+            return
         state.animation_timer += dt
 
         if state.animation_timer >= state.animation_delay:
             state.animation_timer = 0
             state.current_frame = (state.current_frame + 1) % 3
 
+    def update_wanted_direction(self, state: GameState) -> None:
+        keys = pygame.key.get_pressed()
+
+        is_arrow = 0
+
+        if keys[pygame.K_LEFT]:
+            state.wanted_direction = "left"
+            is_arrow = 1
+        elif keys[pygame.K_RIGHT]:
+            state.wanted_direction = "right"
+            is_arrow = 1
+
+        elif keys[pygame.K_UP]:
+            state.wanted_direction = "up"
+            is_arrow = 1
+
+        elif keys[pygame.K_DOWN]:
+            state.wanted_direction = "down"
+            is_arrow = 1
+
+        if is_arrow == 1 and state.status == "pause":
+            state.status = "play"
+
     def update_pacman_target(self, state: GameState) -> None:
+        if state.status != "play" or state.wanted_direction is None:
+            return
+
         if (
             state.pacman_x != state.target_x
             or state.pacman_y != state.target_y
@@ -69,6 +89,7 @@ class EngineUtils:
             state.pacman_grid_x,
             state.pacman_grid_y,
             state.wanted_direction,
+            state,
         ):
             # the "official" direction is now the wanted direction
             state.direction = state.wanted_direction
@@ -77,7 +98,8 @@ class EngineUtils:
             state.current_maze,
             state.pacman_grid_x,
             state.pacman_grid_y,
-            state.direction
+            state.direction,
+            state,
         ):
             state.current_frame = 1
             return
@@ -98,10 +120,11 @@ class EngineUtils:
             state.pacgums.remove(current_cell)
             state.statistics.score += state.config["points_per_pacgum"]
 
-
         state.update_target_position()
 
     def move_pacman(self, state: GameState) -> None:
+        if state.status != "play":
+            return
         if state.pacman_x < state.target_x:
             state.pacman_x = min(
                 state.pacman_x + state.pacman_speed,

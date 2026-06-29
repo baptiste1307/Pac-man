@@ -214,7 +214,7 @@ class PlayVisualMixin:
 
     def draw_pacman(self, state: GameState) -> None:
 
-        direction = state.direction
+        direction = state.direction or "right"
         x = state.pacman_x
         y = state.pacman_y
         current_frame = state.current_frame

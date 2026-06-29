@@ -1,3 +1,4 @@
+import sys
 import pygame
 from dataclasses import dataclass
 from pacman.assets import LoadedAssets
@@ -182,7 +183,7 @@ class GameVisual(
         self.black_rectangle_width = self.x(PLAY_AREA["size"][0])
         self.black_rectangle_height = self.y(PLAY_AREA["size"][1])
 
-    def test_draw(self):
+    def main_menu(self):
         page = "hero"
         scores = {"huian": 300, "baptiste": 600, "allan": 200}
 
@@ -219,7 +220,7 @@ class GameVisual(
                         if pygame.Rect(self.exit_button.rect).collidepoint(
                             event_pos
                         ):
-                            running = False
+                            sys.exit(0)
                     elif page == "instruction":
                         if pygame.Rect(self.go_back_button.rect).collidepoint(
                             event_pos
@@ -256,4 +257,4 @@ class GameVisual(
 
 if __name__ == "__main__":
     v = GameVisual()
-    v.test_draw()
+    v.main_menu()

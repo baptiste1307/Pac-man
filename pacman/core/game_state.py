@@ -22,11 +22,12 @@ def get_levels(config: dict[str, Any], game: Any) -> list[Level]:
 class GameState:
     config: dict[str, Any]
     game: Any
+    status: str = "pause"
     current_level: int = 0
     pacman_speed: int = 4
-    direction: str = "right"
-    wanted_direction: str = "right"
-    current_frame: int = 0
+    direction: str | None = None
+    wanted_direction: str | None = None
+    current_frame: int = 1
     animation_timer: int = 0
     animation_delay: int = 60
     level_timer: int = 0
@@ -70,6 +71,10 @@ class GameState:
         return (x, y)
 
     def reset_level(self) -> None:
+        self.status = "pause"
+        self.direction = None
+        self.wanted_direction = None
+
         self.current_maze = self.levels[self.current_level].maze.maze
         self.update_level_layout()
 

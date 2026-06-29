@@ -27,7 +27,6 @@ Clyde -> Pacman si loin, coin de départ si proche
 
 mis-a-jour 25/06 (Game to-do):
 
-2.1. go_back button in play page doesn't work.
 2.2. start playing: idealy pac-man stays and wait for keyborad input.
 2.3. Ghosts movement: Finding shortest path between ghost and pacman, and ghost moves towards pacman. The level can be set based on ghost's speed.
 2.4. Super-pacgums eaten, the game in status: ghost_vulnerable? ghosts start to move away from pacman, and can be eaten, for 5 seconds?
@@ -40,6 +39,7 @@ mis-a-jour 25/06 (Game to-do):
 
 Done:
 
+2.1. go_back button in play page doesn't work.
 0.8. 42 in maze are not filled. (Play_visual.py L323 --> "if cell == 15")
 0.3. the timer go to negative when the countdown is finished => now it is reset to 0 and lives -= 1
 0.1. Next button - Error: list index out of range after the last level. (after level 10)

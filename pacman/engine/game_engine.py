@@ -8,7 +8,6 @@ from typing import Any
 
 
 class GameEngine:
-
     def handle_events(self, game: GameVisual, state: GameState) -> bool:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -17,12 +16,19 @@ class GameEngine:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
 
-                b_rect = pygame.Rect(game.next_level_button.rect)
-                if b_rect.collidepoint(mouse_pos):
+                next_button_rect = pygame.Rect(game.next_level_button.rect)
+                if next_button_rect.collidepoint(mouse_pos):
                     state.current_level += 1
                     if state.current_level >= len(state.levels):
                         state.current_level = 0
                     state.reset_level()
+
+                if pygame.Rect(game.play_back_button.rect).collidepoint(
+                    mouse_pos
+                ):
+                    state.current_level = 0
+                    state.reset_level()
+                    game.main_menu()
 
             if event.type == pygame.VIDEORESIZE:
                 game.resize(event.w, event.h)
@@ -35,23 +41,14 @@ class GameEngine:
         game: GameVisual,
         state: GameState,
     ) -> None:
-        # game.screen.fill(game.colors.BLACK.value)
-
-        # game.draw_stats(state)
 
         game.draw_maze(state)
-
         game.draw_pacman(state)
-
         game.draw_pacgums(state)
-
         game.draw_ghosts(state)
-
-        # game.draw_next_button()
-
         game.present()
 
-    def init_game(self, config: dict[str, Any]) -> None:
+    def init_game(self, config: dict[str, Any]) -> bool:
         game = GameVisual()
 
         pygame.init()
@@ -61,7 +58,7 @@ class GameEngine:
 
         utils = EngineUtils()
         clock = pygame.time.Clock()
-        game.test_draw()
+        game.main_menu()
         running = True
 
         while running:
@@ -90,10 +87,12 @@ class GameEngine:
             game.draw_play(state)
 
             utils.update_animation(state, dt)
-            utils.update_direction(state)
+            utils.update_wanted_direction(state)
             utils.update_pacman_target(state)
             utils.move_pacman(state)
 
             self.render(game, state)
+
+        game.main_menu()
 
         pygame.quit()

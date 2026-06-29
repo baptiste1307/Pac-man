@@ -195,7 +195,7 @@ class GameVisual(
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    sys.exit(0)
                 if event.type == pygame.VIDEORESIZE:
                     self.resize(event.w, event.h)
                 if event.type == pygame.MOUSEBUTTONDOWN:

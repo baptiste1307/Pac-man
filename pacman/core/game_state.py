@@ -6,16 +6,10 @@ from .statistics import Statistics
 from .level import Level
 
 
-def get_levels(config: dict[str, Any], game: Any) -> list[Level]:
-    levels: list[Level] = []
+def get_level(config: dict[str, Any], game: Any, level_index: int) -> Level:
 
-    for level in config["levels"]:
-        new_level = Level(
-            width=level["width"], height=level["height"], game=game
-        )
-        levels.append(new_level)
-
-    return levels
+    level = config["levels"][level_index]
+    return Level(width=level["width"], height=level["height"], game=game)
 
 
 @dataclass
@@ -23,7 +17,7 @@ class GameState:
     config: dict[str, Any]
     game: Any
     status: str = "pause"
-    current_level: int = 0
+    current_level_index: int = 0
     pacman_speed: int = 4
     direction: str | None = None
     wanted_direction: str | None = None
@@ -33,7 +27,6 @@ class GameState:
     level_timer: int = 0
 
     def __post_init__(self):
-        self.levels = get_levels(self.config, self.game)
         self.statistics = Statistics(config=self.config)
         self.reset_level()
 
@@ -75,7 +68,11 @@ class GameState:
         self.direction = None
         self.wanted_direction = None
 
-        self.current_maze = self.levels[self.current_level].maze.maze
+        self.level = get_level(
+            self.config, self.game, self.current_level_index
+        )
+
+        self.current_maze = self.level.maze.maze
         self.update_level_layout()
 
         self.fourty_two_cells = self.find_42_pattern_cells()
@@ -112,7 +109,7 @@ class GameState:
         self.statistics.time_left = self.statistics.level_max_time
 
     def update_level_layout(self) -> None:
-        current_level = self.levels[self.current_level]
+        current_level = self.level
         current_level.cell_size = current_level._find_cell_size(
             current_level.width,
             current_level.height,
@@ -123,11 +120,11 @@ class GameState:
         self.wall_thickness = max(1, int(0.30 * self.current_cell_size))
 
         self.maze_width_pixel = (
-            self.levels[self.current_level].width * self.current_cell_size
+            self.level.width * self.current_cell_size
         )
 
         self.maze_height_pixel = (
-            self.levels[self.current_level].height * self.current_cell_size
+            self.level.height * self.current_cell_size
         )
 
         self.MAZE_OFFSET_X = self.game.black_rectangle_start[0] + (

@@ -34,10 +34,10 @@ class EngineUtils:
         return False
 
     def next_level(self, state: GameState) -> None:
-        state.current_level += 1
+        state.current_level_index += 1
 
-        if state.current_level >= len(state.levels):
-            state.current_level = 0
+        if state.current_level_index >= len(state.config["levels"]):
+            state.current_level_index = 0
 
         state.reset_level()
 

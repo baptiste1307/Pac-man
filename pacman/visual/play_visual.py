@@ -1,13 +1,13 @@
 import pygame
-
+from pacman.assets import LoadedAssets
 from pacman.core import GameState
 from pacman.ui import Colors
 
-HUD_IMAGES = {
-    "score_board": {"size": (278, 278), "pos": (1632, 140)},
-    "lives_icon": {"size": (149, 149), "pos": (1632, 460)},
-    "level_icon": {"size": (149, 149), "pos": (1632, 623)},
-    "timer_icon": {"size": (149, 149), "pos": (1632, 802)},
+HUD_IMAGES_POS = {
+    "score_board": (1632, 140),
+    "lives_icon": (1632, 460),
+    "level_icon": (1632, 623),
+    "timer_icon": (1632, 802),
 }
 
 HUD_LABEL_RECTS = {
@@ -40,22 +40,6 @@ HUD_LABEL_RADIUS = 8
 class PlayVisualMixin:
 
     def draw_play(self, state: GameState):
-        score_board = pygame.transform.scale(
-            pygame.image.load("./img/play/score_board.png").convert_alpha(),
-            self.size(HUD_IMAGES["score_board"]["size"]),
-        )
-        lives_icon = pygame.transform.scale(
-            pygame.image.load("./img/play/lives.png").convert_alpha(),
-            self.size(HUD_IMAGES["lives_icon"]["size"]),
-        )
-        level_icon = pygame.transform.scale(
-            pygame.image.load("./img/play/level-badge.png").convert_alpha(),
-            self.size(HUD_IMAGES["level_icon"]["size"]),
-        )
-        timer_icon = pygame.transform.scale(
-            pygame.image.load("./img/play/time.png").convert_alpha(),
-            self.size(HUD_IMAGES["timer_icon"]["size"]),
-        )
 
         r_start_x, r_start_y = (
             self.black_rectangle_start[0],
@@ -75,7 +59,7 @@ class PlayVisualMixin:
             border_radius=self.radius(PLAY_AREA_RADIUS),
         )
         self.screen.blit(
-            score_board, self.pos(HUD_IMAGES["score_board"]["pos"])
+            self.score_board, self.pos(HUD_IMAGES_POS["score_board"])
         )
         self.draw_text(
             f"{state.statistics.score}",
@@ -85,7 +69,9 @@ class PlayVisualMixin:
             center=True,
         )
 
-        self.screen.blit(lives_icon, self.pos(HUD_IMAGES["lives_icon"]["pos"]))
+        self.screen.blit(
+            self.lives_icon, self.pos(HUD_IMAGES_POS["lives_icon"])
+        )
         pygame.draw.rect(
             self.screen,
             Colors.CYAN.value,
@@ -105,7 +91,9 @@ class PlayVisualMixin:
             HUD_TEXT_POSITIONS["lives_value"],
         )
 
-        self.screen.blit(level_icon, self.pos(HUD_IMAGES["level_icon"]["pos"]))
+        self.screen.blit(
+            self.level_icon, self.pos(HUD_IMAGES_POS["level_icon"])
+        )
         pygame.draw.rect(
             self.screen,
             Colors.CYAN.value,
@@ -119,13 +107,15 @@ class PlayVisualMixin:
             HUD_TEXT_POSITIONS["level_label"],
         )
         self.draw_text(
-            f"{state.current_level + 1}",
+            f"{state.current_level_index + 1}",
             self.title_font,
             Colors.WHITE.value,
             HUD_TEXT_POSITIONS["level_value"],
         )
 
-        self.screen.blit(timer_icon, self.pos(HUD_IMAGES["timer_icon"]["pos"]))
+        self.screen.blit(
+            self.timer_icon, self.pos(HUD_IMAGES_POS["timer_icon"])
+        )
         self.draw_text(
             f"{state.statistics.time_left}",
             self.start_font,
@@ -182,7 +172,10 @@ class PlayVisualMixin:
         cell_size = state.current_cell_size
         thickness = state.wall_thickness
 
-        asset = self.assets.get_image(
+        if self.assets is None:
+            self.assets = LoadedAssets()
+
+        asset = self.assets.get_asset(
             name=asset_name,
             cell_size=cell_size,
             sub_name=sub_name,
@@ -233,7 +226,7 @@ class PlayVisualMixin:
     def draw_pacgums(self, state: GameState) -> None:
 
         if len(state.pacgums) == 0:
-            state.current_level += 1
+            state.current_level_index += 1
             state.reset_level()
 
         for x, y in state.pacgums:
@@ -241,7 +234,7 @@ class PlayVisualMixin:
 
     def draw_ghosts(self, state: GameState) -> None:
         if len(state.pacgums) == 0:
-            state.current_level += 1
+            state.current_level_index += 1
             state.reset_level()
 
         maze = state.current_maze

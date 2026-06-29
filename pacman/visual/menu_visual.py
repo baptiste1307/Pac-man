@@ -9,6 +9,7 @@ HERO_POSITIONS = {
     "pacman": (383, 0),
     "credit": (875, 1094),
 }
+LOADING_POSITION = (760, 875)
 
 MENU_FRAME_POS = (365, 208)
 MENU_PANEL_RECT = (401, 258, 1356, 778)
@@ -62,6 +63,23 @@ class MenuVisualMixin:
         self.draw_button(self.instruction_button, self.button_font)
         self.draw_button(self.score_button, self.button_font)
         self.draw_button(self.exit_button, self.button_font)
+        self.draw_text(
+            "A lovely project by bpasquer & hliu",
+            self.text_font,
+            Colors.B_YELLOW.value,
+            HERO_POSITIONS["credit"],
+        )
+
+    def draw_load_game(self) -> None:
+        self.screen.blit(self.background_img, (0, 0))
+        self.screen.blit(self.pacman_img, self.pos(HERO_POSITIONS["pacman"]))
+        self.draw_button(self.load_back_button, self.button_font)
+        self.draw_text(
+            "Loading Your Games ...",
+            self.start_font,
+            Colors.WHITE.value,
+            LOADING_POSITION
+        )
         self.draw_text(
             "A lovely project by bpasquer & hliu",
             self.text_font,

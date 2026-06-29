@@ -38,6 +38,7 @@ BUTTON_SPECS = {
     "exit_button": (240, 58, 1311, 902, "Exit", (1390, 908), 4),
     "go_back_button": (160, 58, 1512, 912, "Go Back", (1523, 918), 2),
     "play_back_button": (160, 58, 1632, 1076, "Go Back", (1643, 1082), 2),
+    "load_back_button": (240, 58, 960, 972, "Go Back", (1000, 978), 4),
     "next_level_button": (
         200,
         58,
@@ -212,7 +213,7 @@ class GameVisual(
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    sys.exit(0)
                 if event.type == pygame.VIDEORESIZE:
                     self.resize(event.w, event.h)
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -221,7 +222,8 @@ class GameVisual(
                         if pygame.Rect(self.start_button.rect).collidepoint(
                             event_pos
                         ):
-                            page = "play"
+                            # page = "play"
+                            page = "loading"
                             pygame.mixer.music.stop()
                             pygame.mixer.music.load("./sounds/play_bgm.ogg")
                             pygame.mixer.music.set_volume(0.6)
@@ -239,6 +241,12 @@ class GameVisual(
                             event_pos
                         ):
                             sys.exit(0)
+                    elif page == "loading":
+                        if pygame.Rect(self.load_back_button.rect
+                                       ).collidepoint(
+                            event_pos
+                        ):
+                            page = "hero"
                     elif page == "instruction":
                         if pygame.Rect(self.go_back_button.rect).collidepoint(
                             event_pos
@@ -261,6 +269,8 @@ class GameVisual(
                             pygame.mixer.music.play(-1)
             if page == "hero":
                 self.draw_hero()
+            elif page == "loading":
+                self.draw_load_game()
             elif page == "instruction":
                 self.draw_instruction()
             elif page == "type_name":

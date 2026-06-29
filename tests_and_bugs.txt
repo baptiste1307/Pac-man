@@ -10,6 +10,8 @@ Discoveries:
 0.6. Global variables are found in visual, is it allowed? do we merge them?
 0.7. When clicking "exit" in main page, I got "Error: video system not initialized make: *** [run] Error 1"
 
+3.1 [instruction] Points according to config.txt in Page_instruction.
+
 
 
 To-do:
@@ -27,7 +29,7 @@ Clyde -> Pacman si loin, coin de départ si proche
 
 mis-a-jour 25/06 (Game to-do):
 
-2.1. go_back button in play page doesn't work.
+2.1. go_back button in play page doesn't work. => works now
 2.2. start playing: idealy pac-man stays and wait for keyborad input.
 2.3. Ghosts movement: Finding shortest path between ghost and pacman, and ghost moves towards pacman. The level can be set based on ghost's speed.
 2.4. Super-pacgums eaten, the game in status: ghost_vulnerable? ghosts start to move away from pacman, and can be eaten, for 5 seconds?

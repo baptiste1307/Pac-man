@@ -10,7 +10,6 @@ from typing import Any
 class GameEngine:
 
     def handle_events(self, game: GameVisual, state: GameState) -> bool:
-        # next_button = game.draw_next_button()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False

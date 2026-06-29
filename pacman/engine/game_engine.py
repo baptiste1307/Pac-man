@@ -8,7 +8,9 @@ from typing import Any
 
 
 class GameEngine:
-    def handle_events(self, game: GameVisual, state: GameState) -> bool:
+    def handle_events(
+        self, game: GameVisual, state: GameState, utils: EngineUtils
+    ) -> bool:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -18,15 +20,12 @@ class GameEngine:
 
                 next_button_rect = pygame.Rect(game.next_level_button.rect)
                 if next_button_rect.collidepoint(mouse_pos):
-                    state.current_level += 1
-                    if state.current_level >= len(state.levels):
-                        state.current_level = 0
-                    state.reset_level()
+                    utils.next_level(state)
 
                 if pygame.Rect(game.play_back_button.rect).collidepoint(
                     mouse_pos
                 ):
-                    state.current_level = 0
+                    state.current_level_index = 0
                     state.reset_level()
                     game.main_menu()
 
@@ -83,7 +82,7 @@ class GameEngine:
 
                     # if lives <= 0: handle game over
 
-            running = self.handle_events(game, state)
+            running = self.handle_events(game, state, utils)
             game.draw_play(state)
 
             utils.update_animation(state, dt)

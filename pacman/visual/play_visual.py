@@ -107,7 +107,7 @@ class PlayVisualMixin:
             HUD_TEXT_POSITIONS["level_label"],
         )
         self.draw_text(
-            f"{state.current_level + 1}",
+            f"{state.current_level_index + 1}",
             self.title_font,
             Colors.WHITE.value,
             HUD_TEXT_POSITIONS["level_value"],
@@ -226,7 +226,7 @@ class PlayVisualMixin:
     def draw_pacgums(self, state: GameState) -> None:
 
         if len(state.pacgums) == 0:
-            state.current_level += 1
+            state.current_level_index += 1
             state.reset_level()
 
         for x, y in state.pacgums:
@@ -234,7 +234,7 @@ class PlayVisualMixin:
 
     def draw_ghosts(self, state: GameState) -> None:
         if len(state.pacgums) == 0:
-            state.current_level += 1
+            state.current_level_index += 1
             state.reset_level()
 
         maze = state.current_maze

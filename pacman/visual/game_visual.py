@@ -1,8 +1,6 @@
 import sys
 import pygame
 from dataclasses import dataclass
-from pacman.assets import LoadedAssets
-from pacman.wall_sprites import Sprites
 from pacman.ui import Button, Colors
 from .menu_visual import MenuVisualMixin
 from .maze_visual import MazeVisualMixin
@@ -19,6 +17,10 @@ IMAGE_SIZES = {
     "instruc_img": (170, 115),
     "type_name_img": (507, 221),
     "score_img": (436, 436),
+    "score_board": (278, 278),
+    "lives_icon": (149, 149),
+    "level_icon": (149, 149),
+    "timer_icon": (149, 149),
 }
 
 BUTTON_SPECS = {
@@ -86,8 +88,8 @@ class GameVisual(
         width = int(info.current_w * INITIAL_WINDOW_SCALE)
         height = int(info.current_h * INITIAL_WINDOW_SCALE)
         self.resize(width, height)
-        self.assets = LoadedAssets()
-        self.sprites = Sprites()
+        self.assets = None
+        self.sprites = None
 
     def fit_to_design_ratio(self, width: int, height: int) -> tuple[int, int]:
         width = max(1, width)
@@ -152,6 +154,22 @@ class GameVisual(
         self.score_img = pygame.transform.scale(
             pygame.image.load("./img/score_img.png").convert_alpha(),
             self.size(IMAGE_SIZES["score_img"]),
+        )
+        self.score_board = pygame.transform.scale(
+            pygame.image.load("./img/play/score_board.png").convert_alpha(),
+            self.size(IMAGE_SIZES["score_board"]),
+        )
+        self.lives_icon = pygame.transform.scale(
+            pygame.image.load("./img/play/lives.png").convert_alpha(),
+            self.size(IMAGE_SIZES["lives_icon"]),
+        )
+        self.level_icon = pygame.transform.scale(
+            pygame.image.load("./img/play/level-badge.png").convert_alpha(),
+            self.size(IMAGE_SIZES["level_icon"]),
+        )
+        self.timer_icon = pygame.transform.scale(
+            pygame.image.load("./img/play/time.png").convert_alpha(),
+            self.size(IMAGE_SIZES["timer_icon"]),
         )
 
     def make_button(

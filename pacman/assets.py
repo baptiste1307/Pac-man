@@ -8,14 +8,6 @@ GHOSTS = {
     "pink_ghost": "pinky",
 }
 
-LEGACY_GHOST_FILES = {
-    "vulnerable_ghost": "assets/ghosts/blue_ghost.png",
-    "red_ghost": "assets/ghosts/blinky.png",
-    "orange_ghost": "assets/ghosts/clyde.png",
-    "blue_ghost": "assets/ghosts/inky.png",
-    "pink_ghost": "assets/ghosts/pinky.png",
-}
-
 ANIMATED_GHOST_FILES = {
     f"{name}_{direction}": {
         f"frame_{frame}": f"assets/ghosts/{folder}/{direction}/{frame}.png"
@@ -35,7 +27,6 @@ PACMAN_FILES = {
 }
 
 FILES = {
-    **LEGACY_GHOST_FILES,
     **ANIMATED_GHOST_FILES,
     "dot": "assets/other/dot.png",
     **PACMAN_FILES,
@@ -60,9 +51,11 @@ class LoadedAssets:
 
                 setattr(self, name, loaded_dict)
 
+        self.scaled_assets = {}
+
     # rescale the corresponding asset to perfectly fit current maze, according
     # to its cell size
-    def get_image(
+    def get_asset(
         self,
         name: str,
         cell_size: int,
@@ -70,21 +63,23 @@ class LoadedAssets:
         sub_name: str | None = None,
     ) -> pygame.Surface:
 
+        cache_key = (name, cell_size, thickness, sub_name)
+
+        if cache_key in self.scaled_assets:
+            return self.scaled_assets[cache_key]
+
         asset = getattr(self, name)
 
-        dot_size = max(1, int(cell_size * 0.8))
-
-        # for pacman and ghosts
-        if thickness:
-            asset_size = max(1, int(cell_size - thickness))
+        if name == "dot":
+            new_size = max(1, int(cell_size * 0.8))
+        else:
+            new_size = max(1, int(cell_size - thickness))
 
         # for pacgums only (small size)
-        if isinstance(asset, pygame.Surface) and name == "dot":
-            return pygame.transform.scale(asset, (dot_size, dot_size))
-
-        # if asset only has one path
-        elif isinstance(asset, pygame.Surface):
-            return pygame.transform.scale(asset, (asset_size, asset_size))
+        if isinstance(asset, pygame.Surface):
+            scaled_asset = pygame.transform.scale(asset, (new_size, new_size))
+            self.scaled_assets[cache_key] = scaled_asset
+            return scaled_asset
 
         # for asset pacman that has sub-pathes
         elif isinstance(asset, dict):
@@ -95,14 +90,14 @@ class LoadedAssets:
             # return all assets (open, half-open and closed)
             elif sub_name == "all":
                 return [
-                    pygame.transform.scale(asset[p], (asset_size, asset_size))
+                    pygame.transform.scale(asset[p], (new_size, new_size))
                     for p in asset
                 ]
 
             # return only one sub_path given by sub_name
             else:
                 return pygame.transform.scale(
-                    asset[sub_name], (asset_size, asset_size)
+                    asset[sub_name], (new_size, new_size)
                 )
 
         # if no "name" attribute

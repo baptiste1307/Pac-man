@@ -50,6 +50,7 @@ class GameEngine:
 
     def init_game(self, config: dict[str, Any]) -> bool:
         game = GameVisual()
+        game.main_menu()
 
         pygame.init()
         pygame.display.set_caption("Pac-Man")
@@ -58,7 +59,6 @@ class GameEngine:
 
         utils = EngineUtils()
         clock = pygame.time.Clock()
-        game.main_menu()
         running = True
 
         while running:

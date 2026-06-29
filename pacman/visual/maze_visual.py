@@ -2,10 +2,14 @@ import pygame
 
 from pacman.core import GameState
 from pacman.ui import Colors
+from pacman.wall_sprites import Sprites
 
 
 class MazeVisualMixin:
     def draw_wall(self, mask_value, x, y, cell_size, state, thickness) -> None:
+
+        if self.sprites is None:
+            self.sprites = Sprites()
 
         sprite, (origin_x, origin_y) = self.sprites.get_sprite_by_mask(
             mask_value, cell_size, thickness

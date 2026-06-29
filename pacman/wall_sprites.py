@@ -3,6 +3,10 @@ from pacman.ui.colors import Colors
 
 
 class Sprites:
+
+    def __init__(self):
+        self.sprite_cache = {}
+
     def get_sprite_by_mask(
         self,
         mask: int,
@@ -10,7 +14,14 @@ class Sprites:
         thickness: int,
     ) -> pygame.Surface:
 
-        return self.draw_wall_sprite(mask, cell_size, thickness)
+        cache_key = (mask, cell_size, thickness)
+
+        if cache_key not in self.sprite_cache:
+            self.sprite_cache[cache_key] = self.draw_wall_sprite(
+                mask, cell_size, thickness
+            )
+
+        return self.sprite_cache[cache_key]
 
     def draw_wall_sprite(
         self, mask, cell_size, thickness

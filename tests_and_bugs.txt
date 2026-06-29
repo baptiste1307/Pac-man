@@ -1,33 +1,46 @@
-Bugs:
+Discoveries:
 
-2. lives go to negative when the countdown is finished. => we stil need to handle game over (game_engine.py L88)
+0.2. lives go to negative when the countdown is finished. => we stil need to handle game over (game_engine.py L88)
 --> print a cool "game over" design on screen, enter name for scores table then go to main menu
 
-3. go_back button in play page doesn't work.
-
-4. Maps loading can be long --> we can't do anything, a-maze-ing package is sh*t...
+0.4. Maps loading can be long --> we can't do anything, a-maze-ing package is sh*t...
 --> but we can display a nice progress bar as you said
 
-5. make run should depend on make install, but the .whl will be unzipped again.
+0.5. make run should depend on make install, but the .whl will be unzipped again.
+0.6. Global variables are found in visual, is it allowed? do we merge them?
+0.7. When clicking "exit" in main page, I got "Error: video system not initialized make: *** [run] Error 1"
 
 
 
 To-do:
 
-1. cases min 169, cases max 400, min 10, max 20 à mettre dans readme
-2. add a waiting(loading page) while the program is loading the maps(now is pure black screen).
-3. add good_job (when all pacgums are eaten) and game_over(when time's up or pacman is eaten by ghost) according to game result.
+1.1. cases min 169, cases max 400, min 10, max 20 à mettre dans readme
+1.2. add a waiting(loading page) while the program is loading the maps(now is pure black screen).
+1.3. add good_job (when all pacgums are eaten) and game_over(when time's up or pacman is eaten by ghost) according to game result.
 
 5. Ghosts movement: 
 Blinky -> position actuelle de Pacman
 Pinky -> 3 ou 4 cases devant Pacman
 Inky -> calcul un peu plus bizarre ou semi-aléatoire
 Clyde -> Pacman si loin, coin de départ si proche
+1.5. Ghosts movement
+
+mis-a-jour 25/06 (Game to-do):
+
+2.1. go_back button in play page doesn't work.
+2.2. start playing: idealy pac-man stays and wait for keyborad input.
+2.3. Ghosts movement: Finding shortest path between ghost and pacman, and ghost moves towards pacman. The level can be set based on ghost's speed.
+2.4. Super-pacgums eaten, the game in status: ghost_vulnerable? ghosts start to move away from pacman, and can be eaten, for 5 seconds?
+2.5. When all pacgums are eaten, show "good_job" sign.
+2.6. When pac-man is eaten or time's up, show "game_over" sign.
+2.7. After "game_over" sign, if the "score" is made in top 10 of the history, pop page type_name for name registration.
+
+2.8. Add sound system. => added two background musics in play and other pages. Added eat pacman sound. Eating ghost, dead sound and other sounds will be added when the whole game engine is complet.
 
 
 Done:
 
-6. 42 in maze are not filled. (Play_visual.py L323 --> "if cell == 15")
-0. the timer go to negative when the countdown is finished => now it is reset to 0 and lives -= 1
-1. Next button - Error: list index out of range after the last level. (after level 10)
-4. add new next_level button, deleted old draw_next_button.
+0.8. 42 in maze are not filled. (Play_visual.py L323 --> "if cell == 15")
+0.3. the timer go to negative when the countdown is finished => now it is reset to 0 and lives -= 1
+0.1. Next button - Error: list index out of range after the last level. (after level 10)
+1.4. add new next_level button, deleted old draw_next_button.

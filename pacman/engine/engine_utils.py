@@ -3,6 +3,12 @@ from pacman.core import GameState
 
 
 class EngineUtils:
+    def __init__(self):
+        if not pygame.mixer.get_init():
+            pygame.mixer.init()
+        self.sound_eat = pygame.mixer.Sound("./sounds/sound_eat.mp3")
+        self.sound_eat.set_volume(0.4)
+
     def can_move(
         self,
         maze: list[list[int]],
@@ -88,8 +94,10 @@ class EngineUtils:
         current_cell = (state.pacman_grid_x, state.pacman_grid_y)
 
         if current_cell in state.pacgums:
+            self.sound_eat.play()
             state.pacgums.remove(current_cell)
             state.statistics.score += state.config["points_per_pacgum"]
+
 
         state.update_target_position()
 

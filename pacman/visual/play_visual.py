@@ -3,7 +3,6 @@ from pacman.assets import LoadedAssets
 from pacman.core import GameState
 from pacman.ui import Colors
 
-
 HUD_IMAGES_POS = {
     "score_board": (1632, 140),
     "lives_icon": (1632, 460),
@@ -173,7 +172,7 @@ class PlayVisualMixin:
         sub_name: str | None = None,
         frame_index: int | None = None,
     ) -> None:
-        cell_size = state.current_cell_size
+        cell_size = state.level.cell_size
         thickness = state.wall_thickness
 
         if self.assets is None:
@@ -192,7 +191,7 @@ class PlayVisualMixin:
         asset_rect = asset.get_rect()
         x, y = grid_position
 
-        if "pacman" in asset_name:
+        if "pacman" in asset_name or "ghost" in asset_name:
             self.screen.blit(asset, grid_position)
 
         else:
@@ -211,10 +210,9 @@ class PlayVisualMixin:
 
     def draw_pacman(self, state: GameState) -> None:
 
-        direction = state.direction or "right"
+        direction = state.pacman_direction or "right"
         x = state.pacman_x
         y = state.pacman_y
-        current_frame = state.current_frame
 
         if direction == "up":
             asset = "pacman_up"
@@ -225,7 +223,9 @@ class PlayVisualMixin:
         elif direction == "left":
             asset = "pacman_left"
 
-        self.draw_grid_asset(state, asset, (x, y), "all", current_frame)
+        self.draw_grid_asset(
+            state, asset, (x, y), "all", state.pacman_current_frame
+        )
 
     def draw_pacgums(self, state: GameState) -> None:
 
@@ -242,24 +242,15 @@ class PlayVisualMixin:
             state.current_level_index += 1
             state.reset_level()
 
-        maze = state.current_maze
-        last_row = len(maze) - 1
-        last_col = len(maze[0]) - 1
+        ghosts = [state.pinky, state.clyde, state.blinky, state.inky]
 
-        ghosts_start_positions = {
-            "red_ghost_right": (0, 0),
-            "pink_ghost_left": (last_col, 0),
-            "blue_ghost_right": (0, last_row),
-            "orange_ghost_left": (last_col, last_row),
-        }
-
-        for ghost, position in ghosts_start_positions.items():
+        for ghost in ghosts:
             self.draw_grid_asset(
                 state=state,
-                asset_name=ghost,
-                grid_position=position,
+                asset_name=f"{ghost.asset_name}_{ghost.direction}",
+                grid_position=(ghost.pixel_x, ghost.pixel_y),
                 sub_name="all",
-                frame_index=state.current_frame,
+                frame_index=state.ghost_current_frame,
             )
 
     def draw_game_over(self):
@@ -276,9 +267,15 @@ class PlayVisualMixin:
         start_time = pygame.time.get_ticks()
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 220))
+        good_job_rect = self.good_job.get_rect(
+            center=(
+                self.screen.get_width() // 2,
+                self.screen.get_height() // 2,
+            )
+        )
 
         while pygame.time.get_ticks() - start_time < 3000:
             self.screen.blit(overlay, (0, 0))
-            self.screen.blit(self.good_job, HUD_IMAGES_POS["game_over"])
+            self.screen.blit(self.good_job, good_job_rect)
             self.draw_button(self.play_back_button, self.button_font)
             pygame.display.flip()

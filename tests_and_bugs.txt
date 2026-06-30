@@ -36,6 +36,8 @@ mis-a-jour 25/06 (Game to-do):
 
 2.8. Add sound system. => added two background musics in play and other pages. Added eat pacman sound. Eating ghost, dead sound and other sounds will be added when the whole game engine is complet.
 
+3.0. If rectangular maze, center it on black screen
+3.1 if pacman touched by a ghost, respawn on center of the map, and the ghost respwan on his corner
 
 mis-a-jour 30/06 (to-do):
 

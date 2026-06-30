@@ -62,7 +62,7 @@ class MazeVisualMixin:
     def draw_maze(self, state: GameState) -> None:
         # 1,2,4,8 = N, E, S, W
         maze = state.current_maze
-        cell_size = state.current_cell_size
+        cell_size = state.level.cell_size
         thickness = state.wall_thickness
 
         # go through each cell of the maze

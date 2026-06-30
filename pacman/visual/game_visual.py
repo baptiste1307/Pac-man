@@ -189,20 +189,25 @@ class GameVisual(
         )
         self.volume_knob = pygame.transform.scale(
             pygame.image.load("./img/volume knob.png").convert_alpha(),
-            self.size(IMAGE_SIZES["volume_knob"]),)
+            self.size(IMAGE_SIZES["volume_knob"]),
+        )
 
-        self.track_rect = pygame.Rect(self.knob_x_left,
-                                      self.knob_y - 10,
-                                      self.knob_x_right - self.knob_x_left,
-                                      self.volume_knob.get_height() + 20)
+        self.track_rect = pygame.Rect(
+            self.knob_x_left,
+            self.knob_y - 10,
+            self.knob_x_right - self.knob_x_left,
+            self.volume_knob.get_height() + 20,
+        )
 
         self.game_over = pygame.transform.scale(
             pygame.image.load("./img/game_over .png").convert_alpha(),
-            self.size(IMAGE_SIZES["game_over"]))
+            self.size(IMAGE_SIZES["game_over"]),
+        )
 
         self.good_job = pygame.transform.scale(
             pygame.image.load("./img/good_job.png").convert_alpha(),
-            self.size(IMAGE_SIZES["game_over"]))
+            self.size(IMAGE_SIZES["game_over"]),
+        )
 
     def make_button(
         self,
@@ -283,7 +288,7 @@ class GameVisual(
                         ):
                             page = "hero"
                     elif page == "play":
-                        if self.game_over == True:
+                        if self.game_over is True:
                             print("HERE RIGHT?")
                         if pygame.Rect(
                             self.play_back_button.rect

@@ -48,7 +48,8 @@ class EngineUtils:
 
         if state.animation_timer >= state.animation_delay:
             state.animation_timer = 0
-            state.current_frame = (state.current_frame + 1) % 3
+            state.pacman_current_frame = (state.pacman_current_frame + 1) % 3
+            state.ghost_current_frame = (state.ghost_current_frame + 1) % 2
 
     def update_wanted_direction(self, state: GameState) -> None:
         keys = pygame.key.get_pressed()
@@ -101,7 +102,7 @@ class EngineUtils:
             state.direction,
             state,
         ):
-            state.current_frame = 1
+            state.pacman_current_frame = 1
             return
 
         if state.direction == "up":
@@ -125,6 +126,7 @@ class EngineUtils:
     def move_pacman(self, state: GameState) -> None:
         if state.status != "play":
             return
+
         if state.pacman_x < state.target_x:
             state.pacman_x = min(
                 state.pacman_x + state.pacman_speed,
@@ -146,3 +148,34 @@ class EngineUtils:
                 state.pacman_y - state.pacman_speed,
                 state.target_y,
             )
+
+    def move_ghosts(self, state: GameState) -> None:
+        if state.status != "play":
+            return
+
+        state.update_ghosts_targets()
+
+        for ghost in [state.blinky, state.pinky, state.inky, state.clyde]:
+            if ghost.pixel_x < ghost.pixel_target_x:
+                ghost.pixel_x = min(
+                    ghost.pixel_x + state.ghost_speed,
+                    ghost.pixel_target_x,
+                )
+
+            if ghost.pixel_x > ghost.pixel_target_x:
+                ghost.pixel_x = max(
+                    ghost.pixel_x - state.ghost_speed,
+                    ghost.pixel_target_x,
+                )
+
+            if ghost.pixel_y < ghost.pixel_target_y:
+                ghost.pixel_y = min(
+                    ghost.pixel_y + state.ghost_speed,
+                    ghost.pixel_target_y,
+                )
+
+            if ghost.pixel_y > ghost.pixel_target_y:
+                ghost.pixel_y = max(
+                    ghost.pixel_y - state.ghost_speed,
+                    ghost.pixel_target_y,
+                )

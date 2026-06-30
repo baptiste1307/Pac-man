@@ -89,6 +89,7 @@ class GameEngine:
             utils.update_wanted_direction(state)
             utils.update_pacman_target(state)
             utils.move_pacman(state)
+            utils.move_ghosts(state)
 
             self.render(game, state)
 

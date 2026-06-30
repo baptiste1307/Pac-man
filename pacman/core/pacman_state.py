@@ -3,26 +3,27 @@ from dataclasses import dataclass
 
 @dataclass
 class PacmanStateMixin:
-    pacman_speed: int = 3
+    pacman_speed: int = 2
     direction: str | None = None
     wanted_direction: str | None = None
+    pacman_current_frame: int = 1
 
     def update_target_position(self) -> None:
         self.target_x = (
             self.MAZE_OFFSET_X
-            + self.pacman_grid_x * self.current_cell_size
+            + self.pacman_grid_x * self.level.cell_size
             + self.wall_thickness
         )
 
         self.target_y = (
             self.MAZE_OFFSET_Y
-            + self.pacman_grid_y * self.current_cell_size
+            + self.pacman_grid_y * self.level.cell_size
             + self.wall_thickness
         )
 
     def find_start_coords(self) -> tuple[int, int]:
-        x = len(self.current_maze[0]) // 2
-        y = len(self.current_maze) // 2
+        x = self.level.width // 2
+        y = self.level.height // 2
         if (x, y) not in self.fourty_two_cells:
             return (x, y)
 
@@ -41,12 +42,12 @@ class PacmanStateMixin:
 
         self.pacman_x = (
             self.MAZE_OFFSET_X
-            + self.pacman_grid_x * self.current_cell_size
+            + self.pacman_grid_x * self.level.cell_size
             + self.wall_thickness
         )
         self.pacman_y = (
             self.MAZE_OFFSET_Y
-            + self.pacman_grid_y * self.current_cell_size
+            + self.pacman_grid_y * self.level.cell_size
             + self.wall_thickness
         )
 
@@ -65,10 +66,10 @@ class PacmanStateMixin:
 
     def set_pacman_start_position(self):
         self.pacman_x = (
-            self.MAZE_OFFSET_X + self.pacman_grid_x * self.current_cell_size
+            self.MAZE_OFFSET_X + self.pacman_grid_x * self.level.cell_size
         )
         self.pacman_y = (
-            self.MAZE_OFFSET_Y + self.pacman_grid_y * self.current_cell_size
+            self.MAZE_OFFSET_Y + self.pacman_grid_y * self.level.cell_size
         )
         self.target_x = self.pacman_x
         self.target_y = self.pacman_y

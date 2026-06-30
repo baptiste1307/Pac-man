@@ -12,7 +12,6 @@ class GameState(PacmanStateMixin, GhostStateMixin):
     game: Any
     status: str = "pause"
     current_level_index: int = 0
-    current_frame: int = 1
     animation_timer: int = 0
     animation_delay: int = 60
     level_timer: int = 0
@@ -45,24 +44,24 @@ class GameState(PacmanStateMixin, GhostStateMixin):
 
         self.update_level_layout()
         self.reset_pacman_state()
+        self.reset_ghosts_states()
 
         self.level_timer = 0
         self.statistics.time_left = self.statistics.level_max_time
 
     def update_level_layout(self) -> None:
-        current_level = self.level
-        current_level.cell_size = current_level._find_cell_size(
-            current_level.width,
-            current_level.height,
+        self.level.cell_size = self.level._find_cell_size(
+            self.level.width,
+            self.level.height,
         )
 
-        self.current_cell_size = current_level.cell_size
+        cell_size = self.level.cell_size
 
-        self.wall_thickness = max(1, int(0.30 * self.current_cell_size))
+        self.wall_thickness = max(1, int(0.30 * cell_size))
 
-        self.maze_width_pixel = self.level.width * self.current_cell_size
+        self.maze_width_pixel = self.level.width * cell_size
 
-        self.maze_height_pixel = self.level.height * self.current_cell_size
+        self.maze_height_pixel = self.level.height * cell_size
 
         self.MAZE_OFFSET_X = self.game.black_rectangle_start[0] + (
             (self.game.black_rectangle_width - self.maze_width_pixel) // 2

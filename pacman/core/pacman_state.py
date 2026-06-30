@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class PacmanStateMixin:
-    pacman_speed: int = 2
+    pacman_speed: int = 1.5
     direction: str | None = None
     wanted_direction: str | None = None
     pacman_current_frame: int = 1

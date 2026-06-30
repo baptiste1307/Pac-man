@@ -1,3 +1,0 @@
-
-3. Error handling for class Level(Mazegenerator integration)
-

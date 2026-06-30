@@ -36,6 +36,13 @@ mis-a-jour 25/06 (Game to-do):
 2.8. Add sound system. => added two background musics in play and other pages. Added eat pacman sound. Eating ghost, dead sound and other sounds will be added when the whole game engine is complet.
 
 
+mis-a-jour 30/06 (to-do):
+4.1 Logic for loading page to play page.
+4.2 Loading animation
+4.3 Volume bar
+4.4 Project Management
+
+
 Done:
 
 2.2. start playing: idealy pac-man stays and wait for keyborad input.

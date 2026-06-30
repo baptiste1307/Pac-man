@@ -222,8 +222,8 @@ class GameVisual(
                         if pygame.Rect(self.start_button.rect).collidepoint(
                             event_pos
                         ):
-                            # page = "play"
-                            page = "loading"
+                            page = "play"
+                            # page = "loading"
                             pygame.mixer.music.stop()
                             pygame.mixer.music.load("./sounds/play_bgm.ogg")
                             pygame.mixer.music.set_volume(0.6)
@@ -241,12 +241,12 @@ class GameVisual(
                             event_pos
                         ):
                             sys.exit(0)
-                    elif page == "loading":
-                        if pygame.Rect(self.load_back_button.rect
-                                       ).collidepoint(
-                            event_pos
-                        ):
-                            page = "hero"
+                    # elif page == "loading":
+                    #     if pygame.Rect(self.load_back_button.rect
+                    #                    ).collidepoint(
+                    #         event_pos
+                    #     ):
+                    #         page = "hero"
                     elif page == "instruction":
                         if pygame.Rect(self.go_back_button.rect).collidepoint(
                             event_pos

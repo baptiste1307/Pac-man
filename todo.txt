@@ -1,0 +1,6 @@
+
+3. Error handling for class Level(Mazegenerator integration)
+
+
+
+colorier cells 42 pattern en utilisant self.forty_two_Cells

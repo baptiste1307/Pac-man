@@ -1,0 +1,2 @@
+class GhostStateMixin:
+    pass

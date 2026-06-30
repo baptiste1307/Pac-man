@@ -21,16 +21,6 @@ class MazeVisualMixin:
         intersection_x = maze_x - origin_x
         intersection_y = maze_y - origin_y
 
-        # if mask_value in [8, 10, 12, 14]:
-        #     wall_x -= thickness
-
-        # if mask_value in [1, 3, 5, 7]:
-        #     wall_y -= thickness
-
-        # if mask_value in [9, 11, 13, 15]:
-        #     wall_x -= thickness
-        #     wall_y -= thickness
-
         self.screen.blit(sprite, (intersection_x, intersection_y))
 
     def get_mask_value(

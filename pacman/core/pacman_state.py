@@ -59,7 +59,12 @@ class PacmanStateMixin:
                     x,
                     y,
                 ) != pacman_start:
+<<<<<<< HEAD
                     self.pacgums.add((x, y))
+=======
+                    if len(self.pacgums) < 1:
+                        self.pacgums.add((x, y))
+>>>>>>> main
 
         self.target_x = self.pacman_x
         self.target_y = self.pacman_y

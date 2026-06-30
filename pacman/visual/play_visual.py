@@ -8,6 +8,8 @@ HUD_IMAGES_POS = {
     "lives_icon": (1632, 460),
     "level_icon": (1632, 623),
     "timer_icon": (1632, 802),
+    "volume_bar": (1933, 1163),
+    "game_over": (646, 371),
 }
 
 HUD_LABEL_RECTS = {
@@ -38,7 +40,6 @@ HUD_LABEL_RADIUS = 8
 
 
 class PlayVisualMixin:
-
     def draw_play(self, state: GameState):
 
         r_start_x, r_start_y = (
@@ -125,6 +126,8 @@ class PlayVisualMixin:
 
         self.draw_button(self.play_back_button, self.button_font)
         self.draw_button(self.next_level_button, self.button_font)
+        self.screen.blit(self.volume_bar, HUD_IMAGES_POS["volume_bar"])
+        self.screen.blit(self.volume_knob, (self.knob_x, self.knob_y))
 
     # DEBUG (to delete)
     def draw_next_button(self) -> pygame.Rect:
@@ -227,6 +230,7 @@ class PlayVisualMixin:
     def draw_pacgums(self, state: GameState) -> None:
 
         if len(state.pacgums) == 0:
+            self.draw_good_job()
             state.current_level_index += 1
             state.reset_level()
 
@@ -248,3 +252,30 @@ class PlayVisualMixin:
                 sub_name="all",
                 frame_index=state.ghost_current_frame,
             )
+
+    def draw_game_over(self):
+        # game_over_sound = pygame.mixer.Sound("./sounds/congrats.mp3")
+        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 220))
+        self.screen.blit(overlay, (0, 0))
+        self.screen.blit(self.game_over, HUD_IMAGES_POS["game_over"])
+        self.draw_button(self.play_back_button, self.button_font)
+        # game_over_sound.play()
+        # game_over_sound.set_volume(0.8)
+
+    def draw_good_job(self):
+        start_time = pygame.time.get_ticks()
+        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 220))
+        good_job_rect = self.good_job.get_rect(
+            center=(
+                self.screen.get_width() // 2,
+                self.screen.get_height() // 2,
+            )
+        )
+
+        while pygame.time.get_ticks() - start_time < 3000:
+            self.screen.blit(overlay, (0, 0))
+            self.screen.blit(self.good_job, good_job_rect)
+            self.draw_button(self.play_back_button, self.button_font)
+            pygame.display.flip()

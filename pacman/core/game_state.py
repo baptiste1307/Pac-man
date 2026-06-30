@@ -12,7 +12,7 @@ class GameState(PacmanStateMixin, GhostStateMixin):
     game: Any
     status: str = "pause"
     current_level_index: int = 0
-    pacman_speed: int = 2
+    pacman_speed: int = 5
     direction: str | None = None
     wanted_direction: str | None = None
     current_frame: int = 1

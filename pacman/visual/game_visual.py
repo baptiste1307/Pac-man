@@ -22,7 +22,8 @@ IMAGE_SIZES = {
     "level_icon": (149, 149),
     "timer_icon": (149, 149),
     "volume_bar": (228, 29),
-    "volume_knob": (53, 53)
+    "volume_knob": (53, 53),
+    "game_over": (537, 537),
 }
 
 BUTTON_SPECS = {
@@ -92,6 +93,7 @@ class GameVisual(
     knob_x = (knob_x_left + knob_x_right) // 2
     knob_y = 1150
     dragging = False
+    game_over = False
 
     def __post_init__(self):
         info = pygame.display.Info()
@@ -187,11 +189,15 @@ class GameVisual(
         )
         self.volume_knob = pygame.transform.scale(
             pygame.image.load("./img/volume knob.png").convert_alpha(),
-            self.size(IMAGE_SIZES["volume_knob"]),
-        )
-        self.track_rect = pygame.Rect(self.knob_x_left, self.knob_y - 10,
+            self.size(IMAGE_SIZES["volume_knob"]),)
+
+        self.track_rect = pygame.Rect(self.knob_x_left,
+                                      self.knob_y - 10,
                                       self.knob_x_right - self.knob_x_left,
                                       self.volume_knob.get_height() + 20)
+        self.game_over = pygame.transform.scale(
+            pygame.image.load("./img/game_over .png").convert_alpha(),
+            self.size(IMAGE_SIZES["game_over"]))
 
     def make_button(
         self,
@@ -272,6 +278,8 @@ class GameVisual(
                         ):
                             page = "hero"
                     elif page == "play":
+                        if self.game_over == True:
+                            print("HERE RIGHT?")
                         if pygame.Rect(
                             self.play_back_button.rect
                         ).collidepoint(event_pos):

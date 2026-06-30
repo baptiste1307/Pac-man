@@ -61,6 +61,8 @@ class GameEngine:
         game.draw_pacman(state)
         game.draw_pacgums(state)
         game.draw_ghosts(state)
+        if state.status == "game_over":
+            game.draw_game_over()
         game.present()
 
     def init_game(self, config: dict[str, Any]) -> bool:
@@ -78,33 +80,35 @@ class GameEngine:
 
         while running:
             dt = clock.tick(60)
-            state.level_timer += dt
-
-            # when 1 sec passed
-            if state.level_timer >= 1000:
-                state.level_timer = 0
-                state.statistics.time_left -= 1
-
-                if state.statistics.time_left <= 0:
-                    # lose a life
-                    state.statistics.lives -= 1
-                    # reset timer
-                    state.statistics.time_left = (
-                        state.statistics.level_max_time
-                    )
-                    # reset the same level if pacman still have lives
-                    if state.statistics.lives > 0:
-                        state.reset_level()
-
-                    # if lives <= 0: handle game over
-
+            # state.level_timer += dt
             running = self.handle_events(game, state, utils)
-            game.draw_play(state)
 
-            utils.update_animation(state, dt)
-            utils.update_wanted_direction(state)
-            utils.update_pacman_target(state)
-            utils.move_pacman(state)
+            if state.status != "game_over":
+                # when 1 sec passed
+                state.level_timer += dt
+                if state.level_timer >= 1000:
+                    state.level_timer = 0
+                    state.statistics.time_left -= 1
+                    if state.statistics.time_left <= 0:
+                        # lose a life
+                        state.statistics.lives -= 1
+                        # reset timer
+                        state.statistics.time_left = (
+                            state.statistics.level_max_time
+                        )
+                        # reset the same level if pacman still have lives
+                        if state.statistics.lives > 0:
+                            state.reset_level()
+                        # if lives <= 0: handle game over
+                        elif state.statistics.lives <= 0:
+                            state.status = "game_over"
+
+                utils.update_animation(state, dt)
+                utils.update_wanted_direction(state)
+                utils.update_pacman_target(state)
+                utils.move_pacman(state)
+
+            game.draw_play(state)
 
             self.render(game, state)
 

@@ -10,6 +10,7 @@ HUD_IMAGES_POS = {
     "level_icon": (1632, 623),
     "timer_icon": (1632, 802),
     "volume_bar": (1933, 1163),
+    "game_over": (646, 371),
 }
 
 HUD_LABEL_RECTS = {
@@ -259,3 +260,13 @@ class PlayVisualMixin:
                 sub_name="all",
                 frame_index=state.current_frame,
             )
+
+    def draw_game_over(self):
+        # game_over_sound = pygame.mixer.Sound("./sounds/congrats.mp3")
+        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 220))
+        self.screen.blit(overlay, (0, 0))
+        self.screen.blit(self.game_over, HUD_IMAGES_POS["game_over"])
+        self.draw_button(self.play_back_button, self.button_font)
+        # game_over_sound.play()
+        # game_over_sound.set_volume(0.8)

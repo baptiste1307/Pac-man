@@ -70,23 +70,6 @@ class MenuVisualMixin:
             HERO_POSITIONS["credit"],
         )
 
-    def draw_load_game(self) -> None:
-        self.screen.blit(self.background_img, (0, 0))
-        self.screen.blit(self.pacman_img, self.pos(HERO_POSITIONS["pacman"]))
-        self.draw_button(self.load_back_button, self.button_font)
-        self.draw_text(
-            "Loading Your Games ...",
-            self.start_font,
-            Colors.WHITE.value,
-            LOADING_POSITION
-        )
-        self.draw_text(
-            "A lovely project by bpasquer & hliu",
-            self.text_font,
-            Colors.B_YELLOW.value,
-            HERO_POSITIONS["credit"],
-        )
-
     def draw_instruction(self) -> None:
         p = Parser()
         p.parser_main(sys.argv)

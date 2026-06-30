@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pacman.ui import Button, Colors
 from .menu_visual import MenuVisualMixin
 from .maze_visual import MazeVisualMixin
-from .play_visual import PlayVisualMixin, HUD_TEXT_POSITIONS
+from .play_visual import PlayVisualMixin
 from .visual_base import VisualBaseMixin
 
 DESIGN_SIZE = (2160, 1280)

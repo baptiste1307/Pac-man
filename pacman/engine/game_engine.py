@@ -8,6 +8,9 @@ from typing import Any
 
 
 class GameEngine:
+    def __init__(self):
+        self.dragging = False
+
     def handle_events(
         self, game: GameVisual, state: GameState, utils: EngineUtils
     ) -> bool:

@@ -10,7 +10,6 @@ class GhostState:
     direction: str
     grid_x: int
     grid_y: int
-    current_frame: int = 0
     pixel_x: int = 0
     pixel_y: int = 0
     pixel_target_x: int = 0

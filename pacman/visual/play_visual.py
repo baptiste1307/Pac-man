@@ -207,7 +207,7 @@ class PlayVisualMixin:
 
     def draw_pacman(self, state: GameState) -> None:
 
-        direction = state.direction or "right"
+        direction = state.pacman_direction or "right"
         x = state.pacman_x
         y = state.pacman_y
 
@@ -246,5 +246,5 @@ class PlayVisualMixin:
                 asset_name=f"{ghost.asset_name}_{ghost.direction}",
                 grid_position=(ghost.pixel_x, ghost.pixel_y),
                 sub_name="all",
-                frame_index=ghost.current_frame,
+                frame_index=state.ghost_current_frame,
             )

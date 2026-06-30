@@ -14,7 +14,7 @@ class EngineUtils:
         maze: list[list[int]],
         grid_x: int,
         grid_y: int,
-        direction: str | None,
+        pacman_direction: str | None,
         state: GameState,
     ) -> bool:
         cell = maze[grid_y][grid_x]
@@ -22,13 +22,13 @@ class EngineUtils:
         if state.status == "pause":
             return False
 
-        if direction == "up":
+        if pacman_direction == "up":
             return not (cell & 1)
-        if direction == "right":
+        if pacman_direction == "right":
             return not (cell & 2)
-        if direction == "down":
+        if pacman_direction == "down":
             return not (cell & 4)
-        if direction == "left":
+        if pacman_direction == "left":
             return not (cell & 8)
 
         return False
@@ -57,25 +57,25 @@ class EngineUtils:
         is_arrow = 0
 
         if keys[pygame.K_LEFT]:
-            state.wanted_direction = "left"
+            state.pacman_wanted_direction = "left"
             is_arrow = 1
         elif keys[pygame.K_RIGHT]:
-            state.wanted_direction = "right"
+            state.pacman_wanted_direction = "right"
             is_arrow = 1
 
         elif keys[pygame.K_UP]:
-            state.wanted_direction = "up"
+            state.pacman_wanted_direction = "up"
             is_arrow = 1
 
         elif keys[pygame.K_DOWN]:
-            state.wanted_direction = "down"
+            state.pacman_wanted_direction = "down"
             is_arrow = 1
 
         if is_arrow == 1 and state.status == "pause":
             state.status = "play"
 
     def update_pacman_target(self, state: GameState) -> None:
-        if state.status != "play" or state.wanted_direction is None:
+        if state.status != "play" or state.pacman_wanted_direction is None:
             return
 
         if (
@@ -89,37 +89,30 @@ class EngineUtils:
             state.current_maze,
             state.pacman_grid_x,
             state.pacman_grid_y,
-            state.wanted_direction,
+            state.pacman_wanted_direction,
             state,
         ):
             # the "official" direction is now the wanted direction
-            state.direction = state.wanted_direction
+            state.pacman_direction = state.pacman_wanted_direction
 
         elif not self.can_move(
             state.current_maze,
             state.pacman_grid_x,
             state.pacman_grid_y,
-            state.direction,
+            state.pacman_direction,
             state,
         ):
             state.pacman_current_frame = 1
             return
 
-        if state.direction == "up":
+        if state.pacman_direction == "up":
             state.pacman_grid_y -= 1
-        elif state.direction == "right":
+        elif state.pacman_direction == "right":
             state.pacman_grid_x += 1
-        elif state.direction == "down":
+        elif state.pacman_direction == "down":
             state.pacman_grid_y += 1
-        elif state.direction == "left":
+        elif state.pacman_direction == "left":
             state.pacman_grid_x -= 1
-
-        current_cell = (state.pacman_grid_x, state.pacman_grid_y)
-
-        if current_cell in state.pacgums:
-            self.sound_eat.play()
-            state.pacgums.remove(current_cell)
-            state.statistics.score += state.config["points_per_pacgum"]
 
         state.update_target_position()
 
@@ -149,6 +142,38 @@ class EngineUtils:
                 state.target_y,
             )
 
+    def eat_touched_pacgums(self, state: GameState) -> None:
+        pacman_size = state.level.cell_size - state.wall_thickness
+        pacman_radius = pacman_size / 2
+        pacman_center_x = state.pacman_x + pacman_radius
+        pacman_center_y = state.pacman_y + pacman_radius
+        eaten_pacgums = []
+
+        for x, y in state.pacgums:
+            pacgum_center_x = (
+                state.MAZE_OFFSET_X
+                + x * state.level.cell_size
+                + state.wall_thickness
+                + ((state.level.cell_size - state.wall_thickness) // 2)
+            )
+            pacgum_center_y = (
+                state.MAZE_OFFSET_Y
+                + y * state.level.cell_size
+                + state.wall_thickness
+                + ((state.level.cell_size - state.wall_thickness) // 2)
+            )
+
+            distance_x = pacgum_center_x - pacman_center_x
+            distance_y = pacgum_center_y - pacman_center_y
+
+            if distance_x**2 + distance_y**2 <= pacman_radius**2:
+                eaten_pacgums.append((x, y))
+
+        for pacgum in eaten_pacgums:
+            state.pacgums.remove(pacgum)
+            state.statistics.score += state.config["points_per_pacgum"]
+            self.sound_eat.play()
+
     def move_ghosts(self, state: GameState) -> None:
         if state.status != "play":
             return
@@ -161,21 +186,25 @@ class EngineUtils:
                     ghost.pixel_x + state.ghost_speed,
                     ghost.pixel_target_x,
                 )
+                ghost.direction = "right"
 
-            if ghost.pixel_x > ghost.pixel_target_x:
+            elif ghost.pixel_x > ghost.pixel_target_x:
                 ghost.pixel_x = max(
                     ghost.pixel_x - state.ghost_speed,
                     ghost.pixel_target_x,
                 )
+                ghost.direction = "left"
 
             if ghost.pixel_y < ghost.pixel_target_y:
                 ghost.pixel_y = min(
                     ghost.pixel_y + state.ghost_speed,
                     ghost.pixel_target_y,
                 )
+                ghost.direction = "down"
 
-            if ghost.pixel_y > ghost.pixel_target_y:
+            elif ghost.pixel_y > ghost.pixel_target_y:
                 ghost.pixel_y = max(
                     ghost.pixel_y - state.ghost_speed,
                     ghost.pixel_target_y,
                 )
+                ghost.direction = "up"

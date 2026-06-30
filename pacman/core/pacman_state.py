@@ -4,8 +4,8 @@ from dataclasses import dataclass
 @dataclass
 class PacmanStateMixin:
     pacman_speed: int = 1.5
-    direction: str | None = None
-    wanted_direction: str | None = None
+    pacman_direction: str | None = None
+    pacman_wanted_direction: str | None = None
     pacman_current_frame: int = 1
 
     def update_target_position(self) -> None:
@@ -33,8 +33,8 @@ class PacmanStateMixin:
         return (x, y)
 
     def reset_pacman_state(self):
-        self.direction = None
-        self.wanted_direction = None
+        self.pacman_direction = None
+        self.pacman_wanted_direction = None
         pacman_start_coords = self.find_start_coords()
 
         self.pacman_grid_x = pacman_start_coords[0]

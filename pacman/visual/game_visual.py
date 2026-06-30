@@ -195,8 +195,13 @@ class GameVisual(
                                       self.knob_y - 10,
                                       self.knob_x_right - self.knob_x_left,
                                       self.volume_knob.get_height() + 20)
+
         self.game_over = pygame.transform.scale(
             pygame.image.load("./img/game_over .png").convert_alpha(),
+            self.size(IMAGE_SIZES["game_over"]))
+
+        self.good_job = pygame.transform.scale(
+            pygame.image.load("./img/good_job.png").convert_alpha(),
             self.size(IMAGE_SIZES["game_over"]))
 
     def make_button(

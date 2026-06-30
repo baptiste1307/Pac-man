@@ -230,6 +230,7 @@ class PlayVisualMixin:
     def draw_pacgums(self, state: GameState) -> None:
 
         if len(state.pacgums) == 0:
+            self.draw_good_job()
             state.current_level_index += 1
             state.reset_level()
 
@@ -270,3 +271,14 @@ class PlayVisualMixin:
         self.draw_button(self.play_back_button, self.button_font)
         # game_over_sound.play()
         # game_over_sound.set_volume(0.8)
+
+    def draw_good_job(self):
+        start_time = pygame.time.get_ticks()
+        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 220))
+
+        while pygame.time.get_ticks() - start_time < 3000:
+            self.screen.blit(overlay, (0, 0))
+            self.screen.blit(self.good_job, HUD_IMAGES_POS["game_over"])
+            self.draw_button(self.play_back_button, self.button_font)
+            pygame.display.flip()

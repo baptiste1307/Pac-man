@@ -53,9 +53,6 @@ SCORE_NAME_DASH_TOTAL = 17
 
 
 class MenuVisualMixin:
-    def draw_loading():
-        pass
-
     def draw_hero(self) -> None:
         self.screen.blit(self.background_img, (0, 0))
         self.screen.blit(self.pacman_img, self.pos(HERO_POSITIONS["pacman"]))

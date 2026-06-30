@@ -3,11 +3,13 @@ from pacman.assets import LoadedAssets
 from pacman.core import GameState
 from pacman.ui import Colors
 
+
 HUD_IMAGES_POS = {
     "score_board": (1632, 140),
     "lives_icon": (1632, 460),
     "level_icon": (1632, 623),
     "timer_icon": (1632, 802),
+    "volume_bar": (1933, 1163),
 }
 
 HUD_LABEL_RECTS = {
@@ -38,7 +40,6 @@ HUD_LABEL_RADIUS = 8
 
 
 class PlayVisualMixin:
-
     def draw_play(self, state: GameState):
 
         r_start_x, r_start_y = (
@@ -125,6 +126,8 @@ class PlayVisualMixin:
 
         self.draw_button(self.play_back_button, self.button_font)
         self.draw_button(self.next_level_button, self.button_font)
+        self.screen.blit(self.volume_bar, HUD_IMAGES_POS["volume_bar"])
+        self.screen.blit(self.volume_knob, (self.knob_x, self.knob_y))
 
     # DEBUG (to delete)
     def draw_next_button(self) -> pygame.Rect:

@@ -29,6 +29,7 @@ mis-a-jour 25/06 (Game to-do):
 
 2.3. Ghosts movement: Finding shortest path between ghost and pacman, and ghost moves towards pacman. The level can be set based on ghost's speed.
 2.4. Super-pacgums eaten, the game in status: ghost_vulnerable? ghosts start to move away from pacman, and can be eaten, for 5 seconds?
+
 2.5. When all pacgums are eaten, show "good_job" sign. [rect(571, 371, 537, 537)]
 2.6. When pac-man is eaten or time's up, show "game_over" sign.
 2.7. After "game_over" sign, if the "score" is made in top 10 of the history, pop page type_name for name registration.
@@ -37,10 +38,11 @@ mis-a-jour 25/06 (Game to-do):
 
 
 mis-a-jour 30/06 (to-do):
-4.1 Logic for loading page to play page.
-4.2 Loading animation
-4.3 Volume bar
-4.4 Project Management
+
+4.2. Loading animation
+
+4.4. Project Management
+4.5. Cheat-Mode (eg. Pause all ghosts / Remove all pacgums - success direct etc.)
 
 
 Done:
@@ -53,3 +55,5 @@ Done:
 1.4. add new next_level button, deleted old draw_next_button.
 2.1. go_back button in play page doesn't work. => works now OK
 3.1 [instruction] Points according to config.txt in Page_instruction. => OK
+4.1. Logic for loading page to play page. => ABORT, now the map loads one by one, no more need to wait.
+4.3. Volume bar => OK

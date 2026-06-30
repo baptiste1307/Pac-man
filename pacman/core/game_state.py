@@ -18,7 +18,7 @@ class GameState:
     game: Any
     status: str = "pause"
     current_level_index: int = 0
-    pacman_speed: int = 4
+    pacman_speed: int = 2
     direction: str | None = None
     wanted_direction: str | None = None
     current_frame: int = 1

@@ -29,9 +29,22 @@ class GameEngine:
                     state.reset_level()
                     game.main_menu()
 
+                if game.track_rect.collidepoint(mouse_pos):
+                    self.dragging = True
+
             if event.type == pygame.VIDEORESIZE:
                 game.resize(event.w, event.h)
                 state.refresh_layout()
+
+            if event.type == pygame.MOUSEMOTION and self.dragging:
+                mx, my = event.pos
+                if mx <= game.knob_x_right and mx >= game.knob_x_left:
+                    game.volume = 1 - (game.knob_x_right - mx) / (
+                        game.knob_x_right - game.knob_x_left)
+                    pygame.mixer.music.set_volume(game.volume)
+                    game.knob_x = mx
+            if event.type == pygame.MOUSEBUTTONUP:
+                self.dragging = False
 
         return True
 

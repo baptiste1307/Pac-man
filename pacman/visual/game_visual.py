@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pacman.ui import Button, Colors
 from .menu_visual import MenuVisualMixin
 from .maze_visual import MazeVisualMixin
-from .play_visual import PlayVisualMixin
+from .play_visual import PlayVisualMixin, HUD_TEXT_POSITIONS
 from .visual_base import VisualBaseMixin
 
 DESIGN_SIZE = (2160, 1280)
@@ -21,6 +21,8 @@ IMAGE_SIZES = {
     "lives_icon": (149, 149),
     "level_icon": (149, 149),
     "timer_icon": (149, 149),
+    "volume_bar": (228, 29),
+    "volume_knob": (53, 53)
 }
 
 BUTTON_SPECS = {
@@ -40,7 +42,7 @@ BUTTON_SPECS = {
     "play_back_button": (160, 58, 1632, 1076, "Go Back", (1643, 1082), 2),
     "load_back_button": (240, 58, 960, 972, "Go Back", (1000, 978), 4),
     "next_level_button": (
-        200,
+        216,
         58,
         1832,
         1076,
@@ -83,6 +85,13 @@ class GameVisual(
         "fonts/Bitcount_Prop_Double/BitcountPropDouble-VariableFont_"
         "CRSV,ELSH,ELXP,slnt,wght.ttf"
     )
+
+    volume = 0.5
+    knob_x_left = 1933
+    knob_x_right = 2142
+    knob_x = (knob_x_left + knob_x_right) // 2
+    knob_y = 1150
+    dragging = False
 
     def __post_init__(self):
         info = pygame.display.Info()
@@ -172,6 +181,17 @@ class GameVisual(
             pygame.image.load("./img/play/time.png").convert_alpha(),
             self.size(IMAGE_SIZES["timer_icon"]),
         )
+        self.volume_bar = pygame.transform.scale(
+            pygame.image.load("./img/volume bar.png").convert_alpha(),
+            self.size(IMAGE_SIZES["volume_bar"]),
+        )
+        self.volume_knob = pygame.transform.scale(
+            pygame.image.load("./img/volume knob.png").convert_alpha(),
+            self.size(IMAGE_SIZES["volume_knob"]),
+        )
+        self.track_rect = pygame.Rect(self.knob_x_left, self.knob_y - 10,
+                                      self.knob_x_right - self.knob_x_left,
+                                      self.volume_knob.get_height() + 20)
 
     def make_button(
         self,
@@ -204,7 +224,7 @@ class GameVisual(
 
     def main_menu(self):
         page = "hero"
-        scores = {"huian": 300, "baptiste": 600, "allan": 200}
+        scores = {"huian": 300, "baptiste": 600, "allan": 200, "james": 500}
 
         pygame.mixer.music.load("./sounds/background.ogg")
         pygame.mixer.music.play(-1)
@@ -213,6 +233,7 @@ class GameVisual(
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    running = False
                     sys.exit(0)
                 if event.type == pygame.VIDEORESIZE:
                     self.resize(event.w, event.h)
@@ -223,10 +244,9 @@ class GameVisual(
                             event_pos
                         ):
                             page = "play"
-                            # page = "loading"
                             pygame.mixer.music.stop()
                             pygame.mixer.music.load("./sounds/play_bgm.ogg")
-                            pygame.mixer.music.set_volume(0.6)
+                            pygame.mixer.music.set_volume(0.5)
                             pygame.mixer.music.play(-1)
 
                         if pygame.Rect(
@@ -241,12 +261,6 @@ class GameVisual(
                             event_pos
                         ):
                             sys.exit(0)
-                    # elif page == "loading":
-                    #     if pygame.Rect(self.load_back_button.rect
-                    #                    ).collidepoint(
-                    #         event_pos
-                    #     ):
-                    #         page = "hero"
                     elif page == "instruction":
                         if pygame.Rect(self.go_back_button.rect).collidepoint(
                             event_pos
@@ -261,8 +275,6 @@ class GameVisual(
                         if pygame.Rect(
                             self.play_back_button.rect
                         ).collidepoint(event_pos):
-                            # Maybe need to stop game
-                            # engine and then go back to hero?
                             page = "hero"
                             pygame.mixer.music.stop()
                             pygame.mixer.music.load("./sounds/background.ogg")

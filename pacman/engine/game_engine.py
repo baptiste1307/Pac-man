@@ -43,7 +43,8 @@ class GameEngine:
                 mx, my = event.pos
                 if mx <= game.knob_x_right and mx >= game.knob_x_left:
                     game.volume = 1 - (game.knob_x_right - mx) / (
-                        game.knob_x_right - game.knob_x_left)
+                        game.knob_x_right - game.knob_x_left
+                    )
                     pygame.mixer.music.set_volume(game.volume)
                     game.knob_x = mx
             if event.type == pygame.MOUSEBUTTONUP:
@@ -115,6 +116,7 @@ class GameEngine:
             utils.move_pacman(state)
             utils.eat_touched_pacgums(state)
             utils.move_ghosts(state)
+            utils.check_ghost_collisions(state)
 
             self.render(game, state)
 

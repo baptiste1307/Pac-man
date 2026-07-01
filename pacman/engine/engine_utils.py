@@ -174,6 +174,41 @@ class EngineUtils:
             state.statistics.score += state.config["points_per_pacgum"]
             self.sound_eat.play()
 
+    def check_ghost_collisions(self, state: GameState) -> None:
+        if state.status != "play":
+            return
+
+        entity_size = state.level.cell_size - state.wall_thickness
+        pacman_rect = pygame.Rect(
+            state.pacman_x,
+            state.pacman_y,
+            entity_size,
+            entity_size,
+        )
+
+        for ghost in state.ghosts:
+            ghost_rect = pygame.Rect(
+                ghost.pixel_x,
+                ghost.pixel_y,
+                entity_size,
+                entity_size,
+            )
+
+            if pacman_rect.colliderect(ghost_rect):
+                self.handle_pacman_hit_by_ghost(state)
+                return
+
+    def handle_pacman_hit_by_ghost(self, state: GameState) -> None:
+        state.statistics.lives -= 1
+
+        if state.statistics.lives <= 0:
+            state.status = "game_over"
+            return
+
+        state.reset_pacman_state()
+        state.reset_ghosts_states()
+        state.status = "pause"
+
     def move_ghosts(self, state: GameState) -> None:
         if state.status != "play":
             return

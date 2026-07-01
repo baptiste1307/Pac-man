@@ -256,7 +256,15 @@ class PlayVisualMixin:
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 220))
         self.screen.blit(overlay, (0, 0))
-        self.screen.blit(self.game_over, HUD_IMAGES_POS["game_over"])
+
+        game_over_rect = self.game_over.get_rect(
+            center=(
+                self.screen.get_width() // 2,
+                self.screen.get_height() // 2,
+            )
+        )
+
+        self.screen.blit(self.game_over, game_over_rect)
         self.draw_button(self.play_back_button, self.button_font)
         # game_over_sound.play()
         # game_over_sound.set_volume(0.8)

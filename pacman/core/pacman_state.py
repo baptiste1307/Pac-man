@@ -64,6 +64,7 @@ class PacmanStateMixin:
 
         self.target_x = self.pacman_x
         self.target_y = self.pacman_y
+        self.pacman_current_frame = 1
 
     def set_pacman_start_position(self):
         self.pacman_x = (

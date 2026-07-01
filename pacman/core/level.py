@@ -13,7 +13,7 @@ class Level:
 
     def __post_init__(self):
         self.cell_size = self._find_cell_size(self.width, self.height)
-        self.maze = MazeGenerator(size=(self.height, self.width))
+        self.maze = MazeGenerator(size=(self.width, self.height))
 
     def _find_cell_size(self, level_width: int, level_height: int) -> int:
 

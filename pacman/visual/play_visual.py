@@ -242,9 +242,7 @@ class PlayVisualMixin:
             state.current_level_index += 1
             state.reset_level()
 
-        ghosts = [state.pinky, state.clyde, state.blinky, state.inky]
-
-        for ghost in ghosts:
+        for ghost in state.ghosts:
             self.draw_grid_asset(
                 state=state,
                 asset_name=f"{ghost.asset_name}_{ghost.direction}",

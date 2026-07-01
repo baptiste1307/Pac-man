@@ -181,30 +181,33 @@ class EngineUtils:
         state.update_ghosts_targets()
 
         for ghost in [state.blinky, state.pinky, state.inky, state.clyde]:
-            if ghost.pixel_x < ghost.pixel_target_x:
-                ghost.pixel_x = min(
-                    ghost.pixel_x + state.ghost_speed,
-                    ghost.pixel_target_x,
-                )
-                ghost.direction = "right"
+            if ghost.pixel_x != ghost.pixel_target_x:
+                if ghost.pixel_x < ghost.pixel_target_x:
+                    ghost.pixel_x = min(
+                        ghost.pixel_x + state.ghost_speed,
+                        ghost.pixel_target_x,
+                    )
+                    ghost.direction = "right"
 
-            elif ghost.pixel_x > ghost.pixel_target_x:
-                ghost.pixel_x = max(
-                    ghost.pixel_x - state.ghost_speed,
-                    ghost.pixel_target_x,
-                )
-                ghost.direction = "left"
+                elif ghost.pixel_x > ghost.pixel_target_x:
+                    ghost.pixel_x = max(
+                        ghost.pixel_x - state.ghost_speed,
+                        ghost.pixel_target_x,
+                    )
+                    ghost.direction = "left"
 
-            if ghost.pixel_y < ghost.pixel_target_y:
-                ghost.pixel_y = min(
-                    ghost.pixel_y + state.ghost_speed,
-                    ghost.pixel_target_y,
-                )
-                ghost.direction = "down"
+            elif ghost.pixel_y != ghost.pixel_target_y:
 
-            elif ghost.pixel_y > ghost.pixel_target_y:
-                ghost.pixel_y = max(
-                    ghost.pixel_y - state.ghost_speed,
-                    ghost.pixel_target_y,
-                )
-                ghost.direction = "up"
+                if ghost.pixel_y < ghost.pixel_target_y:
+                    ghost.pixel_y = min(
+                        ghost.pixel_y + state.ghost_speed,
+                        ghost.pixel_target_y,
+                    )
+                    ghost.direction = "down"
+
+                elif ghost.pixel_y > ghost.pixel_target_y:
+                    ghost.pixel_y = max(
+                        ghost.pixel_y - state.ghost_speed,
+                        ghost.pixel_target_y,
+                    )
+                    ghost.direction = "up"

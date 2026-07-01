@@ -52,6 +52,13 @@ class PacmanStateMixin:
         )
 
         pacman_start = (self.pacman_grid_x, self.pacman_grid_y)
+        self.init_pacgums(pacman_start)
+
+        self.target_x = self.pacman_x
+        self.target_y = self.pacman_y
+        self.pacman_current_frame = 1
+
+    def init_pacgums(self, pacman_start: tuple[int, int]) -> None:
         self.pacgums = set()
         for y, row in enumerate(self.current_maze):
             for x, _ in enumerate(row):
@@ -61,16 +68,24 @@ class PacmanStateMixin:
                 ) != pacman_start:
                     self.pacgums.add((x, y))
 
+    def set_pacman_start_position(self):
+        self.pacman_direction = None
+        self.pacman_wanted_direction = None
+        pacman_start_coords = self.find_start_coords()
+
+        self.pacman_grid_x = pacman_start_coords[0]
+        self.pacman_grid_y = pacman_start_coords[1]
+
+        self.pacman_x = (
+            self.MAZE_OFFSET_X
+            + self.pacman_grid_x * self.level.cell_size
+            + self.wall_thickness
+        )
+        self.pacman_y = (
+            self.MAZE_OFFSET_Y
+            + self.pacman_grid_y * self.level.cell_size
+            + self.wall_thickness
+        )
         self.target_x = self.pacman_x
         self.target_y = self.pacman_y
         self.pacman_current_frame = 1
-
-    def set_pacman_start_position(self):
-        self.pacman_x = (
-            self.MAZE_OFFSET_X + self.pacman_grid_x * self.level.cell_size
-        )
-        self.pacman_y = (
-            self.MAZE_OFFSET_Y + self.pacman_grid_y * self.level.cell_size
-        )
-        self.target_x = self.pacman_x
-        self.target_y = self.pacman_y

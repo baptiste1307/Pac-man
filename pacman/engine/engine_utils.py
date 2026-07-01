@@ -205,7 +205,7 @@ class EngineUtils:
             state.status = "game_over"
             return
 
-        state.reset_pacman_state()
+        state.set_pacman_start_position()
         state.reset_ghosts_states()
         state.status = "pause"
 

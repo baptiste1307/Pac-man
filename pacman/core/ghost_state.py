@@ -53,7 +53,7 @@ class GhostStateMixin:
 
     def reset_ghosts_states(self):
 
-        self.ghost_speed = self.pacman_speed * 0.5
+        self.ghost_speed = self.pacman_speed * 0.6
         last_col, last_row = self.level.width - 1, self.level.height - 1
 
         self.blinky = GhostState(self, "red_ghost", "right", 0, 0)

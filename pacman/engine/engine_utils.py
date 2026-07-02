@@ -149,7 +149,10 @@ class EngineUtils:
         pacman_center_y = state.pacman_y + pacman_radius
         eaten_pacgums = []
 
-        for x, y in state.pacgums:
+        # add two sets together
+        pacgums_and_super_pacgums = state.pacgums | state.super_pacgums
+
+        for x, y in pacgums_and_super_pacgums:
             pacgum_center_x = (
                 state.MAZE_OFFSET_X
                 + x * state.level.cell_size
@@ -170,8 +173,15 @@ class EngineUtils:
                 eaten_pacgums.append((x, y))
 
         for pacgum in eaten_pacgums:
-            state.pacgums.remove(pacgum)
-            state.statistics.score += state.config["points_per_pacgum"]
+            if pacgum in state.pacgums:
+                state.pacgums.remove(pacgum)
+                state.statistics.score += state.config["points_per_pacgum"]
+            elif pacgum in state.super_pacgums:
+                state.super_pacgums.remove(pacgum)
+                state.statistics.score += state.config[
+                    "points_per_super_pacgum"
+                ]
+
             self.sound_eat.play()
 
     def check_ghost_collisions(self, state: GameState) -> None:

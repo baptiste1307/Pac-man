@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class PacmanStateMixin:
-    pacman_speed: int = 1
+    pacman_speed: int = 2
     pacman_direction: str | None = None
     pacman_wanted_direction: str | None = None
     pacman_current_frame: int = 1
@@ -60,13 +60,17 @@ class PacmanStateMixin:
 
     def init_pacgums(self, pacman_start: tuple[int, int]) -> None:
         self.pacgums = set()
+        self.super_pacgums = set()
         for y, row in enumerate(self.current_maze):
             for x, _ in enumerate(row):
-                if (x, y) not in self.fourty_two_cells and (
-                    x,
-                    y,
-                ) != pacman_start:
-                    self.pacgums.add((x, y))
+                if (
+                    (x, y) not in self.fourty_two_cells
+                    and (x, y) != pacman_start
+                ):
+                    if (x, y) in self.maze_corners_coords:
+                        self.super_pacgums.add((x, y))
+                    else:
+                        self.pacgums.add((x, y))
 
     def set_pacman_start_position(self):
         self.pacman_direction = None

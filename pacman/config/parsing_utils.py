@@ -99,7 +99,7 @@ def check_levels_key(
             )
 
         # Part 2: checking key values
-        max_size = 20  # (for performance)
+        max_size = 15  # (for performance)
         min_size = 10
         original_height = level["height"]
         original_width = level["width"]
@@ -116,17 +116,20 @@ def check_levels_key(
         if level["width"] > max_size:
             config["levels"][index]["width"] = max_size
 
+        max_cells_count = 225
+        min_cells_count = 100
+
         # case 3: height * width < 180 -> increase the smallest one
-        if (level["height"] * level["width"]) < 169:
-            while (level["height"] * level["width"]) < 169:
+        if (level["height"] * level["width"]) < min_cells_count:
+            while (level["height"] * level["width"]) < min_cells_count:
                 if level["height"] <= level["width"]:
                     level["height"] += 1
                 else:
                     level["width"] += 1
 
         # case 4: height * width > 400 -> decrease the biggest one
-        if (level["height"] * level["width"]) > 400:
-            while (level["height"] * level["width"]) > 400:
+        if (level["height"] * level["width"]) > max_cells_count:
+            while (level["height"] * level["width"]) > max_cells_count:
                 if level["height"] >= level["width"]:
                     level["height"] -= 1
                 else:

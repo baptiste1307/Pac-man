@@ -229,13 +229,16 @@ class PlayVisualMixin:
 
     def draw_pacgums(self, state: GameState) -> None:
 
-        if len(state.pacgums) == 0:
+        if len(state.pacgums) == 0 and len(state.super_pacgums) == 0:
             self.draw_good_job()
             state.current_level_index += 1
             state.reset_level()
 
         for x, y in state.pacgums:
-            self.draw_grid_asset(state, "dot", (x, y))
+            self.draw_grid_asset(state, "pacgum", (x, y))
+
+        for x, y in state.super_pacgums:
+            self.draw_grid_asset(state, "super_pacgum", (x, y))
 
     def draw_ghosts(self, state: GameState) -> None:
         if len(state.pacgums) == 0:

@@ -52,8 +52,16 @@ class GhostStateMixin:
     ghost_current_frame: int = 0
 
     def reset_ghosts_states(self):
+        cell_count = self.level.width * self.level.height
 
-        self.ghost_speed = self.pacman_speed * 0.6
+        if cell_count <= 100:
+            ghost_speed = self.pacman_speed * 0.6
+        elif cell_count > 100 and cell_count <= 170:
+            ghost_speed = self.pacman_speed * 0.8
+        elif cell_count > 170:
+            ghost_speed = self.pacman_speed
+
+        self.ghost_speed = ghost_speed
         last_col, last_row = self.level.width - 1, self.level.height - 1
 
         self.blinky = GhostState(self, "red_ghost", "right", 0, 0)

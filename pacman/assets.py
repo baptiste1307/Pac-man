@@ -28,7 +28,8 @@ PACMAN_FILES = {
 
 FILES = {
     **ANIMATED_GHOST_FILES,
-    "dot": "assets/other/dot.png",
+    "pacgum": "assets/other/dot.png",
+    "super_pacgum": "assets/other/super_pacgum.png",
     **PACMAN_FILES,
 }
 
@@ -70,8 +71,12 @@ class LoadedAssets:
 
         asset = getattr(self, name)
 
-        if name == "dot":
-            new_size = max(1, int(cell_size * 0.8))
+        if name == "pacgum":
+            new_size = max(1, int(cell_size * 0.1))
+
+        elif name == "super_pacgum":
+            new_size = max(1, int(cell_size * 0.4))
+
         else:
             new_size = max(1, int(cell_size - thickness))
 

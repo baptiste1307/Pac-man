@@ -13,7 +13,7 @@ class GameState(PacmanStateMixin, GhostStateMixin):
     status: str = "pause"
     current_level_index: int = 0
     animation_timer: int = 0
-    animation_delay: int = 60
+    animation_delay: int = 100
     level_timer: int = 0
 
     def __post_init__(self):
@@ -69,6 +69,16 @@ class GameState(PacmanStateMixin, GhostStateMixin):
         self.MAZE_OFFSET_Y = self.game.black_rectangle_start[1] + (
             (self.game.black_rectangle_height - self.maze_height_pixel) // 2
         )
+
+        last_row = self.level.height - 1
+        last_col = self.level.width - 1
+
+        self.maze_corners_coords = [
+            (0, 0),
+            (last_col, 0),
+            (0, last_row),
+            (last_col, last_row),
+        ]
 
     def refresh_layout(self) -> None:
         self.update_level_layout()

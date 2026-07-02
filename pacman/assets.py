@@ -75,7 +75,7 @@ class LoadedAssets:
             new_size = max(1, int(cell_size * 0.1))
 
         elif name == "super_pacgum":
-            new_size = max(1, int(cell_size * 0.4))
+            new_size = max(1, int(cell_size * 0.3))
 
         else:
             new_size = max(1, int(cell_size - thickness))

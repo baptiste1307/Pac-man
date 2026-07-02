@@ -1,7 +1,7 @@
 {
   "highscore_filename": "scores.json",
   "levels": [
-    { "width": 15, "height": 10, "seed": 42 },
+    { "width": 10, "height": 10, "seed": 42 },
     { "width": 10, "height": 10, "seed": 567832 },
     { "width": 10, "height": 10, "seed": 689432 },
     { "width": 10, "height": 10, "seed": 454545 },

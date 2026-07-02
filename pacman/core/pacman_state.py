@@ -71,6 +71,8 @@ class PacmanStateMixin:
                         self.super_pacgums.add((x, y))
                     else:
                         self.pacgums.add((x, y))
+                    # if len(self.pacgums) <= 1:
+                    #     self.pacgums.add((x, y))
 
     def set_pacman_start_position(self):
         self.pacman_direction = None

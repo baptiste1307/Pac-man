@@ -9,7 +9,8 @@ HUD_IMAGES_POS = {
     "level_icon": (1632, 623),
     "timer_icon": (1632, 802),
     "volume_bar": (1933, 1163),
-    "game_over": (827, 120),
+    "game_over": (827, 220),
+    "good_job": (827, 120),
 }
 
 HUD_LABEL_RECTS = {
@@ -231,7 +232,7 @@ class PlayVisualMixin:
     def draw_pacgums(self, state: GameState) -> None:
 
         if len(state.pacgums) == 0 and len(state.super_pacgums) == 0:
-            self.draw_good_job()
+            self.draw_good_job(state)
             state.current_level_index += 1
             state.reset_level()
 
@@ -270,13 +271,13 @@ class PlayVisualMixin:
         # game_over_sound.play()
         # game_over_sound.set_volume(0.8)
 
-    def draw_good_job(self):
+    def draw_good_job(self, state: GameState):
         start_time = pygame.time.get_ticks()
         clock = pygame.time.Clock()
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 220))
         good_job_rect = self.good_job.get_rect(
-            topleft=HUD_IMAGES_POS["game_over"]
+            topleft=HUD_IMAGES_POS["good_job"]
         )
 
         while pygame.time.get_ticks() - start_time < 3000:
@@ -286,8 +287,9 @@ class PlayVisualMixin:
             self.draw_text("Loading your next level...", self.title_font,
                            Colors.WHITE.value, HUD_TEXT_POSITIONS["loading"])
 
-            delta_time = clock.tick(60) / 1000
-            self.draw_loading_pacman(delta_time)
+            if state.current_level_index < 9:
+                delta_time = clock.tick(60) / 1000
+                self.draw_loading_pacman(delta_time)
             pygame.display.flip()
 
     def draw_loading_pacman(self, dt):

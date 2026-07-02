@@ -39,6 +39,7 @@ mis-a-jour 30/06 (to-do):
 4.6. After GAMEOVER, start should restart new games.
 4.7. Put fruits for INVINCIBLE mode.
 4.8. Go to type_name page when either GAMEOVER, or GOODJOB for level 10.
+4.9. When LEVEL10 Finish, do not draw_loading_pacman
 
 
 Done:

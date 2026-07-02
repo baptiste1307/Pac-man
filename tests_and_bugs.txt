@@ -1,34 +1,47 @@
+_____________________________________________________________________________________________
+
 Discoveries:
-
-
-
+_____________________________________________________________________________________________
 
 0.5. make run should depend on make install, but the .whl will be unzipped again.
 
-
+_____________________________________________________________________________________________
 
 To-do:
+_____________________________________________________________________________________________
 
-mis-a-jour 25/06 (Game to-do):
+----------------------
+mis-a-jour 25/06     |
+----------------------
 
 
 2.7. After "game_over" sign, if the "score" is made in top 10 of the history, pop page type_name for name registration.
-
 2.8. Add sound system. => added two background musics in play and other pages. Added eat pacman sound. Eating ghost, dead sound and other sounds will be added when the whole game engine is complet.
 
-
-mis-a-jour 30/06 (to-do):
+----------------------
+mis-a-jour 30/06     |
+----------------------
 
 4.2. Loading animation
-
 4.4. Project Management + README
 4.5. Cheat-Mode (eg. Pause all ghosts / Remove all pacgums - success direct etc.)
 4.7. Put fruits for INVINCIBLE mode.
 4.8. Go to type_name page when either GAMEOVER, or GOODJOB for level 10.
 4.9. When LEVEL10 Finish, do not draw_loading_pacman
 
+----------------------
+mis-a-jour 02/07     |
+----------------------
+
+5.1 Draw_good_job and draw_game_over: elements of the page needs to be centered (currently their 
+coordinates are harcoded ==> bad design practice and awful for screen adaptation)
+Currently, on macbook, only good job img is visible (moving ghosts and other stuff is outside the screen)
+
+_____________________________________________________________________________________________
 
 Done:
+_____________________________________________________________________________________________
+
 
 2.2. start playing: idealy pac-man stays and wait for keyborad input.
 2.1. go_back button in play page doesn't work.

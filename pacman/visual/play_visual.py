@@ -9,7 +9,7 @@ HUD_IMAGES_POS = {
     "level_icon": (1632, 623),
     "timer_icon": (1632, 802),
     "volume_bar": (1933, 1163),
-    "game_over": (646, 371),
+    "game_over": (827, 120),
 }
 
 HUD_LABEL_RECTS = {
@@ -24,6 +24,7 @@ HUD_TEXT_POSITIONS = {
     "level_label": (1658, 686),
     "level_value": (1833, 683),
     "timer": (1833, 862),
+    "loading": (698, 848),
 }
 
 NEXT_BUTTON = {
@@ -261,10 +262,7 @@ class PlayVisualMixin:
         self.screen.blit(overlay, (0, 0))
 
         game_over_rect = self.game_over.get_rect(
-            center=(
-                self.screen.get_width() // 2,
-                self.screen.get_height() // 2,
-            )
+            topleft=HUD_IMAGES_POS["game_over"]
         )
 
         self.screen.blit(self.game_over, game_over_rect)
@@ -274,17 +272,34 @@ class PlayVisualMixin:
 
     def draw_good_job(self):
         start_time = pygame.time.get_ticks()
+        clock = pygame.time.Clock()
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 220))
         good_job_rect = self.good_job.get_rect(
-            center=(
-                self.screen.get_width() // 2,
-                self.screen.get_height() // 2,
-            )
+            topleft=HUD_IMAGES_POS["game_over"]
         )
 
         while pygame.time.get_ticks() - start_time < 3000:
             self.screen.blit(overlay, (0, 0))
             self.screen.blit(self.good_job, good_job_rect)
             self.draw_button(self.play_back_button, self.button_font)
+            self.draw_text("Loading your next level...", self.title_font,
+                           Colors.WHITE.value, HUD_TEXT_POSITIONS["loading"])
+
+            delta_time = clock.tick(60) / 1000
+            self.draw_loading_pacman(delta_time)
             pygame.display.flip()
+
+    def draw_loading_pacman(self, dt):
+
+        self.loading_frame += 1
+        if (self.loading_frame // 10) % 2 == 0:
+            self.screen.blit(self.loading_pacman1,
+                             (self.current_point, self.loading_height))
+        else:
+            self.screen.blit(self.loading_pacman2,
+                             (self.current_point, self.loading_height))
+        if self.current_point < self.end_point:
+            self.current_point += self.loading_speed * dt
+        else:
+            self.current_point = self.start_point

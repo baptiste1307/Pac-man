@@ -3,9 +3,9 @@ from dataclasses import dataclass
 
 @dataclass
 class PacmanStateMixin:
-    # Speeds are expressed in pixels per second, not pixels per frame.
-    # This keeps movement stable on machines with different frame rates.
-    pacman_speed: float = 200
+    # Speeds are expressed in cells per second. The engine converts this to
+    # pixels each frame using the current cell size and delta time.
+    pacman_speed: float = 2
     pacman_direction: str | None = None
     pacman_wanted_direction: str | None = None
     pacman_current_frame: int = 1
@@ -69,12 +69,12 @@ class PacmanStateMixin:
                     x,
                     y,
                 ) != pacman_start:
-                    if (x, y) in self.maze_corners_coords:
-                        self.super_pacgums.add((x, y))
-                    else:
-                        self.pacgums.add((x, y))
-                    # if len(self.pacgums) <= 1:
+                    # if (x, y) in self.maze_corners_coords:
+                    #     self.super_pacgums.add((x, y))
+                    # else:
                     #     self.pacgums.add((x, y))
+                    if len(self.pacgums) <= 1:
+                        self.pacgums.add((x, y))
 
     def set_pacman_start_position(self):
         self.pacman_direction = None

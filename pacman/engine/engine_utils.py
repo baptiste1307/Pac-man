@@ -125,8 +125,8 @@ class EngineUtils:
         # Multiplying by dt_seconds converts a speed in pixels/second
         # into the exact distance to travel for this frame.
         dt_seconds = dt / 1000
-        # state.pacman_speed(px/s) * dt_seconds (s) = px
-        step = state.pacman_speed * dt_seconds
+        # state.pacman_speed(px/s) * cell_size(px) * dt_seconds (s) = px
+        step = state.pacman_speed * state.level.cell_size * dt_seconds
 
         if state.pacman_x < state.target_x:
             state.pacman_x = min(
@@ -251,7 +251,7 @@ class EngineUtils:
             # Each ghost has its own pixels/second speed. The frame distance
             # changes with dt, so a slower frame moves farther once,
             # not slower.
-            step = ghost.speed * dt_seconds
+            step = ghost.speed * state.level.cell_size * dt_seconds
 
             if ghost.pixel_x != ghost.pixel_target_x:
                 if ghost.pixel_x < ghost.pixel_target_x:

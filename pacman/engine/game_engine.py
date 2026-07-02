@@ -13,10 +13,10 @@ class GameEngine:
 
     def handle_events(
         self, game: GameVisual, state: GameState, utils: EngineUtils
-    ) -> bool:
+    ) -> str:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return False
+                return "quit"
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
@@ -28,9 +28,7 @@ class GameEngine:
                 if pygame.Rect(game.play_back_button.rect).collidepoint(
                     mouse_pos
                 ):
-                    state.current_level_index = 0
-                    state.reset_level()
-                    game.main_menu()
+                    return "menu"
 
                 if game.track_rect.collidepoint(mouse_pos):
                     self.dragging = True
@@ -47,10 +45,16 @@ class GameEngine:
                     )
                     pygame.mixer.music.set_volume(game.volume)
                     game.knob_x = mx
+
             if event.type == pygame.MOUSEBUTTONUP:
                 self.dragging = False
 
-        return True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F11:
+                    game.toggle_fullscreen()
+                    state.refresh_layout()
+
+            return "play"
 
     def render(
         self,
@@ -68,70 +72,73 @@ class GameEngine:
 
     def init_game(self, config: dict[str, Any]) -> bool:
         game = GameVisual()
-        game.main_menu()
 
         pygame.init()
         pygame.display.set_caption("Pac-Man")
 
-        state = GameState(config=config, game=game)
-
         utils = EngineUtils()
         clock = pygame.time.Clock()
-        running = True
+        app_running = True
 
-        while running:
-            # dt = time to display 60 frames
-            dt = clock.tick(60)
-            # state.level_timer += dt
-            running = self.handle_events(game, state, utils)
+        while app_running:
+            game.main_menu()
+            state = GameState(config=config, game=game)
 
-            if state.status != "game_over":
-                state.level_timer += dt
+            game_running = True
+            while game_running:
+                # time since previous frame (in ms)
+                dt = clock.tick(60)
+                event_result = self.handle_events(game, state, utils)
 
-                # when 1 sec passed
-                if state.level_timer >= 1000:
-                    state.level_timer = 0
-                    state.statistics.time_left -= 1
+                if event_result == "quit":
+                    app_running = False
+                    game_running = False
+                    continue
 
-                    for ghost in state.ghosts:
-                        if ghost.status == "vulnerable":
-                            ghost.vulnerable_timer += 1
+                if event_result == "menu":
+                    game_running = False
+                    continue
 
-                            if ghost.vulnerable_timer >= 10:
-                                ghost.status = "normal"
-                                ghost.speed = state.normal_ghost_speed
-                                ghost.vulnerable_timer = 0
+                if state.status != "game_over":
+                    state.level_timer += dt
 
-                    if state.statistics.time_left <= 0:
-                        # lose a life
-                        state.statistics.lives -= 1
-                        # reset timer
-                        state.statistics.time_left = (
-                            state.statistics.level_max_time
-                        )
-                        # reset the same level if pacman still have lives
-                        if state.statistics.lives > 0:
-                            state.reset_level()
-                        # if lives <= 0: handle game over
-                        elif state.statistics.lives <= 0:
-                            state.status = "game_over"
+                    # when 1 sec passed
+                    if state.level_timer >= 1000:
+                        state.level_timer = 0
+                        state.statistics.time_left -= 1
 
-                utils.update_animation(state, dt)
-                utils.update_wanted_direction(state)
-                utils.update_pacman_target(state)
-                utils.move_pacman(state)
+                        for ghost in state.ghosts:
+                            if ghost.status == "vulnerable":
+                                ghost.vulnerable_timer += 1
 
-            game.draw_play(state)
-            utils.update_animation(state, dt)
-            utils.update_wanted_direction(state)
-            utils.update_pacman_target(state)
-            utils.move_pacman(state)
-            utils.eat_touched_pacgums(state)
-            utils.move_ghosts(state)
-            utils.check_ghost_collisions(state)
+                                if ghost.vulnerable_timer >= 10:
+                                    ghost.status = "normal"
+                                    ghost.speed = state.normal_ghost_speed
+                                    ghost.vulnerable_timer = 0
 
-            self.render(game, state)
+                        if state.statistics.time_left <= 0:
+                            # lose a life
+                            state.statistics.lives -= 1
+                            # reset timer
+                            state.statistics.time_left = (
+                                state.statistics.level_max_time
+                            )
+                            # reset the same level if pacman still have lives
+                            if state.statistics.lives > 0:
+                                state.reset_level()
+                            # if lives <= 0: handle game over
+                            elif state.statistics.lives <= 0:
+                                state.status = "game_over"
 
-        game.main_menu()
+                    utils.update_animation(state, dt)
+                    utils.update_wanted_direction(state)
+                    utils.update_pacman_target(state)
+                    utils.move_pacman(state, dt)
+                    utils.eat_touched_pacgums(state)
+                    utils.move_ghosts(state, dt)
+                    utils.check_ghost_collisions(state)
+
+                game.draw_play(state)
+                self.render(game, state)
 
         pygame.quit()

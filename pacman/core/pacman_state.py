@@ -3,7 +3,9 @@ from dataclasses import dataclass
 
 @dataclass
 class PacmanStateMixin:
-    pacman_speed: int = 2
+    # Speeds are expressed in pixels per second, not pixels per frame.
+    # This keeps movement stable on machines with different frame rates.
+    pacman_speed: float = 120
     pacman_direction: str | None = None
     pacman_wanted_direction: str | None = None
     pacman_current_frame: int = 1
@@ -63,10 +65,10 @@ class PacmanStateMixin:
         self.super_pacgums = set()
         for y, row in enumerate(self.current_maze):
             for x, _ in enumerate(row):
-                if (
-                    (x, y) not in self.fourty_two_cells
-                    and (x, y) != pacman_start
-                ):
+                if (x, y) not in self.fourty_two_cells and (
+                    x,
+                    y,
+                ) != pacman_start:
                     if (x, y) in self.maze_corners_coords:
                         self.super_pacgums.add((x, y))
                     else:

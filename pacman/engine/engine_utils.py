@@ -117,29 +117,36 @@ class EngineUtils:
 
         state.update_target_position()
 
-    def move_pacman(self, state: GameState) -> None:
+    def move_pacman(self, state: GameState, dt: int) -> None:
         if state.status != "play":
             return
 
+        # clock.tick() returns milliseconds since last frame.
+        # Multiplying by dt_seconds converts a speed in pixels/second
+        # into the exact distance to travel for this frame.
+        dt_seconds = dt / 1000
+        # state.pacman_speed(px/s) * dt_seconds (s) = px
+        step = state.pacman_speed * dt_seconds
+
         if state.pacman_x < state.target_x:
             state.pacman_x = min(
-                state.pacman_x + state.pacman_speed,
+                state.pacman_x + step,
                 state.target_x,
             )
         elif state.pacman_x > state.target_x:
             state.pacman_x = max(
-                state.pacman_x - state.pacman_speed,
+                state.pacman_x - step,
                 state.target_x,
             )
 
         if state.pacman_y < state.target_y:
             state.pacman_y = min(
-                state.pacman_y + state.pacman_speed,
+                state.pacman_y + step,
                 state.target_y,
             )
         elif state.pacman_y > state.target_y:
             state.pacman_y = max(
-                state.pacman_y - state.pacman_speed,
+                state.pacman_y - step,
                 state.target_y,
             )
 
@@ -233,24 +240,30 @@ class EngineUtils:
             state.status = "game_over"
             return
 
-    def move_ghosts(self, state: GameState) -> None:
+    def move_ghosts(self, state: GameState, dt: int) -> None:
         if state.status != "play":
             return
 
         state.update_ghosts_targets()
+        dt_seconds = dt / 1000
 
         for ghost in [state.blinky, state.pinky, state.inky, state.clyde]:
+            # Each ghost has its own pixels/second speed. The frame distance
+            # changes with dt, so a slower frame moves farther once,
+            # not slower.
+            step = ghost.speed * dt_seconds
+
             if ghost.pixel_x != ghost.pixel_target_x:
                 if ghost.pixel_x < ghost.pixel_target_x:
                     ghost.pixel_x = min(
-                        ghost.pixel_x + ghost.speed,
+                        ghost.pixel_x + step,
                         ghost.pixel_target_x,
                     )
                     ghost.direction = "right"
 
                 elif ghost.pixel_x > ghost.pixel_target_x:
                     ghost.pixel_x = max(
-                        ghost.pixel_x - ghost.speed,
+                        ghost.pixel_x - step,
                         ghost.pixel_target_x,
                     )
                     ghost.direction = "left"
@@ -259,14 +272,14 @@ class EngineUtils:
 
                 if ghost.pixel_y < ghost.pixel_target_y:
                     ghost.pixel_y = min(
-                        ghost.pixel_y + ghost.speed,
+                        ghost.pixel_y + step,
                         ghost.pixel_target_y,
                     )
                     ghost.direction = "down"
 
                 elif ghost.pixel_y > ghost.pixel_target_y:
                     ghost.pixel_y = max(
-                        ghost.pixel_y - ghost.speed,
+                        ghost.pixel_y - step,
                         ghost.pixel_target_y,
                     )
                     ghost.direction = "up"

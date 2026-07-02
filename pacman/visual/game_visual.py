@@ -95,6 +95,7 @@ class GameVisual(
     knob_y = 1150
     dragging = False
     game_over = False
+    fullscreen = False
 
     def __post_init__(self):
         info = pygame.display.Info()
@@ -134,18 +135,27 @@ class GameVisual(
 
         return max(1, width), max(1, height)
 
-    def resize(self, width: int, height: int) -> None:
+    def resize(self, width: int, height: int, flags=pygame.RESIZABLE) -> None:
         self.screen_width, self.screen_height = self.fit_to_design_ratio(
             width, height
         )
         self.screen = pygame.display.set_mode(
             (self.screen_width, self.screen_height),
-            pygame.RESIZABLE,
+            flags,
         )
         self.load_fonts()
         self.load_images()
         self.load_buttons()
         self.load_play_area()
+
+    def toggle_fullscreen(self):
+        self.fullscreen = not self.fullscreen
+
+        if self.fullscreen:
+            info = pygame.display.Info()
+            self.resize(info.current_w, info.current_h, pygame.FULLSCREEN)
+        else:
+            self.resize(1280, 720, pygame.RESIZABLE)
 
     def font_size(self, value: int) -> int:
         return max(1, self.y(value))

@@ -6,23 +6,20 @@ from .shortest_path import find_shortest_path
 @dataclass
 class GhostState:
     state: Any
-    asset_name: str
-    direction: str
-    grid_x: int
-    grid_y: int
+    name: str
+    status: str = "normal"
     pixel_x: int = 0
     pixel_y: int = 0
     pixel_target_x: int = 0
     pixel_target_y: int = 0
+    vulnerable_timer = 0
     start_x: int | None = None
     start_y: int | None = None
     mode: str | None = None
 
     def __post_init__(self):
-        # self.last_pacman_coords = (
-        #     self.state.pacman_grid_x,
-        #     self.state.pacman_grid_y,
-        # )
+        self.set_attributes()
+        self.set_speed()
 
         self.pixel_x = (
             self.state.MAZE_OFFSET_X
@@ -38,39 +35,84 @@ class GhostState:
         self.pixel_target_x = self.pixel_x
         self.pixel_target_y = self.pixel_y
 
-        # only for clyde which moves back and forth between Pac-Man
-        # and its starting point.
+        self.start_x = self.grid_x
+        self.start_y = self.grid_y
+
         if self.asset_name == "orange_ghost":
-            self.start_x = self.grid_x
-            self.start_y = self.grid_y
             # "chase" or "scatter"
             self.mode = "chase"
+
+    def set_speed(self):
+        cell_count = self.state.level.width * self.state.level.height
+
+        if cell_count <= 100:
+            speed = self.state.pacman_speed * 0.6
+        elif cell_count > 100 and cell_count <= 170:
+            speed = self.state.pacman_speed * 0.8
+        elif cell_count > 170:
+            speed = self.state.pacman_speed
+
+        self.state.normal_ghost_speed = speed
+        self.state.vulnerable_ghost_speed = speed * 0.6
+        self.speed = speed
+
+    def set_attributes(self):
+        last_col, last_row = (
+            self.state.level.width - 1,
+            self.state.level.height - 1,
+        )
+
+        if self.name == "blinky":
+            self.asset_name = "red_ghost"
+            self.direction = "right"
+            self.grid_x = 0
+            self.grid_y = 0
+        if self.name == "pinky":
+            self.asset_name = "pink_ghost"
+            self.direction = "left"
+            self.grid_x = last_col
+            self.grid_y = 0
+        if self.name == "inky":
+            self.asset_name = "blue_ghost"
+            self.direction = "right"
+            self.grid_x = 0
+            self.grid_y = last_row
+        if self.name == "clyde":
+            self.asset_name = "orange_ghost"
+            self.direction = "left"
+            self.grid_x = last_col
+            self.grid_y = last_row
 
 
 @dataclass
 class GhostStateMixin:
     ghost_current_frame: int = 0
 
-    def reset_ghosts_states(self):
-        cell_count = self.level.width * self.level.height
+    def reset_ghosts_states(self, ghost: GhostState | None = None) -> None:
 
-        if cell_count <= 100:
-            ghost_speed = self.pacman_speed * 0.6
-        elif cell_count > 100 and cell_count <= 170:
-            ghost_speed = self.pacman_speed * 0.8
-        elif cell_count > 170:
-            ghost_speed = self.pacman_speed
+        # if only need to reset ONE ghost (given in param)
+        if ghost and ghost.status == "eaten":
+            new_ghost = GhostState(self, name=ghost.name)
 
-        self.ghost_speed = ghost_speed
-        last_col, last_row = self.level.width - 1, self.level.height - 1
+            if ghost.name == "blinky":
+                self.blinky = new_ghost
+            elif ghost.name == "pinky":
+                self.pinky = new_ghost
+            elif ghost.name == "inky":
+                self.inky = new_ghost
+            elif ghost.name == "clyde":
+                self.clyde = new_ghost
 
-        self.blinky = GhostState(self, "red_ghost", "right", 0, 0)
-        self.pinky = GhostState(self, "pink_ghost", "left", last_col, 0)
-        self.inky = GhostState(self, "blue_ghost", "right", 0, last_row)
-        self.clyde = GhostState(
-            self, "orange_ghost", "left", last_col, last_row
-        )
-        self.ghosts = [self.blinky, self.pinky, self.clyde, self.inky]
+            self.ghosts = [self.blinky, self.pinky, self.clyde, self.inky]
+            return
+
+        # reset all ghosts states
+        else:
+            self.blinky = GhostState(self, "blinky")
+            self.pinky = GhostState(self, "pinky")
+            self.inky = GhostState(self, "inky")
+            self.clyde = GhostState(self, "clyde")
+            self.ghosts = [self.blinky, self.pinky, self.clyde, self.inky]
 
     def update_ghosts_targets(self):
 
@@ -89,19 +131,23 @@ class GhostStateMixin:
                 continue
 
             start = (ghost.grid_x, ghost.grid_y)
-            if ghost == self.blinky:
-                # blinky's target is pacman
-                goal = (self.pacman_grid_x, self.pacman_grid_y)
-            elif ghost == self.pinky:
-                # pinky's target is a few cells around pacman
-                goal = self.find_goal_near_pacman(self.pinky)
-            elif ghost == self.clyde:
-                # clyde's target alternates between pacman (chase mode)
-                # and his starting point (scatter mode)
-                goal = self.find_clyde_goal()
-            elif ghost == self.inky:
-                # inky's position is the opposite of blinky's one
-                goal = self.find_inky_goal()
+            if ghost.status == "normal":
+                if ghost == self.blinky:
+                    # blinky's target is pacman
+                    goal = (self.pacman_grid_x, self.pacman_grid_y)
+                elif ghost == self.pinky:
+                    # pinky's target is a few cells around pacman
+                    goal = self.find_goal_near_pacman(self.pinky)
+                elif ghost == self.clyde:
+                    # clyde's target alternates between pacman (chase mode)
+                    # and his starting point (scatter mode)
+                    goal = self.find_clyde_goal()
+                elif ghost == self.inky:
+                    # inky's position is the opposite of blinky's one
+                    goal = self.find_inky_goal()
+
+            elif ghost.status == "vulnerable":
+                goal = (ghost.start_x, ghost.start_y)
 
             path = find_shortest_path(self.current_maze, start, goal)
 

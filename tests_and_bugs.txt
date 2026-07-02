@@ -9,26 +9,14 @@ Discoveries:
 
 To-do:
 
-1.1. cases min 169, cases max 400, min 10, max 20 à mettre dans readme
-
-5. Ghosts movement: 
-Blinky -> position actuelle de Pacman
-Pinky -> 3 ou 4 cases devant Pacman
-Inky -> calcul un peu plus bizarre ou semi-aléatoire
-Clyde -> Pacman si loin, coin de départ si proche
-1.5. Ghosts movement
-
 mis-a-jour 25/06 (Game to-do):
 
-2.4. Super-pacgums eaten, the game in status: ghost_vulnerable? ghosts start to move away from pacman, and can be eaten, for 5 seconds?
 
-2.5. When all pacgums are eaten, show "good_job" sign. [rect(571, 371, 537, 537)]
 2.7. After "game_over" sign, if the "score" is made in top 10 of the history, pop page type_name for name registration.
 
 2.8. Add sound system. => added two background musics in play and other pages. Added eat pacman sound. Eating ghost, dead sound and other sounds will be added when the whole game engine is complet.
 
 
-3.1 if pacman touched by a ghost, respawn on center of the map, and the ghost respwan on his corner
 
 mis-a-jour 30/06 (to-do):
 
@@ -62,3 +50,13 @@ Done:
 2.3. Ghosts movement: Finding shortest path between ghost and pacman, and ghost moves towards pacman. The level can be set based on ghost's speed. => OK
 2.6. When pac-man is eaten or time's up, show "game_over" sign. => OK
 1.2. add a waiting(loading page) while the program is loading the maps(now is pure black screen). => Same as 0.4
+5. Ghosts movement: 
+    Blinky -> position actuelle de Pacman
+    Pinky -> 3 ou 4 cases devant Pacman
+    Inky -> calcul un peu plus bizarre ou semi-aléatoire
+    Clyde -> Pacman si loin, coin de départ si proche
+    1.5. Ghosts movement
+
+2.4. Super-pacgums eaten, the game in status: ghost_vulnerable? ghosts start to move away from pacman, and can be eaten, for 5 seconds?
+2.5. When all pacgums are eaten, show "good_job" sign. [rect(571, 371, 537, 537)]
+3.1 if pacman touched by a ghost, respawn on center of the map, and the ghost respwan on his corner

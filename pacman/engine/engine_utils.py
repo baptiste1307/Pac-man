@@ -1,5 +1,6 @@
 import pygame
 from pacman.core import GameState
+from typing import Any
 
 
 class EngineUtils:
@@ -181,6 +182,9 @@ class EngineUtils:
                 state.statistics.score += state.config[
                     "points_per_super_pacgum"
                 ]
+                for ghost in state.ghosts:
+                    ghost.status = "vulnerable"
+                    ghost.speed = state.vulnerable_ghost_speed
 
             self.sound_eat.play()
 
@@ -189,6 +193,7 @@ class EngineUtils:
             return
 
         entity_size = state.level.cell_size - state.wall_thickness
+
         pacman_rect = pygame.Rect(
             state.pacman_x,
             state.pacman_y,
@@ -200,24 +205,33 @@ class EngineUtils:
             ghost_rect = pygame.Rect(
                 ghost.pixel_x,
                 ghost.pixel_y,
-                entity_size,
-                entity_size,
+                entity_size * 0.7,
+                entity_size * 0.7,
             )
 
             if pacman_rect.colliderect(ghost_rect):
-                self.handle_pacman_hit_by_ghost(state)
+                self.handle_pacman_touch_ghost(state, ghost)
                 return
 
-    def handle_pacman_hit_by_ghost(self, state: GameState) -> None:
-        state.statistics.lives -= 1
+    def handle_pacman_touch_ghost(self, state: GameState, ghost: Any) -> None:
+        # ghost killed by pacman
+        if ghost.status == "vulnerable":
+            ghost.status = "eaten"
+            state.statistics.score += state.config["points_per_ghost"]
+            # this ghost respawns in his corner
+            state.reset_ghosts_states(ghost=ghost)
+            return
+
+        # pacman killed by ghost
+        elif ghost.status == "normal":
+            state.statistics.lives -= 1
+            state.set_pacman_start_position()
+            state.reset_ghosts_states()
+            state.status = "pause"
 
         if state.statistics.lives <= 0:
             state.status = "game_over"
             return
-
-        state.set_pacman_start_position()
-        state.reset_ghosts_states()
-        state.status = "pause"
 
     def move_ghosts(self, state: GameState) -> None:
         if state.status != "play":
@@ -229,14 +243,14 @@ class EngineUtils:
             if ghost.pixel_x != ghost.pixel_target_x:
                 if ghost.pixel_x < ghost.pixel_target_x:
                     ghost.pixel_x = min(
-                        ghost.pixel_x + state.ghost_speed,
+                        ghost.pixel_x + ghost.speed,
                         ghost.pixel_target_x,
                     )
                     ghost.direction = "right"
 
                 elif ghost.pixel_x > ghost.pixel_target_x:
                     ghost.pixel_x = max(
-                        ghost.pixel_x - state.ghost_speed,
+                        ghost.pixel_x - ghost.speed,
                         ghost.pixel_target_x,
                     )
                     ghost.direction = "left"
@@ -245,14 +259,14 @@ class EngineUtils:
 
                 if ghost.pixel_y < ghost.pixel_target_y:
                     ghost.pixel_y = min(
-                        ghost.pixel_y + state.ghost_speed,
+                        ghost.pixel_y + ghost.speed,
                         ghost.pixel_target_y,
                     )
                     ghost.direction = "down"
 
                 elif ghost.pixel_y > ghost.pixel_target_y:
                     ghost.pixel_y = max(
-                        ghost.pixel_y - state.ghost_speed,
+                        ghost.pixel_y - ghost.speed,
                         ghost.pixel_target_y,
                     )
                     ghost.direction = "up"

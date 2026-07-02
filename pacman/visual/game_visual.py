@@ -6,7 +6,6 @@ from .menu_visual import MenuVisualMixin
 from .maze_visual import MazeVisualMixin
 from .play_visual import PlayVisualMixin
 from .visual_base import VisualBaseMixin
-from typing import Dict
 
 DESIGN_SIZE = (2160, 1280)
 INITIAL_WINDOW_SCALE = 0.7

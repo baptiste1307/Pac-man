@@ -80,16 +80,28 @@ class GameEngine:
         running = True
 
         while running:
+            # dt = time to display 60 frames
             dt = clock.tick(60)
             # state.level_timer += dt
             running = self.handle_events(game, state, utils)
 
             if state.status != "game_over":
-                # when 1 sec passed
                 state.level_timer += dt
+
+                # when 1 sec passed
                 if state.level_timer >= 1000:
                     state.level_timer = 0
                     state.statistics.time_left -= 1
+
+                    for ghost in state.ghosts:
+                        if ghost.status == "vulnerable":
+                            ghost.vulnerable_timer += 1
+
+                            if ghost.vulnerable_timer >= 10:
+                                ghost.status = "normal"
+                                ghost.speed = state.normal_ghost_speed
+                                ghost.vulnerable_timer = 0
+
                     if state.statistics.time_left <= 0:
                         # lose a life
                         state.statistics.lives -= 1

@@ -246,9 +246,12 @@ class PlayVisualMixin:
             state.reset_level()
 
         for ghost in state.ghosts:
+            asset_name = ghost.asset_name
+            if ghost.status == "vulnerable":
+                asset_name = "vulnerable_ghost"
             self.draw_grid_asset(
                 state=state,
-                asset_name=f"{ghost.asset_name}_{ghost.direction}",
+                asset_name=f"{asset_name}_{ghost.direction}",
                 grid_position=(ghost.pixel_x, ghost.pixel_y),
                 sub_name="all",
                 frame_index=state.ghost_current_frame,

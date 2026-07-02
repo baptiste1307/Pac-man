@@ -210,10 +210,10 @@ class EngineUtils:
 
         for ghost in state.ghosts:
             ghost_rect = pygame.Rect(
-                ghost.pixel_x,
-                ghost.pixel_y,
-                entity_size * 0.7,
-                entity_size * 0.7,
+                ghost.pixel_x + (entity_size // 2),
+                ghost.pixel_y + (entity_size // 2),
+                entity_size // 2,
+                entity_size // 2,
             )
 
             if pacman_rect.colliderect(ghost_rect):

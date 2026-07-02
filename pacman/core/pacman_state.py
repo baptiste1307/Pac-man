@@ -5,7 +5,7 @@ from dataclasses import dataclass
 class PacmanStateMixin:
     # Speeds are expressed in pixels per second, not pixels per frame.
     # This keeps movement stable on machines with different frame rates.
-    pacman_speed: float = 120
+    pacman_speed: float = 200
     pacman_direction: str | None = None
     pacman_wanted_direction: str | None = None
     pacman_current_frame: int = 1

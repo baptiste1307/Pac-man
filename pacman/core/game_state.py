@@ -13,7 +13,7 @@ class GameState(PacmanStateMixin, GhostStateMixin):
     status: str = "pause"
     current_level_index: int = 0
     animation_timer: int = 0
-    animation_delay: int = 100
+    animation_delay: int = 80
     level_timer: int = 0
 
     def __post_init__(self):

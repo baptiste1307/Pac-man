@@ -49,11 +49,6 @@ class GameEngine:
             if event.type == pygame.MOUSEBUTTONUP:
                 self.dragging = False
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_F11:
-                    game.toggle_fullscreen()
-                    state.refresh_layout()
-
             return "play"
 
     def render(

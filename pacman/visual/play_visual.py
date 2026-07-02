@@ -26,7 +26,7 @@ HUD_TEXT_POSITIONS = {
     "level_label": (1658, 686),
     "level_value": (1833, 683),
     "timer": (1833, 862),
-    "loading": (698, 848),
+    "loading": (750, 848),
 }
 
 NEXT_BUTTON = {
@@ -266,9 +266,9 @@ class PlayVisualMixin:
         overlay.fill((0, 0, 0, 220))
         self.screen.blit(overlay, (0, 0))
 
-        game_over_rect = self.game_over.get_rect(
-            topleft=HUD_IMAGES_POS["game_over"]
-        )
+        game_over_rect = self.game_over.get_rect()
+        game_over_rect.centerx = self.screen_width // 2
+        game_over_rect.top = self.y(HUD_IMAGES_POS["game_over"][1])
 
         self.screen.blit(self.game_over, game_over_rect)
         self.draw_button(self.play_back_button, self.button_font)
@@ -280,16 +280,17 @@ class PlayVisualMixin:
         clock = pygame.time.Clock()
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 220))
-        good_job_rect = self.good_job.get_rect(
-            topleft=HUD_IMAGES_POS["good_job"]
-        )
+        good_job_rect = self.good_job.get_rect()
+        good_job_rect.centerx = self.screen_width // 2
+        good_job_rect.top = self.y(HUD_IMAGES_POS["good_job"][1])
 
-        self.start_point = HUD_TEXT_POSITIONS["loading"][0] + 100
-        self.end_point = self.start_point + 620
-        self.loading_speed = 200
-        self.loading_height = HUD_TEXT_POSITIONS["loading"][1]
+        scaled_loading_pos = self.pos(HUD_TEXT_POSITIONS["loading"])
+        self.start_point = scaled_loading_pos[0]
+        self.end_point = self.start_point + self.x(550)
+        self.loading_speed = self.x(200)
+        self.loading_height = scaled_loading_pos[1] - self.y(80)
 
-        spacing_pixels = 80
+        spacing_pixels = self.x(80)
         delay_step = int((spacing_pixels / self.loading_speed) * 1000)
 
         self.loading_ghosts = [
@@ -307,7 +308,8 @@ class PlayVisualMixin:
             self.screen.blit(self.good_job, good_job_rect)
             self.draw_button(self.play_back_button, self.button_font)
             self.draw_text("Loading your next level...", self.title_font,
-                           Colors.WHITE.value, HUD_TEXT_POSITIONS["loading"])
+                           Colors.WHITE.value, HUD_TEXT_POSITIONS["loading"],
+                           center=False)
 
             if state.current_level_index < 9:
                 delta_time = clock.tick(60) / 1000

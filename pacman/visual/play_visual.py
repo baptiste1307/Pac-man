@@ -2,6 +2,7 @@ import pygame
 from pacman.assets import LoadedAssets
 from pacman.core import GameState
 from pacman.ui import Colors
+from typing import Dict, Any
 
 HUD_IMAGES_POS = {
     "score_board": (1632, 140),
@@ -289,19 +290,33 @@ class PlayVisualMixin:
 
             if state.current_level_index < 9:
                 delta_time = clock.tick(60) / 1000
-                self.draw_loading_pacman(delta_time)
+
+                for ghost in self.loading_ghosts:
+                    if pygame.time.get_ticks() - start_time >= ghost["delay"]:
+                        ghost["x"] += self.loading_speed * delta_time
+                        self.draw_loading_pacman(delta_time, ghost)
             pygame.display.flip()
 
-    def draw_loading_pacman(self, dt):
+    def draw_loading_pacman(self, dt, ghost: Dict[str, Any]):
+        if ghost["name"] == "blinky":
+            image1 = self.loading_blinky1
+            image2 = self.loading_blinky2
+        elif ghost["name"] == "clyde":
+            image1 = self.loading_clyde1
+            image2 = self.loading_clyde2
+        elif ghost["name"] == "pinky":
+            image1 = self.loading_pinky1
+            image2 = self.loading_pinky2
+        elif ghost["name"] == "inky":
+            image1 = self.loading_inky1
+            image2 = self.loading_inky2
 
         self.loading_frame += 1
         if (self.loading_frame // 10) % 2 == 0:
-            self.screen.blit(self.loading_pacman1,
-                             (self.current_point, self.loading_height))
+            self.screen.blit(image1, (ghost["x"], self.loading_height))
         else:
-            self.screen.blit(self.loading_pacman2,
-                             (self.current_point, self.loading_height))
-        if self.current_point < self.end_point:
-            self.current_point += self.loading_speed * dt
+            self.screen.blit(image2, (ghost["x"], self.loading_height))
+        if ghost["x"] < self.end_point:
+            ghost["x"] += self.loading_speed * dt
         else:
-            self.current_point = self.start_point
+            ghost["x"] = self.start_point

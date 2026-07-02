@@ -106,18 +106,18 @@ class GameVisual(
 
         # --------- For loading animation --------- #
 
-        self.start_point = HUD_TEXT_POSITIONS["loading"][0] + 100
-        self.current_point = self.start_point
-        self.end_point = self.start_point + 620
-        self.loading_speed = 200
-        self.loading_height = HUD_TEXT_POSITIONS["loading"][1]
-        self.loading_frame = 0
-        self.loading_ghosts = [
-            {"name": "blinky", "x": self.start_point, "delay": 200},
-            {"name": "clyde", "x": self.start_point, "delay": 400},
-            {"name": "pinky", "x": self.start_point, "delay": 600},
-            {"name": "inky", "x": self.start_point, "delay": 800},
-        ]
+        # self.start_point = HUD_TEXT_POSITIONS["loading"][0] + 100
+        # self.current_point = self.start_point
+        # self.end_point = self.start_point + 620
+        # self.loading_speed = 200
+        # self.loading_height = HUD_TEXT_POSITIONS["loading"][1]
+        # self.loading_frame = 0
+        # self.loading_ghosts = [
+        #     {"name": "blinky", "x": self.start_point, "delay": 200},
+        #     {"name": "clyde", "x": self.start_point, "delay": 400},
+        #     {"name": "pinky", "x": self.start_point, "delay": 600},
+        #     {"name": "inky", "x": self.start_point, "delay": 800},
+        # ]
 
     def fit_to_design_ratio(self, width: int, height: int) -> tuple[int, int]:
         width = max(1, width)

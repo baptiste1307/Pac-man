@@ -284,7 +284,25 @@ class PlayVisualMixin:
             topleft=HUD_IMAGES_POS["good_job"]
         )
 
+        self.start_point = HUD_TEXT_POSITIONS["loading"][0] + 100
+        self.end_point = self.start_point + 620
+        self.loading_speed = 200
+        self.loading_height = HUD_TEXT_POSITIONS["loading"][1]
+
+        spacing_pixels = 80
+        delay_step = int((spacing_pixels / self.loading_speed) * 1000)
+
+        self.loading_ghosts = [
+            {"name": "blinky", "x": self.start_point, "delay": 0},
+            {"name": "clyde", "x": self.start_point, "delay": delay_step},
+            {"name": "pinky", "x": self.start_point, "delay": delay_step * 2},
+            {"name": "inky", "x": self.start_point, "delay": delay_step * 3},]
+
         while pygame.time.get_ticks() - start_time < 3000:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
             self.screen.blit(overlay, (0, 0))
             self.screen.blit(self.good_job, good_job_rect)
             self.draw_button(self.play_back_button, self.button_font)
@@ -293,14 +311,18 @@ class PlayVisualMixin:
 
             if state.current_level_index < 9:
                 delta_time = clock.tick(60) / 1000
-
+                current_elapsed = pygame.time.get_ticks() - start_time
                 for ghost in self.loading_ghosts:
-                    if pygame.time.get_ticks() - start_time >= ghost["delay"]:
+                    if current_elapsed >= ghost["delay"]:
                         ghost["x"] += self.loading_speed * delta_time
-                        self.draw_loading_pacman(delta_time, ghost)
+                        if ghost["x"] > self.end_point:
+                            ghost["x"] = self.start_point
+                        self.draw_loading_pacman(ghost=ghost)
+            else:
+                clock.tick(60)
             pygame.display.flip()
 
-    def draw_loading_pacman(self, dt, ghost: Dict[str, Any]):
+    def draw_loading_pacman(self, ghost: Dict[str, Any]):
         if ghost["name"] == "blinky":
             image1 = self.loading_blinky1
             image2 = self.loading_blinky2
@@ -314,12 +336,7 @@ class PlayVisualMixin:
             image1 = self.loading_inky1
             image2 = self.loading_inky2
 
-        self.loading_frame += 1
-        if (self.loading_frame // 10) % 2 == 0:
+        if (pygame.time.get_ticks() // 150) % 2 == 0:
             self.screen.blit(image1, (ghost["x"], self.loading_height))
         else:
             self.screen.blit(image2, (ghost["x"], self.loading_height))
-        if ghost["x"] < self.end_point:
-            ghost["x"] += self.loading_speed * dt
-        else:
-            ghost["x"] = self.start_point

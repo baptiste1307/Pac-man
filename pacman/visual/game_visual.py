@@ -6,6 +6,7 @@ from .menu_visual import MenuVisualMixin
 from .maze_visual import MazeVisualMixin
 from .play_visual import PlayVisualMixin
 from .visual_base import VisualBaseMixin
+from typing import Dict
 
 DESIGN_SIZE = (2160, 1280)
 INITIAL_WINDOW_SCALE = 0.7
@@ -313,4 +314,5 @@ class GameVisual(
 
 if __name__ == "__main__":
     v = GameVisual()
+    # scores = {"huian": 300, "baptiste": 600, "allan": 200, "james": 500}
     v.main_menu()

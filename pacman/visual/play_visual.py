@@ -2,6 +2,7 @@ import pygame
 from pacman.assets import LoadedAssets
 from pacman.core import GameState
 from pacman.ui import Colors
+from typing import Dict, Any
 
 HUD_IMAGES_POS = {
     "score_board": (1632, 140),
@@ -9,7 +10,8 @@ HUD_IMAGES_POS = {
     "level_icon": (1632, 623),
     "timer_icon": (1632, 802),
     "volume_bar": (1933, 1163),
-    "game_over": (646, 371),
+    "game_over": (827, 220),
+    "good_job": (827, 120),
 }
 
 HUD_LABEL_RECTS = {
@@ -24,6 +26,7 @@ HUD_TEXT_POSITIONS = {
     "level_label": (1658, 686),
     "level_value": (1833, 683),
     "timer": (1833, 862),
+    "loading": (698, 848),
 }
 
 NEXT_BUTTON = {
@@ -230,7 +233,7 @@ class PlayVisualMixin:
     def draw_pacgums(self, state: GameState) -> None:
 
         if len(state.pacgums) == 0 and len(state.super_pacgums) == 0:
-            self.draw_good_job()
+            self.draw_good_job(state)
             state.current_level_index += 1
             state.reset_level()
 
@@ -264,10 +267,7 @@ class PlayVisualMixin:
         self.screen.blit(overlay, (0, 0))
 
         game_over_rect = self.game_over.get_rect(
-            center=(
-                self.screen.get_width() // 2,
-                self.screen.get_height() // 2,
-            )
+            topleft=HUD_IMAGES_POS["game_over"]
         )
 
         self.screen.blit(self.game_over, game_over_rect)
@@ -275,19 +275,51 @@ class PlayVisualMixin:
         # game_over_sound.play()
         # game_over_sound.set_volume(0.8)
 
-    def draw_good_job(self):
+    def draw_good_job(self, state: GameState):
         start_time = pygame.time.get_ticks()
+        clock = pygame.time.Clock()
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 220))
         good_job_rect = self.good_job.get_rect(
-            center=(
-                self.screen.get_width() // 2,
-                self.screen.get_height() // 2,
-            )
+            topleft=HUD_IMAGES_POS["good_job"]
         )
 
         while pygame.time.get_ticks() - start_time < 3000:
             self.screen.blit(overlay, (0, 0))
             self.screen.blit(self.good_job, good_job_rect)
             self.draw_button(self.play_back_button, self.button_font)
+            self.draw_text("Loading your next level...", self.title_font,
+                           Colors.WHITE.value, HUD_TEXT_POSITIONS["loading"])
+
+            if state.current_level_index < 9:
+                delta_time = clock.tick(60) / 1000
+
+                for ghost in self.loading_ghosts:
+                    if pygame.time.get_ticks() - start_time >= ghost["delay"]:
+                        ghost["x"] += self.loading_speed * delta_time
+                        self.draw_loading_pacman(delta_time, ghost)
             pygame.display.flip()
+
+    def draw_loading_pacman(self, dt, ghost: Dict[str, Any]):
+        if ghost["name"] == "blinky":
+            image1 = self.loading_blinky1
+            image2 = self.loading_blinky2
+        elif ghost["name"] == "clyde":
+            image1 = self.loading_clyde1
+            image2 = self.loading_clyde2
+        elif ghost["name"] == "pinky":
+            image1 = self.loading_pinky1
+            image2 = self.loading_pinky2
+        elif ghost["name"] == "inky":
+            image1 = self.loading_inky1
+            image2 = self.loading_inky2
+
+        self.loading_frame += 1
+        if (self.loading_frame // 10) % 2 == 0:
+            self.screen.blit(image1, (ghost["x"], self.loading_height))
+        else:
+            self.screen.blit(image2, (ghost["x"], self.loading_height))
+        if ghost["x"] < self.end_point:
+            ghost["x"] += self.loading_speed * dt
+        else:
+            ghost["x"] = self.start_point

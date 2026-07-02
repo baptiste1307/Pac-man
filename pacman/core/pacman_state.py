@@ -67,9 +67,11 @@ class PacmanStateMixin:
                     (x, y) not in self.fourty_two_cells
                     and (x, y) != pacman_start
                 ):
-                    if (x, y) in self.maze_corners_coords:
-                        self.super_pacgums.add((x, y))
-                    else:
+                    # if (x, y) in self.maze_corners_coords:
+                    #     self.super_pacgums.add((x, y))
+                    # else:
+                    #     self.pacgums.add((x, y))
+                    if len(self.pacgums) <= 1:
                         self.pacgums.add((x, y))
 
     def set_pacman_start_position(self):

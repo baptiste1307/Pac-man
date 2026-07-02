@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pacman.ui import Button, Colors
 from .menu_visual import MenuVisualMixin
 from .maze_visual import MazeVisualMixin
-from .play_visual import PlayVisualMixin
+from .play_visual import PlayVisualMixin, HUD_TEXT_POSITIONS
 from .visual_base import VisualBaseMixin
 
 DESIGN_SIZE = (2160, 1280)
@@ -24,6 +24,7 @@ IMAGE_SIZES = {
     "volume_bar": (228, 29),
     "volume_knob": (53, 53),
     "game_over": (537, 537),
+    "loading_pacman": (53, 53),
 }
 
 BUTTON_SPECS = {
@@ -102,6 +103,21 @@ class GameVisual(
         self.resize(width, height)
         self.assets = None
         self.sprites = None
+
+        # --------- For loading animation --------- #
+
+        self.start_point = HUD_TEXT_POSITIONS["loading"][0] + 100
+        self.current_point = self.start_point
+        self.end_point = self.start_point + 620
+        self.loading_speed = 200
+        self.loading_height = HUD_TEXT_POSITIONS["loading"][1]
+        self.loading_frame = 0
+        self.loading_ghosts = [
+            {"name": "blinky", "x": self.start_point, "delay": 200},
+            {"name": "clyde", "x": self.start_point, "delay": 400},
+            {"name": "pinky", "x": self.start_point, "delay": 600},
+            {"name": "inky", "x": self.start_point, "delay": 800},
+        ]
 
     def fit_to_design_ratio(self, width: int, height: int) -> tuple[int, int]:
         width = max(1, width)
@@ -207,6 +223,55 @@ class GameVisual(
         self.good_job = pygame.transform.scale(
             pygame.image.load("./img/good_job.png").convert_alpha(),
             self.size(IMAGE_SIZES["game_over"]),
+        )
+
+        self.loading_blinky1 = pygame.transform.scale(
+            pygame.image.load(
+                "./assets/ghosts/blinky/right/1.png"
+            ).convert_alpha(),
+            self.size(IMAGE_SIZES["loading_pacman"]),
+        )
+        self.loading_blinky2 = pygame.transform.scale(
+            pygame.image.load(
+                "./assets/ghosts/blinky/right/2.png"
+            ).convert_alpha(),
+            self.size(IMAGE_SIZES["loading_pacman"]),
+        )
+        self.loading_clyde1 = pygame.transform.scale(
+            pygame.image.load(
+                "./assets/ghosts/clyde/right/1.png"
+            ).convert_alpha(),
+            self.size(IMAGE_SIZES["loading_pacman"]),
+        )
+        self.loading_clyde2 = pygame.transform.scale(
+            pygame.image.load(
+                "./assets/ghosts/clyde/right/2.png"
+            ).convert_alpha(),
+            self.size(IMAGE_SIZES["loading_pacman"]),
+        )
+        self.loading_pinky1 = pygame.transform.scale(
+            pygame.image.load(
+                "./assets/ghosts/pinky/right/1.png"
+            ).convert_alpha(),
+            self.size(IMAGE_SIZES["loading_pacman"]),
+        )
+        self.loading_pinky2 = pygame.transform.scale(
+            pygame.image.load(
+                "./assets/ghosts/pinky/right/2.png"
+            ).convert_alpha(),
+            self.size(IMAGE_SIZES["loading_pacman"]),
+        )
+        self.loading_inky1 = pygame.transform.scale(
+            pygame.image.load(
+                "./assets/ghosts/inky/right/1.png"
+            ).convert_alpha(),
+            self.size(IMAGE_SIZES["loading_pacman"]),
+        )
+        self.loading_inky2 = pygame.transform.scale(
+            pygame.image.load(
+                "./assets/ghosts/inky/right/2.png"
+            ).convert_alpha(),
+            self.size(IMAGE_SIZES["loading_pacman"]),
         )
 
     def make_button(
